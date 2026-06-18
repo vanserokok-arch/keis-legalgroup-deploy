@@ -93,6 +93,59 @@
     }
   };
 
+  const CATEGORY_VARIANTS = {
+    'Кредиты и банки': [
+      {
+        summary: 'Финансовые правила меняются не только для банков: такие решения постепенно отражаются на ставках, лимитах и условиях обслуживания клиентов.',
+        client: 'Сверьте дату изменения с договором, графиком платежей и уведомлениями банка. Эти документы важны, если условия стали хуже.'
+      },
+      {
+        summary: 'Регулятор уточняет порядок работы финансового рынка. Для клиента это сигнал внимательнее смотреть на кредит, вклад, карту или спор с банком.',
+        client: 'Сохраните уведомления банка и текущие тарифы. В споре часто решает не сама новость, а то, как банк применил ее к вам.'
+      }
+    ],
+    'Мошенничество': [
+      {
+        summary: 'Материал связан с переводами, картами и цифровыми схемами обмана. В таких делах важны первые часы после операции.',
+        client: 'Зафиксируйте выписку, переписку, номера телефонов и обращения в банк. Не удаляйте личный кабинет и историю операций.'
+      },
+      {
+        summary: 'Речь о рисках, которые возникают при дистанционных переводах и онлайн-сервисах. Чем точнее следы операции, тем сильнее позиция.',
+        client: 'Соберите скриншоты, чеки, банковские ответы и номера заявлений. Эти данные нужны до претензии и до обращения в суд.'
+      }
+    ],
+    'Защита прав потребителей': [
+      {
+        summary: 'Изменение касается покупки, услуги, претензии или возврата денег. На практике многое зависит от сроков и доказательств.',
+        client: 'Держите вместе чек, договор, фото дефекта, акт и переписку. Претензию лучше подавать с расчетом суммы и сроков.'
+      },
+      {
+        summary: 'Потребительские споры редко решаются одним звонком: важны документы, понятная хронология и корректно сформулированное требование.',
+        client: 'До суда проверьте, есть ли письменный отказ, акт осмотра и подтверждение оплаты. Это ускоряет взыскание.'
+      }
+    ],
+    'Суды': [
+      {
+        summary: 'Судебная практика показывает, какие аргументы работают в спорах о деньгах, договорах и ответственности сторон.',
+        client: 'Сравните свою ситуацию с выводами суда: сроки, документы и поведение сторон часто важнее названия спора.'
+      },
+      {
+        summary: 'Решение помогает понять, как суды смотрят на доказательства, неустойку и добросовестность участников спора.',
+        client: 'Отдельно проверьте даты, переписку и подтверждение передачи денег или документов. Это основа позиции.'
+      }
+    ],
+    'Законы': [
+      {
+        summary: 'Правило меняет порядок действий для граждан или организаций. Главное — понять срок вступления в силу и практические последствия.',
+        client: 'Проверьте, действует ли норма уже сейчас. От даты зависит, что писать в претензии, жалобе или иске.'
+      },
+      {
+        summary: 'Нормативное изменение важно не само по себе, а тем, какие обязанности, сроки или доказательства оно меняет.',
+        client: 'Сопоставьте новую норму с вашим договором и документами. Если сроки уже идут, не откладывайте фиксацию нарушения.'
+      }
+    ]
+  };
+
   const TITLE_RULES = [
     {
       test: /инсайдерская информация банка россии/,
@@ -330,16 +383,18 @@
     return clampText(title.replace(/^официально:\s*/i, ''), 112);
   };
 
-  const buildContext = (rawItem, category, title, note) => {
+  const buildContext = (rawItem, category, title, note, index = 0) => {
     const haystack = getHaystack(rawItem);
     const rule = CONTEXT_RULES.find((item) => item.test.test(haystack));
     const categoryCopy = CATEGORY_COPY[category] || CATEGORY_COPY['Законы'];
+    const variants = CATEGORY_VARIANTS[category] || CATEGORY_VARIANTS['Законы'] || [];
+    const variant = variants.length > 0 ? variants[index % variants.length] : null;
     const rawSummary = normalizeText(rawItem?.summary);
     const summaryLooksUseful = rawSummary.length >= 80 && !/^(дл|юл|ип)\s*[–-]/i.test(rawSummary);
 
     return {
-      summary: clampText(summaryLooksUseful ? rawSummary : (rule?.summary || note.happened || categoryCopy.summary), 230),
-      clientMeaning: clampText(rule?.client || note.step || categoryCopy.client, 210),
+      summary: clampText(summaryLooksUseful ? rawSummary : (rule?.summary || note.happened || variant?.summary || categoryCopy.summary), 168),
+      clientMeaning: clampText(rule?.client || note.step || variant?.client || categoryCopy.client, 150),
       audience: clampText(note.audience || '', 120),
       title
     };
@@ -379,7 +434,7 @@
     const category = detectCategory(item);
     const note = parseKeisNote(item);
     const title = buildTitle(item?.title);
-    const context = buildContext(item, category, title, note);
+    const context = buildContext(item, category, title, note, index);
     const source = normalizeText(item?.source) || 'Источник';
     const dateHuman = formatDate(item?.dateISO, item?.dateHuman);
     const dateTime = formatTime(item?.dateISO, item?.dateHuman);
@@ -625,7 +680,7 @@
       <li class="kg-news-card"${dataAttrs}>
         <article class="kg-news-card__article">
           <a class="kg-news-card__media" ${linkAttrs(item)} aria-label="${escapeAttr(item.title)}">
-            <img src="${escapeAttr(item.image)}" alt="" loading="lazy" decoding="async">
+            <img src="${escapeAttr(item.image)}" alt="" loading="eager" decoding="async">
           </a>
           <div class="kg-news-card__body">
             <p class="kg-news-card__meta">
