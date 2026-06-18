@@ -125,3 +125,38 @@ Result:
   - `kgx-stories-1200.png`
   - `kgx-stories-1440.png`
   - `kgx-stories-1920.png`
+
+## Quality pass
+
+After visual review on a 1920px viewport, the first optimized files were too compressed for a full-width background:
+
+- previous mp4: 1280x720, about 1.3 Mbps, 847 KB;
+- previous webm: 1280x720, about 1.9 Mbps, 1.2 MB.
+
+The source itself is sharper: 1280x720, about 4.8 Mbps. The final background files were regenerated as 1920x1080 with Lanczos upscale, mild sharpening, and less aggressive compression.
+
+Commands used:
+
+```bash
+ffmpeg -y -i assets/block/video/Justice_Law.mp4 -an -map_metadata -1 -sn -dn -vf "scale=1920:-2:flags=lanczos,fps=24,unsharp=3:3:0.42:3:3:0.18" -c:v libvpx-vp9 -b:v 0 -crf 25 -row-mt 1 -deadline good -cpu-used 2 assets/block/video/justice-law-bg.webm
+ffmpeg -y -i assets/block/video/Justice_Law.mp4 -an -map_metadata -1 -sn -dn -vf "scale=1920:-2:flags=lanczos,fps=24,unsharp=3:3:0.42:3:3:0.18" -c:v libx264 -crf 20 -preset slow -movflags +faststart -pix_fmt yuv420p assets/block/video/justice-law-bg.mp4
+ffmpeg -y -ss 00:00:02 -i assets/block/video/Justice_Law.mp4 -frames:v 1 -vf "scale=1920:-2:flags=lanczos,unsharp=3:3:0.42:3:3:0.18" tmp/video-bg-quality-check/poster-hq.png
+cwebp -quiet -q 86 tmp/video-bg-quality-check/poster-hq.png -o assets/block/video/justice-law-bg-poster.webp
+rsync -a assets/block/video/justice-law-bg.webm assets/block/video/justice-law-bg.mp4 assets/block/video/justice-law-bg-poster.webp dist-timeweb/assets/block/video/
+```
+
+Final result:
+
+- `justice-law-bg.webm` - 3.5 MB, VP9, 1920x1080, 24 fps.
+- `justice-law-bg.mp4` - 3.6 MB, H.264, 1920x1080, 24 fps, `+faststart`.
+- `justice-law-bg-poster.webp` - 98 KB.
+
+The video and poster paths now use `?v=20260618hq` in JS/CSS, so Chrome does not keep using the old over-compressed local cache.
+
+Additional verification:
+
+- `/assets/block/video/justice-law-bg.webm?v=20260618hq`: `200 OK`, `video/webm`, `Content-Length: 3711639`.
+- `/assets/block/video/justice-law-bg.mp4?v=20260618hq`: `200 OK`, `video/mp4`, `Content-Length: 3815302`.
+- `/assets/block/video/justice-law-bg-poster.webp?v=20260618hq`: `200 OK`, `image/webp`, `Content-Length: 100506`.
+- Browser check on `/scam/pressure/`: video source is 1920x1080, `readyState=4`, no 404, no console errors, no horizontal overflow.
+- Updated screenshot: `tmp/video-bg-carousel-shots/kgx-stories-1920-hq.png`.
