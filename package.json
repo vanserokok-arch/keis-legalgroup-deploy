@@ -1,0 +1,36 @@
+{
+  "name": "landing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "dev": "python3 -m http.server 5507",
+    "build": "node scripts/validate-static-site.js",
+    "test": "echo \"Use npm run test:kxchat and npm run test:e2e:kxchat\"",
+    "test:kxchat": "cd kxchat-server && npm test",
+    "test:e2e:kxchat": "playwright test tests/kxchat-v5.e2e.spec.js --workers=1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vanserokok-arch/legalgroup.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/vanserokok-arch/legalgroup/issues"
+  },
+  "homepage": "https://github.com/vanserokok-arch/legalgroup#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "playwright": "^1.59.1",
+    "postcss": "^8.5.6",
+    "postcss-safe-parser": "^7.0.1",
+    "stylelint": "^17.0.0",
+    "stylelint-config-standard": "^40.0.0"
+  }
+}

@@ -1,0 +1,8 @@
+.DS_Store
+*.log
+*.tmp
+*.bak
+*.zip
+*.tar
+*.tar.gz
+node_modules/

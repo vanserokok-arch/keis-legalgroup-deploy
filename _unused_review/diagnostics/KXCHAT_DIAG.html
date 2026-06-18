@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>KXchat Diagnostic</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 20px; }
+    .section { background: #2d2d2d; margin: 20px 0; padding: 15px; border-left: 4px solid #007acc; }
+    .section-title { color: #4ec9b0; font-weight: bold; margin-bottom: 10px; }
+    .output { background: #1e1e1e; padding: 10px; margin: 10px 0; border: 1px solid #404040; overflow-x: auto; }
+    .true { color: #6a9955; }
+    .false { color: #d16969; }
+    .error { color: #f44747; }
+    .success { color: #6a9955; }
+  </style>
+</head>
+<body>
+
+<h1>KXchat Diagnostics</h1>
+
+<div class="section">
+  <div class="section-title">1. PART 1 — LIVE DOM PROOF</div>
+  <div id="part1" class="output"></div>
+</div>
+
+<div class="section">
+  <div class="section-title">2. PART 2 — DETAILED DOM STATE</div>
+  <div id="part2" class="output"></div>
+</div>
+
+<div class="section">
+  <div class="section-title">3. PART 3 — COMPUTED STYLES</div>
+  <div id="part3" class="output"></div>
+</div>
+
+<div class="section">
+  <div class="section-title">4. PART 4 — NETWORK RESOURCES</div>
+  <div id="part4" class="output"></div>
+</div>
+
+<div class="section">
+  <div class="section-title">5. PART 5 — WINDOW OBJECT CHECK</div>
+  <div id="part5" class="output"></div>
+</div>
+
+<div class="section">
+  <div class="section-title">6. PART 6 — CONSOLE LOGS FROM PAGE</div>
+  <div id="part6" class="output"></div>
+</div>
+
+<script>
+// Capture console logs
+let logs = [];
+const originalLog = console.log;
+const originalError = console.error;
+console.log = function(...args) {
+  logs.push('LOG: ' + args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' '));
+  originalLog.apply(console, args);
+};
+console.error = function(...args) {
+  logs.push('ERROR: ' + args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' '));
+  originalError.apply(console, args);
+};
+
+// Load page in hidden iframe
+const iframe = document.createElement('iframe');
+iframe.style.display = 'none';
+iframe.onload = function() {
+  try {
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    const win = iframe.contentWindow;
+    
+    // PART 1: Basic DOM queries
+    const p1 = document.getElementById('part1');
+    const launcher = doc.getElementById('kxchat-launcher');
+    const widget = doc.getElementById('kxchat-widget');
+    const all = doc.querySelectorAll('[id^="kxchat"]');
+    
+    p1.innerHTML = `
+      document.getElementById('kxchat-launcher'): ${launcher ? `<span class="success">FOUND</span>` : `<span class="false">null</span>`}
+      document.getElementById('kxchat-widget'): ${widget ? `<span class="success">FOUND</span>` : `<span class="false">null</span>`}
+      document.querySelectorAll('[id^="kxchat"]').length: <span class="${all.length > 0 ? 'success' : 'false'}">${all.length}</span>
+    `.replace(/\n/g, '<br>');
+
+    // PART 2: Detailed state
+    const p2 = document.getElementById('part2');
+    const state = {
+      launcherExists: !!launcher,
+      widgetExists: !!widget,
+      launcherClassName: launcher ? launcher.className : null,
+      widgetClassName: widget ? widget.className : null,
+      launcherHTML: launcher ? launcher.outerHTML.slice(0, 300) : null,
+      widgetHTML: widget ? widget.outerHTML.slice(0, 300) : null
+    };
+    
+    p2.innerHTML = `<pre>${JSON.stringify(state, null, 2)}</pre>`;
+
+    // PART 3: Computed styles
+    const p3 = document.getElementById('part3');
+    if (!launcher && !widget) {
+      p3.innerHTML = '<span class="error">NO KXCHAT NODES FOUND - Cannot compute styles</span>';
+    } else {
+      const styles = {
+        launcher: launcher ? {
+          display: win.getComputedStyle(launcher).display,
+          visibility: win.getComputedStyle(launcher).visibility,
+          opacity: win.getComputedStyle(launcher).opacity,
+          pointerEvents: win.getComputedStyle(launcher).pointerEvents,
+          zIndex: win.getComputedStyle(launcher).zIndex,
+          position: win.getComputedStyle(launcher).position,
+          bottom: win.getComputedStyle(launcher).bottom,
+          right: win.getComputedStyle(launcher).right,
+          transform: win.getComputedStyle(launcher).transform
+        } : null,
+        widget: widget ? {
+          display: win.getComputedStyle(widget).display,
+          visibility: win.getComputedStyle(widget).visibility,
+          opacity: win.getComputedStyle(widget).opacity,
+          pointerEvents: win.getComputedStyle(widget).pointerEvents,
+          zIndex: win.getComputedStyle(widget).zIndex,
+          position: win.getComputedStyle(widget).position,
+          bottom: win.getComputedStyle(widget).bottom,
+          right: win.getComputedStyle(widget).right,
+          transform: win.getComputedStyle(widget).transform
+        } : null
+      };
+      p3.innerHTML = `<pre>${JSON.stringify(styles, null, 2)}</pre>`;
+    }
+
+    // PART 4: Check if KXchat scripts loaded
+    const p4 = document.getElementById('part4');
+    const scriptCheck = {
+      kxchatConfigLoaded: !!win.KXCHAT_CONFIG,
+      kxchatWidgetLoaded: !!win.KXchatWidget,
+      configValue: win.KXCHAT_CONFIG ? JSON.stringify(win.KXCHAT_CONFIG) : 'NOT LOADED',
+      widgetValue: !!win.KXchatWidget ? 'true' : 'NOT LOADED'
+    };
+    p4.innerHTML = `<pre>${JSON.stringify(scriptCheck, null, 2)}</pre>`;
+
+    // PART 5: Window object
+    const p5 = document.getElementById('part5');
+    const windowCheck = {
+      windowReady: !!win,
+      documentReady: !!doc,
+      bodyExists: !!doc.body,
+      readyState: doc.readyState,
+      scripts: doc.querySelectorAll('script[src*="kxchat"]').length
+    };
+    p5.innerHTML = `<pre>${JSON.stringify(windowCheck, null, 2)}</pre>`;
+
+    // PART 6: Logs
+    const p6 = document.getElementById('part6');
+    setTimeout(() => {
+      const allLogs = logs.concat(
+        Array.from(win.console._logs || [])
+      );
+      p6.innerHTML = `<pre>${allLogs.length > 0 ? allLogs.join('\n') : 'NO LOGS'}</pre>`;
+    }, 2000);
+
+  } catch(e) {
+    document.getElementById('part1').innerHTML = `<span class="error">ERROR: ${e.message}</span>`;
+  }
+};
+
+iframe.src = 'http://127.0.0.1:5507/scam/broker/index.html';
+document.body.appendChild(iframe);
+</script>
+</body>
+</html>

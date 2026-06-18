@@ -1,0 +1,130 @@
+KXCHAT FORENSIC DIAGNOSTIC INSTRUCTIONS
+==============================================
+
+How to verify:
+1. Open: http://127.0.0.1:5507/scam/broker/index.html
+2. Press Ctrl+Shift+J (Windows/Linux) or Cmd+Option+J (Mac) to open DevTools Console
+3. Copy each command below and paste into the console, one at a time
+4. Copy ALL output and send it back
+
+==================================================
+COMMAND 1: Check if DOM nodes exist
+==================================================
+
+document.getElementById('kxchat-launcher')
+
+Expected output: Either <button...> (element found) OR null (NOT FOUND)
+
+
+==================================================
+COMMAND 2: Check widget DOM node  
+==================================================
+
+document.getElementById('kxchat-widget')
+
+Expected output: Either <div...> (element found) OR null (NOT FOUND)
+
+
+==================================================
+COMMAND 3: Count all KXchat elements
+==================================================
+
+document.querySelectorAll('[id^="kxchat"]').length
+
+Expected output: A number (0, 1, 2, etc)
+
+
+==================================================
+COMMAND 4: Complete DOM state dump
+==================================================
+
+(() => {
+  const launcher = document.getElementById('kxchat-launcher');
+  const widget = document.getElementById('kxchat-widget');
+  return {
+    launcherExists: !!launcher,
+    widgetExists: !!widget,
+    launcherClassName: launcher ? launcher.className : null,
+    widgetClassName: widget ? widget.className : null,
+    launcherOuterHTML: launcher ? launcher.outerHTML.slice(0, 200) : null,
+    widgetOuterHTML: widget ? widget.outerHTML.slice(0, 200) : null,
+    totalKXchatElements: document.querySelectorAll('[id^="kxchat"]').length
+  };
+})()
+
+Expected output: Object with true/false and class names
+
+
+==================================================
+COMMAND 5: Check computed styles (if elements exist)
+==================================================
+
+(() => {
+  const launcher = document.getElementById('kxchat-launcher');
+  const widget = document.getElementById('kxchat-widget');
+  if (!launcher && !widget) return 'NO KXCHAT ELEMENTS FOUND';
+  
+  return {
+    launcher: launcher ? {
+      display: getComputedStyle(launcher).display,
+      visibility: getComputedStyle(launcher).visibility,
+      opacity: getComputedStyle(launcher).opacity,
+      zIndex: getComputedStyle(launcher).zIndex,
+      position: getComputedStyle(launcher).position,
+      bottom: getComputedStyle(launcher).bottom,
+      right: getComputedStyle(launcher).right
+    } : null,
+    widget: widget ? {
+      display: getComputedStyle(widget).display,
+      visibility: getComputedStyle(widget).visibility,
+      opacity: getComputedStyle(widget).opacity,
+      zIndex: getComputedStyle(widget).zIndex,
+      position: getComputedStyle(widget).position,
+      bottom: getComputedStyle(widget).bottom,
+      right: getComputedStyle(widget).right
+    } : null
+  };
+})()
+
+Expected output: Object with CSS properties OR "NO KXCHAT ELEMENTS FOUND"
+
+
+==================================================
+COMMAND 6: Check window globals
+==================================================
+
+{
+  kxchatWidget: !!window.KXchatWidget,
+  kxchatConfig: !!window.KXCHAT_CONFIG,
+  configValue: window.KXCHAT_CONFIG
+}
+
+Expected output: Object showing true/false and config
+
+
+==================================================
+COMMAND 7: Scroll back in console to find logs
+==================================================
+
+Just look for logs starting with:
+- [KXCHAT-BOOT]
+- [KXCHAT-CREATE]
+- [KXCHAT-INIT]
+
+These show the initialization process. Copy any ERROR logs.
+
+==================================================
+FINAL STEP: Screenshot & Summary
+==================================================
+
+After running all commands:
+1. Take screenshot of:
+   - DevTools Console with command outputs
+   - The target page (should show launcher or blank)
+2. Send all outputs back
+3. Based on results:
+   - If launcher: DOESN'T exist in DOM → createWidget() failed
+   - If launcher exists but NOT visible → CSS hiding it
+   - If launcher visible but grey out → CSS opacity issue
+
+This will prove the exact root cause.

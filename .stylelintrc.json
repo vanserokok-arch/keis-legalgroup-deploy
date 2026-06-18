@@ -1,0 +1,50 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "rules": {
+    "no-descending-specificity": null,
+
+    "block-no-empty": null,
+    "no-duplicate-selectors": null,
+    "declaration-block-no-duplicate-properties": null,
+
+    "at-rule-no-unknown": true,
+    "property-no-unknown": true,
+    "declaration-property-value-no-unknown": true,
+    "selector-pseudo-class-no-unknown": true,
+    "selector-pseudo-element-no-unknown": true,
+    "media-feature-name-no-unknown": true,
+    "no-invalid-double-slash-comments": true,
+
+    "selector-class-pattern": null,
+    "media-feature-range-notation": null,
+    "declaration-empty-line-before": null,
+    "rule-empty-line-before": null,
+
+    "alpha-value-notation": null,
+    "at-rule-empty-line-before": null,
+    "block-no-redundant-nested-style-rules": null,
+    "color-function-alias-notation": null,
+    "color-function-notation": null,
+    "color-hex-length": null,
+    "comment-empty-line-before": null,
+    "comment-whitespace-inside": null,
+    "container-name-pattern": null,
+    "custom-property-empty-line-before": null,
+    "custom-media-pattern": null,
+    "declaration-block-no-redundant-longhand-properties": null,
+    "declaration-block-single-line-max-declarations": null,
+    "declaration-block-no-shorthand-property-overrides": null,
+    "font-family-name-quotes": null,
+    "keyframes-name-pattern": null,
+    "length-zero-no-unit": null,
+    "property-no-vendor-prefix": null,
+    "selector-no-vendor-prefix": null,
+    "selector-not-notation": null,
+    "shorthand-property-no-redundant-values": null,
+    "value-keyword-case": null,
+    "custom-property-pattern": null,
+    "property-no-deprecated": null,
+    "declaration-property-value-keyword-no-deprecated": null,
+    "at-rule-no-vendor-prefix": null
+  }
+}

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://keis-legalgroup.ru/sitemap.xml

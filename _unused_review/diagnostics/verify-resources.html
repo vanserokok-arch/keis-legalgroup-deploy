@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>KXchat Path & Load Verification</title>
+  <style>
+    body { font-family: monospace; background: #222; color: #ddd; padding: 20px; }
+    .test { margin: 20px 0; padding: 15px; background: #333; border-left: 3px solid #0f7; }
+    .error { border-left-color: #f44; }
+    .test h3 { color: #77f; margin-top: 0; }
+    .success { color: #0f7; }
+    .error { color: #f44; }
+  </style>
+</head>
+<body>
+
+<h1>KXchat Resource Verification</h1>
+
+<div class="test">
+  <h3>1. CSS File</h3>
+  <div id="test-css"></div>
+</div>
+
+<div class="test">
+  <h3>2. Config File</h3>
+  <div id="test-config"></div>
+</div>
+
+<div class="test">
+  <h3>3. Widget File</h3>
+  <div id="test-widget"></div>
+</div>
+
+<div class="test">
+  <h3>4. Page Content Analysis</h3>
+  <div id="test-page"></div>
+</div>
+
+<script>
+async function testResource(url, name) {
+  try {
+    const res = await fetch(url);
+    const text = `<span class="success">✓ ${res.status}</span> Size: ${text ? text.length : '?'} bytes`;
+    return text;
+  } catch (e) {
+    return `<span class="error">✗ ${e.message}</span>`;
+  }
+}
+
+// Test resources
+(async () => {
+  document.getElementById('test-css').innerHTML = 
+    await testResource('http://127.0.0.1:5507/assets/kxchat/kxchat-widget.css', 'CSS');
+  
+  document.getElementById('test-config').innerHTML = 
+    await testResource('http://127.0.0.1:5507/assets/kxchat/kxchat-config.js', 'Config');
+  
+  document.getElementById('test-widget').innerHTML = 
+    await testResource('http://127.0.0.1:5507/assets/kxchat/kxchat-widget.js', 'Widget');
+  
+  // Try to load the page
+  document.getElementById('test-page').innerHTML = '<p>Loading page...</p>';
+  try {
+    const res = await fetch('http://127.0.0.1:5507/scam/broker/index.html');
+    const html = await res.text();
+    const hasCSS = html.includes('kxchat-widget.css');
+    const hasConfig = html.includes('kxchat-config.js');
+    const hasWidget = html.includes('kxchat-widget.js');
+    
+    let content = '';
+    content += `HTML loaded: <span class="success">✓ ${res.status}</span><br>`;
+    content += `Contains CSS link: ${hasCSS ? '<span class="success">✓</span>' : '<span class="error">✗</span>'}<br>`;
+    content += `Contains config script: ${hasConfig ? '<span class="success">✓</span>' : '<span class="error">✗</span>'}<br>`;
+    content += `Contains widget script: ${hasWidget ? '<span class="success">✓</span>' : '<span class="error">✗</span>'}<br>`;
+    
+    document.getElementById('test-page').innerHTML = content;
+  } catch (e) {
+    document.getElementById('test-page').innerHTML = `<span class="error">Error: ${e.message}</span>`;
+  }
+})();
+</script>
+</body>
+</html>

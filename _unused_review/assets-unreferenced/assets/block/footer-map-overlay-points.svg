@@ -1,0 +1,543 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 3000 1500" preserveAspectRatio="xMidYMid slice">
+  <style>
+    .metro-point,
+    .office-point,
+    .walk-time,
+    .parking-text {
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+
+    .metro-point {
+      animation: metroCycle 20s ease-in-out infinite;
+    }
+
+    .office-point {
+      animation: officeCycle 20s ease-in-out infinite;
+    }
+
+    .metro-dot {
+      fill: #d8d8d8;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,.2));
+    }
+
+    .office-dot {
+      fill: #d2913a;
+      filter: drop-shadow(0 0 18px rgba(210,145,58,.42));
+    }
+
+    .pulse {
+      fill: none;
+      stroke: #f5a23a;
+      stroke-width: 3.5;
+      opacity: .5;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: pulseCycle 2.8s ease-out infinite;
+    }
+
+    .label {
+      font-family: "Inter", Arial, sans-serif;
+      font-size: 58px;
+      font-style: normal;
+      font-weight: 600;
+      fill: #e2e2e2;
+      text-rendering: geometricPrecision;
+      paint-order: stroke;
+      stroke: rgba(5,7,9,.85);
+      stroke-width: 8px;
+      stroke-linejoin: round;
+    }
+
+    .label-accent {
+      fill: #f5a23a;
+    }
+
+    .office-title {
+      font-size: 62px;
+      font-weight: 650;
+    }
+
+    .office-subtitle {
+      font-size: 50px;
+      font-weight: 500;
+    }
+
+    .walk-footprints {
+      opacity: 0;
+      filter: drop-shadow(0 0 5px rgba(245,162,58,.25));
+    }
+    .walk-footprints-1 {
+      animation: walkRouteOneCycle 20s ease-in-out infinite;
+    }
+    .walk-footprints-2 {
+      animation: walkRouteTwoCycle 20s ease-in-out infinite;
+    }
+    .walk-step-shape {
+      fill: #f5a23a;
+    }
+
+    .street-highlight {
+      opacity: 0;
+      animation: streetHighlightCycle 20s ease-in-out infinite;
+    }
+
+    .street-label {
+      font-family: "Inter", Arial, sans-serif;
+      font-size: 34px;
+      font-style: normal;
+      font-weight: 500;
+      fill: rgba(236,242,249,.92);
+      letter-spacing: 0;
+      text-rendering: geometricPrecision;
+      paint-order: stroke;
+      stroke: rgba(5,7,9,.62);
+      stroke-width: 4px;
+      stroke-linejoin: round;
+      opacity: 0;
+      animation: streetLabelCycle 20s ease-in-out infinite;
+    }
+
+    .route-reveal {
+      fill: none;
+      stroke: #fff;
+      stroke-width: 70;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .walk-reveal-1 {
+      stroke-dasharray: 640;
+      stroke-dashoffset: 640;
+      animation: walkRevealOneCycle 20s ease-in-out infinite;
+    }
+
+    .walk-reveal-2 {
+      stroke-dasharray: 430;
+      stroke-dashoffset: 430;
+      animation: walkRevealTwoCycle 20s ease-in-out infinite;
+    }
+
+    .walk-time {
+      animation: walkTimeCycle 20s ease-in-out infinite;
+    }
+
+    .time-text {
+      font-family: "Inter", Arial, sans-serif;
+      font-size: 48px;
+      font-style: normal;
+      font-weight: 600;
+      fill: #e7b66b;
+      text-rendering: geometricPrecision;
+      paint-order: stroke;
+      stroke: rgba(5,7,9,.68);
+      stroke-width: 5px;
+    }
+
+    .walk-person {
+      opacity: 0;
+      animation: walkPersonMove 20s linear infinite;
+    }
+
+    .walk-person-fill {
+      fill: #e7b66b;
+      filter: drop-shadow(0 0 4px rgba(231,182,107,.5));
+    }
+
+    .parking-route {
+      fill: none;
+      stroke: #f6f5f1;
+      stroke-width: 10.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 12 14;
+      opacity: 0;
+      filter: drop-shadow(0 0 4px rgba(255,255,255,.35));
+    }
+
+    .parking-reveal {
+      fill: none;
+      stroke: #fff;
+      stroke-width: 18;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .parking-route-1 {
+      animation: parkingRouteOneCycle 20s linear infinite;
+    }
+
+    .parking-route-2 {
+      animation: parkingRouteTwoCycle 20s linear infinite;
+    }
+
+    .parking-reveal-1 {
+      stroke-dasharray: 332;
+      stroke-dashoffset: 332;
+      animation: parkingRevealOneCycle 20s linear infinite;
+    }
+
+    .parking-reveal-2 {
+      stroke-dasharray: 118;
+      stroke-dashoffset: 118;
+      animation: parkingRevealTwoCycle 20s linear infinite;
+    }
+
+    .turn-point {
+      opacity: 0;
+      fill: #f5a23a;
+    }
+
+    .parking-text {
+      opacity: 0;
+      animation: parkingTextCycle 20s ease-in-out infinite;
+      filter: drop-shadow(0 0 3px rgba(242,240,234,.24));
+    }
+
+    .parking-badge {
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: parkingBadgeCycle 20s ease-in-out infinite;
+      filter: drop-shadow(0 0 8px rgba(255,255,255,.28));
+    }
+
+    .parking-badge-box {
+      fill: rgba(12,15,18,.62);
+      stroke: #f2f0ea;
+      stroke-width: 4;
+      stroke-linejoin: round;
+      rx: 7;
+    }
+
+    .parking-badge-letter {
+      font-family: "Inter", Arial, sans-serif;
+      font-size: 52px;
+      font-style: normal;
+      font-weight: 650;
+      fill: #f2f0ea;
+      text-rendering: geometricPrecision;
+      dominant-baseline: middle;
+      text-anchor: middle;
+    }
+
+    .parking-car {
+      opacity: 0;
+      animation: parkingCarMove 20s linear infinite;
+      filter: drop-shadow(0 0 6px rgba(255,255,255,.35));
+    }
+
+    .parking-car-outline {
+      fill: none;
+      stroke: #fff;
+      stroke-width: 5.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .parking-copy {
+      font-family: "Inter", Arial, sans-serif;
+      font-size: 54px;
+      font-style: normal;
+      font-weight: 600;
+      fill: #f2f0ea;
+      text-rendering: geometricPrecision;
+      paint-order: stroke;
+      stroke: rgba(5,7,9,.72);
+      stroke-width: 6px;
+      stroke-linejoin: round;
+    }
+
+    @keyframes metroCycle {
+      0%, 2% { opacity: 0; transform: scale(.92); }
+      8%, 94% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(.96); }
+    }
+
+    @keyframes officeCycle {
+      0%, 2% { opacity: 0; transform: scale(.92); }
+      8%, 94% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(.96); }
+    }
+
+    @keyframes walkRouteOneCycle {
+      0%, 31.9% { opacity: 0; }
+      32%, 61.9% { opacity: .9; }
+      62%, 100% { opacity: 0; }
+    }
+
+    @keyframes walkRouteTwoCycle {
+      0%, 37.9% { opacity: 0; }
+      40%, 61.9% { opacity: .9; }
+      62%, 100% { opacity: 0; }
+    }
+
+    @keyframes walkRevealOneCycle {
+      0%, 32% { stroke-dashoffset: 640; }
+      40%, 100% { stroke-dashoffset: 0; }
+    }
+
+    @keyframes walkRevealTwoCycle {
+      0%, 38% { stroke-dashoffset: 430; }
+      48%, 100% { stroke-dashoffset: 0; }
+    }
+
+    @keyframes walkTimeCycle {
+      0%, 50% { opacity: 0; transform: translateY(6px); }
+      52%, 60% { opacity: 1; transform: translateY(0); }
+      62%, 100% { opacity: 0; transform: translateY(6px); }
+    }
+
+    @keyframes streetHighlightCycle {
+      0%, 11.9% { opacity: 0; }
+      12%, 28% { opacity: 1; }
+      30%, 100% { opacity: 0; }
+    }
+
+    @keyframes streetLabelCycle {
+      0%, 13.4% { opacity: 0; transform: translateY(6px); }
+      15%, 28% { opacity: .92; transform: translateY(0); }
+      30%, 100% { opacity: 0; transform: translateY(6px); }
+    }
+
+    @keyframes walkPersonMove {
+      0%, 31.9% {
+        opacity: 0;
+        transform: translate(1840px,184px) scale(0.9);
+      }
+      32% {
+        opacity: .98;
+        transform: translate(1840px,184px) scale(0.9);
+      }
+      39.99% {
+        opacity: .98;
+        transform: translate(2120px,748px) scale(0.9);
+      }
+      40% {
+        opacity: .98;
+        transform: translate(2120px,748px) scale(-0.9,0.9);
+      }
+      48% {
+        opacity: .98;
+        transform: translate(1822px,1028px) scale(-0.9,0.9);
+      }
+      49.2% {
+        opacity: 0;
+        transform: translate(1822px,1028px) scale(-0.9,0.9);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(1822px,1028px) scale(-0.9,0.9);
+      }
+    }
+
+    @keyframes parkingTextCycle {
+      0%, 82% { opacity: 0; transform: translateY(8px); }
+      84%, 94% { opacity: .95; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(8px); }
+    }
+
+    @keyframes parkingRouteOneCycle {
+      0%, 63.9% { opacity: 0; }
+      64%, 94% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes parkingRouteTwoCycle {
+      0%, 71.9% { opacity: 0; }
+      72%, 94% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes parkingRevealOneCycle {
+      0%, 64% { stroke-dashoffset: 332; }
+      72%, 100% { stroke-dashoffset: 0; }
+    }
+
+    @keyframes parkingRevealTwoCycle {
+      0%, 72% { stroke-dashoffset: 184; }
+      82%, 100% { stroke-dashoffset: 0; }
+    }
+
+    @keyframes parkingCarMove {
+      0%, 63.9% {
+        opacity: 0;
+        transform: translate(1570px,1430px) rotate(-53.3deg) scale(0.52);
+      }
+      64% {
+        opacity: .95;
+        transform: translate(1566px,1426px) rotate(-53.3deg) scale(0.52);
+      }
+      73% {
+        opacity: .95;
+        transform: translate(1756px,1178px) rotate(-53.3deg) scale(0.52);
+      }
+      74.2% {
+        opacity: .95;
+        transform: translate(1766px,1178px) rotate(-45deg) scale(0.52);
+      }
+      75.4% {
+        opacity: .95;
+        transform: translate(1778px,1176px) rotate(-34deg) scale(0.52);
+      }
+      76.8% {
+        opacity: .95;
+        transform: translate(1792px,1174px) rotate(-22deg) scale(0.52);
+      }
+      78.2% {
+        opacity: .95;
+        transform: translate(1806px,1172px) rotate(-10deg) scale(0.52);
+      }
+      79.6% {
+        opacity: .95;
+        transform: translate(1818px,1171px) rotate(-1deg) scale(0.52);
+      }
+      80.8% {
+        opacity: .95;
+        transform: translate(1828px,1170px) rotate(7deg) scale(0.52);
+      }
+      82% {
+        opacity: .95;
+        transform: translate(1828px,1169px) rotate(11deg) scale(0.52);
+      }
+      83.2% {
+        opacity: 0;
+        transform: translate(1828px,1169px) rotate(11deg) scale(0.52);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(1828px,1169px) rotate(11deg) scale(0.52);
+      }
+    }
+
+    @keyframes parkingBadgeCycle {
+      0%, 81.9% { opacity: 0; transform: scale(.92); }
+      84%, 94% { opacity: .98; transform: scale(1); }
+      100% { opacity: 0; transform: scale(.96); }
+    }
+
+    @keyframes pulseCycle {
+      0% { transform: scale(.55); opacity: .5; }
+      100% { transform: scale(1.65); opacity: 0; }
+    }
+  </style>
+
+  <!-- metro: 1810 220 -->
+  <!-- turn: 2140 790 -->
+  <!-- office: 1822 1088 -->
+  <!-- parking-start: 1570 1428 -->
+  <!-- parking-turn: 1758 1176 -->
+  <!-- parking-yard: 1838 1174 -->
+
+  <defs>
+    <g id="walk-step">
+      <path class="walk-step-shape" d="M -19 0 C -15 -9 -8 -13 1 -13 C 10 -13 16 -7 16 0 C 16 8 8 12 -1 12 C -10 12 -17 8 -19 0 Z"/>
+      <path class="walk-step-shape" d="M -26 7 C -26 1 -22 -3 -17 -3 C -12 -3 -9 1 -9 7 C -9 12 -13 16 -17 16 C -22 16 -26 12 -26 7 Z"/>
+    </g>
+
+    <mask id="walk-route-1-mask" maskUnits="userSpaceOnUse">
+      <path class="route-reveal walk-reveal-1" d="M 1810 220 L 2140 790"/>
+    </mask>
+
+    <mask id="walk-route-2-mask" maskUnits="userSpaceOnUse">
+      <path class="route-reveal walk-reveal-2" d="M 2140 790 L 1822 1088"/>
+    </mask>
+
+    <mask id="parking-route-1-mask" maskUnits="userSpaceOnUse">
+      <path class="parking-reveal parking-reveal-1" d="M 1570 1428 L 1758 1176"/>
+    </mask>
+    <mask id="parking-route-2-mask" maskUnits="userSpaceOnUse">
+      <path class="parking-reveal parking-reveal-2" d="M 1758 1176 C 1784 1174 1806 1172 1842 1170"/>
+    </mask>
+  </defs>
+
+  <g class="metro-point">
+    <circle cx="1810" cy="220" r="24" class="metro-dot"/>
+    <text x="1860" y="238" class="label">м. Петроградская</text>
+  </g>
+
+  <g class="office-point">
+    <circle cx="1822" cy="1088" r="30" class="office-dot"/>
+    <circle cx="1822" cy="1088" r="56" class="pulse"/>
+    <text x="1882" y="1072" class="label label-accent">
+      <tspan x="1882" dy="0" class="office-title">Кейс</tspan>
+      <tspan x="1882" dy="50" class="office-subtitle">Большая Пушкарская, 41</tspan>
+    </text>
+  </g>
+
+  <circle cx="2140" cy="790" r="5" class="turn-point"/>
+
+  <g class="street-highlight" aria-hidden="true">
+    <g transform="rotate(64 2252 606)">
+      <text x="1940" y="850" class="street-label">КАМЕННООСТРОВСКИЙ ПРОСП.</text>
+    </g>
+    <g transform="rotate(-50 1908 980)">
+      <text x="1608" y="620" class="street-label">БОЛЬШОЙ ПРОСП. П.С.</text>
+    </g>
+  </g>
+
+  <g class="walk-footprints walk-footprints-1" mask="url(#walk-route-1-mask)">
+    <use href="#walk-step" transform="translate(1840 280) rotate(63.6) translate(0 -15) scale(0.76)"/>
+    <use href="#walk-step" transform="translate(1872 344) rotate(63.6) translate(0 15) scale(0.76)"/>
+    <use href="#walk-step" transform="translate(1905 408) rotate(63.6) translate(0 -15) scale(0.76)"/>
+    <use href="#walk-step" transform="translate(1938 472) rotate(63.6) translate(0 15) scale(0.76)"/>
+    <use href="#walk-step" transform="translate(1970 536) rotate(63.6) translate(0 -15) scale(0.76)"/>
+    <use href="#walk-step" transform="translate(2002 600) rotate(63.6) translate(0 15) scale(0.76)"/>
+    <use href="#walk-step" transform="translate(2034 664) rotate(63.6) translate(0 -15) scale(0.76)"/>
+    <use href="#walk-step" transform="translate(2066 728) rotate(63.6) translate(0 15) scale(0.76)"/>
+  </g>
+
+  <g class="walk-footprints walk-footprints-2" mask="url(#walk-route-2-mask)">
+    <use href="#walk-step" transform="translate(2108 776) rotate(131.4) translate(0 14) scale(0.76)"/>
+    <use href="#walk-step" transform="translate(2062 816) rotate(131.4) translate(0 -14) scale(0.76)"/>
+    <use href="#walk-step" transform="translate(2016 868) rotate(131.4) translate(0 14) scale(0.76)"/>
+    <use href="#walk-step" transform="translate(1970 920) rotate(131.4) translate(0 -14) scale(0.76)"/>
+    <use href="#walk-step" transform="translate(1924 972) rotate(131.4) translate(0 14) scale(0.76)"/>
+    <use href="#walk-step" transform="translate(1878 1024) rotate(131.4) translate(0 -14) scale(0.76)"/>
+    <use href="#walk-step" transform="translate(1842 1064) rotate(131.4) translate(0 14) scale(0.76)"/>
+  </g>
+
+  <g class="walk-time">
+    <text x="2158" y="744" class="time-text">5 минут пешком</text>
+  </g>
+
+  <g class="walk-person" aria-hidden="true">
+    <g transform="scale(0.64)">
+      <circle cx="0" cy="-46" r="14" class="walk-person-fill"/>
+      <path class="walk-person-fill" d="M -10 -26 C -4 -30 6 -30 14 -25 C 22 -20 27 -12 28 -3 L 28 23 L 17 23 L 15 45 L 27 56 L 36 88 L 24 92 L 16 65 L 1 53 C -6 47 -11 38 -11 29 L -11 -6 C -11 -14 -7 -21 -10 -26 Z"/>
+      <path class="walk-person-fill" d="M -10 -16 L -26 4 L -17 12 L -3 -5 Z"/>
+      <path class="walk-person-fill" d="M 15 -3 L 33 10 L 29 18 L 12 8 Z"/>
+      <path class="walk-person-fill" d="M -1 54 L -11 71 L -31 94 L -22 102 L -1 80 L 8 64 Z"/>
+      <path class="walk-person-fill" d="M 11 62 L 23 84 L 34 108 L 45 104 L 32 79 L 20 58 Z"/>
+    </g>
+  </g>
+
+  <path class="parking-route parking-route-1" d="M 1578 1434 L 1766 1182" mask="url(#parking-route-1-mask)"/>
+  <path class="parking-route parking-route-1" d="M 1562 1422 L 1750 1170" mask="url(#parking-route-1-mask)"/>
+  <path class="parking-route parking-route-2" d="M 1752 1184 C 1778 1182 1800 1180 1836 1178" mask="url(#parking-route-2-mask)"/>
+  <path class="parking-route parking-route-2" d="M 1764 1168 C 1790 1166 1812 1164 1848 1162" mask="url(#parking-route-2-mask)"/>
+
+  <g class="parking-car" aria-hidden="true">
+    <g transform="translate(-9,2)">
+      <path d="M -56 -12 L -56 8 L -46 8 C -44 -5 -34 -15 -21 -15 C -8 -15 3 -5 5 8 L 31 8 C 33 -5 43 -15 56 -15 C 69 -15 79 -5 81 8 L 84 8 C 90 8 95 3 95 -4 L 95 -18 C 95 -23 90 -28 84 -28 L 69 -31 C 60 -42 45 -50 31 -50 L -2 -50 C -18 -50 -36 -44 -49 -34 L -51 -34 C -54 -34 -56 -32 -56 -29 Z" class="parking-car-outline"/>
+      <path d="M -35 -35 L -8 -35 L -8 -47 C -18 -47 -28 -42 -35 -35 Z" class="parking-car-outline"/>
+      <path d="M -1 -35 L 27 -35 L 38 -47 L 5 -47 L -1 -35 Z" class="parking-car-outline"/>
+      <circle cx="-21" cy="8" r="12" class="parking-car-outline"/>
+      <circle cx="56" cy="8" r="12" class="parking-car-outline"/>
+    </g>
+  </g>
+
+  <g class="parking-badge" transform="translate(1868 1236)">
+    <rect x="-32" y="-32" width="64" height="64" class="parking-badge-box"/>
+    <text x="0" y="2" class="parking-badge-letter">P</text>
+  </g>
+
+  <g class="parking-text">
+    <text x="1950" y="1218" class="parking-copy">
+      <tspan x="1950" dy="0">Во дворе</tspan>
+      <tspan x="1950" dy="56">бесплатная</tspan>
+      <tspan x="1950" dy="56">парковка</tspan>
+    </text>
+  </g>
+</svg>

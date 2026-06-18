@@ -1,0 +1,62 @@
+[
+  {
+    "page": "/news/",
+    "viewport": "1440x900",
+    "constructorScriptLoaded": false,
+    "jivoPresent": true,
+    "kxchatPresent": false,
+    "consoleErrors": [],
+    "pageErrors": [],
+    "screenshotPath": "/Users/evgenijtazelnikov/Documents/kg-rest/keis-legalgroup/artifacts/footer-map-check/news-desktop.png"
+  },
+  {
+    "page": "/news/",
+    "viewport": "375x812",
+    "constructorScriptLoaded": false,
+    "jivoPresent": true,
+    "kxchatPresent": false,
+    "consoleErrors": [],
+    "pageErrors": [],
+    "screenshotPath": "/Users/evgenijtazelnikov/Documents/kg-rest/keis-legalgroup/artifacts/footer-map-check/news-mobile.png"
+  },
+  {
+    "page": "/scam/hack/",
+    "viewport": "1440x900",
+    "constructorScriptLoaded": false,
+    "jivoPresent": true,
+    "kxchatPresent": false,
+    "consoleErrors": [],
+    "pageErrors": [],
+    "screenshotPath": "/Users/evgenijtazelnikov/Documents/kg-rest/keis-legalgroup/artifacts/footer-map-check/scam-hack-desktop.png"
+  },
+  {
+    "page": "/scam/hack/",
+    "viewport": "375x812",
+    "constructorScriptLoaded": false,
+    "jivoPresent": true,
+    "kxchatPresent": false,
+    "consoleErrors": [],
+    "pageErrors": [],
+    "screenshotPath": "/Users/evgenijtazelnikov/Documents/kg-rest/keis-legalgroup/artifacts/footer-map-check/scam-hack-mobile.png"
+  },
+  {
+    "page": "/zpp/renovation/",
+    "viewport": "1440x900",
+    "constructorScriptLoaded": false,
+    "jivoPresent": true,
+    "kxchatPresent": false,
+    "consoleErrors": [],
+    "pageErrors": [],
+    "screenshotPath": "/Users/evgenijtazelnikov/Documents/kg-rest/keis-legalgroup/artifacts/footer-map-check/zpp-renovation-desktop.png"
+  },
+  {
+    "page": "/zpp/renovation/",
+    "viewport": "375x812",
+    "constructorScriptLoaded": false,
+    "jivoPresent": true,
+    "kxchatPresent": false,
+    "consoleErrors": [],
+    "pageErrors": [],
+    "screenshotPath": "/Users/evgenijtazelnikov/Documents/kg-rest/keis-legalgroup/artifacts/footer-map-check/zpp-renovation-mobile.png"
+  }
+]

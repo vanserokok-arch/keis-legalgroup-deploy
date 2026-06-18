@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>KXchat Forensic Diagnostic</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Courier New', monospace; background: #0d1117; color: #c9d1d9; padding: 20px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h1 { color: #58a6ff; margin-bottom: 20px; text-align: center; }
+    .section { background: #161b22; margin: 15px 0; padding: 15px; border-left: 4px solid #58a6ff; border-radius: 4px; }
+    .section-title { color: #79c0ff; font-weight: bold; margin-bottom: 10px; font-size: 14px; }
+    .output { background: #0d1117; padding: 12px; margin: 10px 0; border: 1px solid #30363d; border-radius: 4px; overflow-x: auto; font-size: 12px; line-height: 1.4; }
+    .success { color: #3fb950; }
+    .error { color: #f85149; }
+    .warning { color: #d29922; }
+    pre { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
+    td { padding: 8px; border: 1px solid #30363d; }
+    td:first-child { color: #79c0ff; font-weight: bold; width: 200px; }
+    .timestamp { color: #8b949e; font-size: 11px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>KXchat Forensic Diagnostic Report</h1>
+  <div class="timestamp">Generated: <span id="timestamp"></span></div>
+
+  <div class="section">
+    <div class="section-title">🔍 PHASE 1: FILE PATHS VERIFICATION</div>
+    <div class="output">
+      <table>
+        <tr>
+          <td>Current URL</td>
+          <td><code id="url"></code></td>
+        </tr>
+        <tr>
+          <td>Document Ready State</td>
+          <td><code id="readyState"></code></td>
+        </tr>
+        <tr>
+          <td>CSS (kxchat-widget.css)</td>
+          <td><code id="cssLoaded"></code></td>
+        </tr>
+        <tr>
+          <td>Config (kxchat-config.js)</td>
+          <td><code id="configLoaded"></code></td>
+        </tr>
+        <tr>
+          <td>Widget (kxchat-widget.js)</td>
+          <td><code id="widgetLoaded"></code></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔍 PHASE 2: DOM ELEMENTS PRESENCE</div>
+    <div class="output">
+      <table id="domTable">
+        <tr>
+          <td>document.getElementById('kxchat-launcher')</td>
+          <td><code id="launcherQuery">CHECKING...</code></td>
+        </tr>
+        <tr>
+          <td>document.getElementById('kxchat-widget')</td>
+          <td><code id="widgetQuery">CHECKING...</code></td>
+        </tr>
+        <tr>
+          <td>document.querySelectorAll('[id^="kxchat"]').length</td>
+          <td><code id="allKxchatElements">CHECKING...</code></td>
+        </tr>
+        <tr>
+          <td>window.KXchatWidget flag</td>
+          <td><code id="kxchatFlag">CHECKING...</code></td>
+        </tr>
+        <tr>
+          <td>window.KXCHAT_CONFIG value</td>
+          <td><code id="configValue">CHECKING...</code></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔍 PHASE 3: DOM STATE & CLASSES</div>
+    <div class="output" id="domState"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔍 PHASE 4: COMPUTED STYLES</div>
+    <div class="output" id="styles"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔍 PHASE 5: CONSOLE LOGS CAPTURE</div>
+    <div class="output" id="consoleLogs"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔍 PHASE 6: NETWORK RESOURCES</div>
+    <div class="output" id="networkInfo"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">ℹ️ INSTRUCTIONS</div>
+    <div class="output">
+      <p>1. Open Target Page with Ctrl+Shift+K (DevTools Console)</p>
+      <p>2. Copy this diagnostic URL and open in NEW tab:</p>
+      <p><code>diag.html</code></p>
+      <p>3. Check all sections for RED errors</p>
+      <p>4. Look for PRIMARY ROOT CAUSE section at bottom</p>
+    </div>
+  </div>
+
+  <div class="section" id="rootCause" style="display: none; border-left-color: #f85149;">
+    <div class="section-title" style="color: #f85149;">⚠️ PRIMARY ROOT CAUSE</div>
+    <div class="output" id="rootCauseText"></div>
+  </div>
+</div>
+
+<script>
+// Utility to format output
+function formatOutput(value) {
+  if (value === null) return '<span class="error">null</span>';
+  if (value === undefined) return '<span class="error">undefined</span>';
+  if (typeof value === 'boolean') return value ? '<span class="success">true</span>' : '<span class="error">false</span>';
+  if (typeof value === 'object') return '<pre>' + JSON.stringify(value, null, 2) + '</pre>';
+  return '<code>' + String(value) + '</code>';
+}
+
+// Timestamp
+document.getElementById('timestamp').textContent = new Date().toISOString();
+
+// Phase 1: Check Resources
+function checkResources() {
+  const stylesheets = Array.from(document.styleSheets);
+  const scripts = Array.from(document.scripts);
+  
+  const cssLoaded = stylesheets.some(s => s.href && s.href.includes('kxchat-widget.css'));
+  const configLoaded = scripts.some(s => s.src && s.src.includes('kxchat-config.js'));
+  const widgetLoaded = scripts.some(s => s.src && s.src.includes('kxchat-widget.js'));
+
+  document.getElementById('url').textContent = window.location.href;
+  document.getElementById('readyState').textContent = document.readyState;
+  document.getElementById('cssLoaded').innerHTML = cssLoaded ? '<span class="success">✓ Loaded</span>' : '<span class="error">✗ NOT found in styleSheets</span>';
+  document.getElementById('configLoaded').innerHTML = configLoaded ? '<span class="success">✓ Loaded</span>' : '<span class="error">✗ NOT found in scripts</span>';
+  document.getElementById('widgetLoaded').innerHTML = widgetLoaded ? '<span class="success">✓ Loaded</span>' : '<span class="error">✗ NOT found in scripts</span>';
+}
+
+// Phase 2: Check DOM
+function checkDOM() {
+  const launcher = document.getElementById('kxchat-launcher');
+  const widget = document.getElementById('kxchat-widget');
+  const allKxchat = document.querySelectorAll('[id^="kxchat"]');
+  const kxchatFlag = window.KXchatWidget;
+  const kxchatConfig = window.KXCHAT_CONFIG;
+
+  document.getElementById('launcherQuery').innerHTML = launcher ? '<span class="success">✓ FOUND</span>' : '<span class="error">✗ NULL</span>';
+  document.getElementById('widgetQuery').innerHTML = widget ? '<span class="success">✓ FOUND</span>' : '<span class="error">✗ NULL</span>';
+  document.getElementById('allKxchatElements').innerHTML = allKxchat.length > 0 ? `<span class="success">✓ ${allKxchat.length} elements</span>` : '<span class="error">✗ 0 elements</span>';
+  document.getElementById('kxchatFlag').innerHTML = kxchatFlag ? '<span class="success">✓ true</span>' : '<span class="error">✗ undefined</span>';
+  document.getElementById('configValue').innerHTML = formatOutput(kxchatConfig);
+
+  return { launcher, widget, allKxchat };
+}
+
+// Phase 3: DOM State
+function checkDOMState(launcher, widget) {
+  if (!launcher && !widget) {
+    document.getElementById('domState').innerHTML = '<span class="error">NO KXchat NODES FOUND in DOM</span>';
+    return;
+  }
+
+  const state = {
+    launcherExists: !!launcher,
+    widgetExists: !!widget,
+    launcherClassName: launcher ? launcher.className : null,
+    widgetClassName: widget ? widget.className : null,
+    launcherParent: launcher ? launcher.parentElement?.tagName : null,
+    widgetParent: widget ? widget.parentElement?.tagName : null,
+    documentBodyChildren: document.body.children.length
+  };
+
+  document.getElementById('domState').innerHTML = '<pre>' + JSON.stringify(state, null, 2) + '</pre>';
+}
+
+// Phase 4: Computed Styles
+function checkStyles(launcher, widget) {
+  if (!launcher && !widget) {
+    document.getElementById('styles').innerHTML = '<span class="error">NO KXchat NODES - Cannot compute styles</span>';
+    return;
+  }
+
+  const styles = {};
+
+  if (launcher) {
+    const cs = getComputedStyle(launcher);
+    styles.launcher = {
+      display: cs.display,
+      visibility: cs.visibility,
+      opacity: cs.opacity,
+      pointerEvents: cs.pointerEvents,
+      zIndex: cs.zIndex,
+      position: cs.position,
+      bottom: cs.bottom,
+      right: cs.right,
+      transform: cs.transform
+    };
+  }
+
+  if (widget) {
+    const cs = getComputedStyle(widget);
+    styles.widget = {
+      display: cs.display,
+      visibility: cs.visibility,
+      opacity: cs.opacity,
+      pointerEvents: cs.pointerEvents,
+      zIndex: cs.zIndex,
+      position: cs.position,
+      bottom: cs.bottom,
+      right: cs.right,
+      transform: cs.transform
+    };
+  }
+
+  document.getElementById('styles').innerHTML = '<pre>' + JSON.stringify(styles, null, 2) + '</pre>';
+}
+
+// Phase 5: Console logs
+function setupConsoleLogs() {
+  let captured = [];
+  const originalLog = console.log;
+  const originalError = console.error;
+  const originalWarn = console.warn;
+
+  console.log = function(...args) {
+    captured.push({ level: 'LOG', message: args.join(' ') });
+    originalLog.apply(console, args);
+  };
+  console.error = function(...args) {
+    captured.push({ level: 'ERROR', message: args.join(' ') });
+    originalError.apply(console, args);
+  };
+  console.warn = function(...args) {
+    captured.push({ level: 'WARN', message: args.join(' ') });
+    originalWarn.apply(console, args);
+  };
+
+  return captured;
+}
+
+// Phase 6: Network info
+function checkNetworkInfo() {
+  const resources = performance.getEntriesByType('resource');
+  const kxchatResources = resources.filter(r => r.name.includes('kxchat'));
+  
+  let html = '<p><strong>KXchat-related resources:</strong></p><pre>';
+  if (kxchatResources.length === 0) {
+    html += '<span class="error">No KXchat resources found in performance timeline</span>';
+  } else {
+    kxchatResources.forEach(r => {
+      const status = r.transferSize === 0 ? 'cached' : 'downloaded';
+      html += `${r.name} (${status}, ${Math.round(r.duration)}ms)\n`;
+    });
+  }
+  html += '</pre>';
+
+  document.getElementById('networkInfo').innerHTML = html;
+}
+
+// Root cause analysis
+function findRootCause(launcher, widget, allKxchat) {
+  const errors = [];
+
+  if (allKxchat.length === 0) {
+    errors.push('NO KXchat DOM NODES - init() likely did not execute or failed');
+  }
+
+  if (!launcher && allKxchat.length === 0) {
+    errors.push('Launcher not in DOM - DOM insertion failed');
+  }
+
+  if (!widget && allKxchat.length === 0) {
+    errors.push('Widget not in DOM - DOM insertion failed');
+  }
+
+  if (launcher && widget) {
+    const launcherVisible = window.getComputedStyle(launcher).display !== 'none' &&
+                            window.getComputedStyle(launcher).visibility !== 'hidden';
+    const launcherOpaque = parseFloat(window.getComputedStyle(launcher).opacity) > 0.1;
+
+    if (!launcherVisible || !launcherOpaque) {
+      errors.push('Launcher exists but is hidden or invisible');
+    }
+  }
+
+  if (!window.KXchatWidget) {
+    errors.push('window.KXchatWidget not set - script may not have executed');
+  }
+
+  if (!window.KXCHAT_CONFIG) {
+    errors.push('window.KXCHAT_CONFIG not set - config.js may not have loaded');
+  }
+
+  return errors;
+}
+
+// Run diagnostics
+document.addEventListener('DOMContentLoaded', () => {
+  checkResources();
+  const { launcher, widget, allKxchat } = checkDOM();
+
+  setTimeout(() => {
+    checkDOMState(launcher, widget);
+    checkStyles(launcher, widget);
+    checkNetworkInfo();
+
+    const errors = findRootCause(launcher, widget, allKxchat);
+
+    if (errors.length > 0) {
+      document.getElementById('rootCause').style.display = 'block';
+      document.getElementById('rootCauseText').innerHTML = '<ul style="margin-left: 20px;">' +
+        errors.map(e => `<li><span class="error">${e}</span></li>`).join('') +
+        '</ul>';
+    }
+  }, 500);
+});
+
+// Capture initial logs
+const capturedLogs = setupConsoleLogs();
+
+// Final log dump
+setTimeout(() => {
+  let logHtml = '<strong>Captured logs from page:</strong><pre>';
+  if (capturedLogs.length === 0) {
+    logHtml += '<span class="warning">No logs captured - check target page console directly</span>';
+  } else {
+    capturedLogs.forEach(log => {
+      const color = log.level === 'ERROR' ? 'error' : log.level === 'WARN' ? 'warning' : 'success';
+      logHtml += `<span class="${color}">[${log.level}]</span> ${log.message}\n`;
+    });
+  }
+  logHtml += '</pre>';
+  document.getElementById('consoleLogs').innerHTML = logHtml;
+}, 1000);
+</script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KXchat Diagnostic Console</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Monaco', 'Courier New', monospace;
+      background: #0d1117;
+      color: #c9d1d9;
+      overflow: hidden;
+    }
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+    .column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #30363d;
+    }
+    .column:last-child {
+      border-right: none;
+    }
+    .header {
+      background: #161b22;
+      padding: 12px 15px;
+      border-bottom: 1px solid #30363d;
+      font-weight: bold;
+      color: #58a6ff;
+      font-size: 13px;
+    }
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 15px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    iframe {
+      display: none;
+    }
+    .log-entry {
+      margin-bottom: 4px;
+      font-family: 'Courier New', monospace;
+    }
+    .log-boot { color: #58a6ff; }
+    .log-init { color: #79c0ff; }
+    .log-create { color: #a3b9ff; }
+    .log-error { color: #f85149; font-weight: bold; }
+    .log-success { color: #3fb950; }
+    .log-default { color: #8b949e; }
+    .log-warn { color: #d29922; }
+    .divider {
+      border-top: 1px solid #30363d;
+      margin: 8px 0;
+      padding-top: 8px;
+      color: #6e7681;
+    }
+    .title {
+      text-align: center;
+      padding: 20px;
+      color: #58a6ff;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .status {
+      padding: 10px 15px;
+      background: #161b22;
+      margin: 10px 0;
+      border-radius: 4px;
+      border-left: 3px solid #58a6ff;
+    }
+    .status.error {
+      border-left-color: #f85149;
+      color: #f85149;
+    }
+    .status.success {
+      border-left-color: #3fb950;
+      color: #3fb950;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="column">
+    <div class="header">📋 Instructions</div>
+    <div class="content">
+      <div class="title">🔧 KXchat Diagnostics</div>
+      <p style="margin-bottom: 15px; color: #8b949e;">Follow these steps:</p>
+      <ol style="margin-left: 20px; color: #8b949e;">
+        <li style="margin-bottom: 8px;">Open <strong>http://127.0.0.1:5507/scam/broker/index.html</strong></li>
+        <li style="margin-bottom: 8px;">Check the right panel for console logs</li>
+        <li style="margin-bottom: 8px;">Look for errors marked in RED</li>
+        <li style="margin-bottom: 8px;">Section marked PRIMARY ROOT CAUSE has the answer</li>
+      </ol>
+      <div class="divider"></div>
+      <p style="color: #8b949e; font-size: 11px;">The target page is loaded in hidden iframe. Console logs are captured and displayed on the right.</p>
+    </div>
+  </div>
+
+  <div class="column">
+    <div class="header">🔍 Captured Console Logs</div>
+    <div class="content" id="logs">
+      <div class="log-entry log-default">Waiting for page to load...</div>
+    </div>
+  </div>
+
+  <div class="column">
+    <div class="header">📊 DOM State</div>
+    <div class="content" id="domstate">
+      <div class="log-entry log-default">Analyzing...</div>
+    </div>
+  </div>
+</div>
+
+<iframe id="target" src="http://127.0.0.1:5507/scam/broker/index.html"></iframe>
+
+<script>
+const logs = [];
+const domstate = [];
+
+// Utility to format log level
+function formatLevel(level) {
+  const levels = {
+    'log': '[L]',
+    'error': '[E]',
+    'warn': '[W]',
+    'info': '[I]'
+  };
+  return levels[level] || '[?]';
+}
+
+// Get log color
+function getLogClass(level) {
+  if (level.includes('BOOT')) return 'log-boot';
+  if (level.includes('CREATE')) return 'log-create';
+  if (level.includes('INIT')) return 'log-init';
+  if (level.includes('ERROR')) return 'log-error';
+  if (level.includes('SUCCESS')) return 'log-success';
+  if (level.includes('WARN')) return 'log-warn';
+  return 'log-default';
+}
+
+function addLog(type, msg) {
+  logs.push({ type, msg, time: new Date().toLocaleTimeString() });
+  renderLogs();
+}
+
+function renderLogs() {
+  const container = document.getElementById('logs');
+  container.innerHTML = logs.map((l, i) => {
+    const cls = getLogClass(l.type);
+    return `<div class="log-entry ${cls}"><span style="color: #6e7681;">${l.time}</span> [${l.type}] ${l.msg}</div>`;
+  }).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+function addDomAnalysis(msg) {
+  domstate.push(msg);
+  const container = document.getElementById('domstate');
+  container.innerHTML = domstate.map(m => {
+    let cls = 'log-default';
+    if (m.includes('FOUND') || m.includes('✓')) cls = 'log-success';
+    if (m.includes('NOT') || m.includes('✗')) cls = 'log-error';
+    return `<div class="log-entry ${cls}">${m}</div>`;
+  }).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+function analyzeDOM(win, doc) {
+  addDomAnalysis('=== DOM Analysis ===');
+  
+  const launcher = doc.getElementById('kxchat-launcher');
+  const widget = doc.getElementById('kxchat-widget');
+  const all = doc.querySelectorAll('[id^="kxchat"]');
+  
+  addDomAnalysis(`✓ getElementById('kxchat-launcher'): ${launcher ? 'FOUND' : '✗ NULL'}`);
+  addDomAnalysis(`✓ getElementById('kxchat-widget'): ${widget ? 'FOUND' : '✗ NULL'}`);
+  addDomAnalysis(`✓ querySelectorAll('[id^="kxchat"]'): ${all.length} elements`);
+  
+  if (all.length > 0) {
+    addDomAnalysis('=== Found Elements ===');
+    all.forEach((el, i) => {
+      addDomAnalysis(`${i}: <${el.tagName}> id="${el.id}" class="${el.className}"`);
+    });
+  }
+  
+  addDomAnalysis('=== Window Flags ===');
+  addDomAnalysis(`window.KXchatWidget: ${win.KXchatWidget ? 'true' : '✗ undefined'}`);
+  addDomAnalysis(`window.KXCHAT_CONFIG: ${win.KXCHAT_CONFIG ? 'loaded' : '✗ undefined'}`);
+  
+  if (launcher && widget) {
+    const lcs = win.getComputedStyle(launcher);
+    const wcs = win.getComputedStyle(widget);
+    addDomAnalysis('=== Computed Styles ===');
+    addDomAnalysis(`launcher display: ${lcs.display}`);
+    addDomAnalysis(`launcher opacity: ${lcs.opacity}`);
+    addDomAnalysis(`launcher visibility: ${lcs.visibility}`);
+    addDomAnalysis(`widget display: ${wcs.display}`);
+    addDomAnalysis(`widget opacity: ${wcs.opacity}`);
+    addDomAnalysis(`widget visibility: ${wcs.visibility}`);
+  }
+}
+
+// Wait for iframe to load
+document.getElementById('target').onload = function() {
+  const win = this.contentWindow;
+  const doc = this.contentDocument;
+  
+  addLog('SYSTEM', 'Target page loaded');
+  
+  // Intercept console
+  const originalLog = win.console.log;
+  const originalError = win.console.error;
+  const originalWarn = win.console.warn;
+  
+  win.console.log = function(...args) {
+    const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+    addLog('LOG', msg);
+    if (originalLog) originalLog.apply(win.console, args);
+  };
+  
+  win.console.error = function(...args) {
+    const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+    addLog('ERROR', msg);
+    if (originalError) originalError.apply(win.console, args);
+  };
+  
+  win.console.warn = function(...args) {
+    const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+    addLog('WARN', msg);
+    if (originalWarn) originalWarn.apply(win.console, args);
+  };
+  
+  // Analyze DOM periodically
+  setTimeout(() => analyzeDOM(win, doc), 1000);
+  setTimeout(() => analyzeDOM(win, doc), 3000);
+  setTimeout(() => analyzeDOM(win, doc), 5000);
+};
+</script>
+</body>
+</html>

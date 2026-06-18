@@ -1,0 +1,179 @@
+{
+  "default_domain_area": "legal",
+  "practice_packs": [
+    {
+      "topic_key": "legal/fraud/broker",
+      "domain_area": "legal",
+      "practice_area": "fraud",
+      "issue_type": "broker_withdrawal",
+      "page_groups": ["scam/broker"],
+      "summary_keywords": ["брокер", "broker", "вывод", "платформа", "инвестиции", "терминал", "личный кабинет"],
+      "operator_opening_question": "Поняла. Скажите, деньги уже переводили или пока только общались с платформой?",
+      "intent_patterns": {
+        "broker": ["брокер", "broker", "торгов(ая|ой)\\s+платформ", "инвест\\w+\\s+платформ"],
+        "broker_withdrawal": ["не\\s*вывод", "не\\s+дают\\s+вывести", "вывести\\s+деньги", "завис\\s+вывод"],
+        "transfer_to_card": ["на\\s+карту", "карта\\s+физлица", "карту\\s+физлица", "\\bp2p\\b", "перев[её]л?\\s+деньги", "перевод\\s+на\\s+карту"],
+        "messenger_channel": ["телеграм", "telegram", "whatsapp", "ватсап", "viber", "мессенджер", "переписк"],
+        "telegram": ["^телеграм$", "^telegram$", "^в\\s*тг$"],
+        "whatsapp": ["^whatsapp$", "^ватсап$"],
+        "has_docs": ["есть\\s+документ", "чек\\s+есть", "квитанц", "скрин", "сохранил", "сохранились", "выписк"],
+        "no_docs": ["нет\\s+документ", "нет\\s+чек", "ничего\\s+не\\s+сохранил", "ничего\\s+нет"],
+        "bank_contact": ["банк.*обращ", "банк.*уведом", "чарджбэк", "chargeback"],
+        "police_contact": ["полици", "заявлени"]
+      },
+      "allowed_next_questions": ["transfer_route", "messenger_contact", "docs_presence", "bank_contact"],
+      "first_questions": [
+        { "key": "transfer_route", "text": "Скажите, перевод был на карту физлица или через платформу?" },
+        { "key": "messenger_contact", "text": "Скажите, общение с ними шло в мессенджере?" },
+        { "key": "docs_presence", "text": "Скажите, чеки или скриншоты у вас сохранились?" },
+        { "key": "core_incident", "text": "Скажите, что сейчас самое срочное в этой истории?" }
+      ],
+      "fallback_followup": "Поняла. Скажите, что для вас сейчас самое срочное в этой ситуации?",
+      "page_soft_prompt": "Поняла. Это связано с брокером и выводом денег или с другой ситуацией?"
+    },
+    {
+      "topic_key": "legal/fraud/unauthorized_credit",
+      "domain_area": "legal",
+      "practice_area": "fraud",
+      "issue_type": "unauthorized_credit",
+      "page_groups": ["scam/hack", "scam/pressure"],
+      "summary_keywords": ["взлом", "госуслуги", "кредит без согласия", "давление", "под влиянием", "оформили кредит"],
+      "operator_opening_question": "Поняла. Скажите, кредит уже оформлен или пока только пришли уведомления?",
+      "intent_patterns": {
+        "hack": ["взлом", "взломали", "доступ.*банк", "госуслуг", "аккаунт\\s+увели", "сим\\s*-?\\s*карт"],
+        "unauthorized_credit": ["без\\s+согласия", "без\\s+моего\\s+ведома", "оформили?\\s+кредит", "кредит\\s+без\\s+меня"],
+        "pressure_credit": ["кредит", "займ", "под\\s+влиянием", "уговорили", "заставили", "давили", "дожимают"],
+        "messenger_channel": ["телеграм", "telegram", "whatsapp", "ватсап", "viber", "мессенджер", "переписк"],
+        "telegram": ["^телеграм$", "^telegram$", "^в\\s*тг$"],
+        "whatsapp": ["^whatsapp$", "^ватсап$"],
+        "has_docs": ["есть\\s+документ", "чек\\s+есть", "квитанц", "скрин", "сохранил", "сохранились", "выписк"],
+        "no_docs": ["нет\\s+документ", "нет\\s+чек", "ничего\\s+не\\s+сохранил", "ничего\\s+нет"],
+        "bank_contact": ["банк.*обращ", "банк.*уведом", "чарджбэк", "chargeback"],
+        "police_contact": ["полици", "заявлени"]
+      },
+      "allowed_next_questions": ["docs_presence", "bank_contact", "police_contact"],
+      "first_questions": [
+        { "key": "credit_stage", "text": "Скажите, кредит уже оформлен или пока только пришли уведомления?" },
+        { "key": "bank_contact", "text": "Скажите, в банк вы уже сообщили?" },
+        { "key": "docs_presence", "text": "Скажите, переписка или подтверждения платежей у вас сохранились?" },
+        { "key": "core_incident", "text": "Скажите, что произошло дальше?" }
+      ],
+      "fallback_followup": "Поняла. Скажите, после этого были новые списания или новые звонки?",
+      "page_soft_prompt": "Поняла. Это связано со взломом или с кредитом без вашего согласия?"
+    },
+    {
+      "topic_key": "legal/consumer/refund",
+      "domain_area": "legal",
+      "practice_area": "consumer",
+      "issue_type": "refund",
+      "page_groups": ["zpp/*"],
+      "summary_keywords": ["брак", "некачественный", "возврат", "услуга", "исполнитель", "подрядчик", "медицин"],
+      "operator_opening_question": "Поняла. Это связано с товаром, услугой или договором?",
+      "intent_patterns": {
+        "defective_product": ["брак", "некачествен", "сломал", "товар\\s+с\\s+дефект", "дефект"],
+        "bad_service": ["услуг[аи]\\s+не\\s+оказан", "плохо\\s+оказан", "не\\s+выполнил", "нарушил\\s+срок", "исполнитель"],
+        "refund": ["возврат", "вернуть\\s+деньги", "refund", "деньги\\s+назад"],
+        "contractor_dispute": ["подрядчик", "договор\\s+услуг", "заказ\\s+работ", "исполнитель\\s+по\\s+договору"],
+        "med_error_like": ["медицин", "клиник", "стоматолог", "ошибка\\s+врач", "лечен"],
+        "has_docs": ["есть\\s+документ", "чек\\s+есть", "квитанц", "скрин", "сохранил", "сохранились", "выписк"],
+        "no_docs": ["нет\\s+документ", "нет\\s+чек", "ничего\\s+не\\s+сохранил", "ничего\\s+нет"]
+      },
+      "allowed_next_questions": ["docs_presence", "core_incident"],
+      "first_questions": [
+        { "key": "consumer_scope", "text": "Скажите, это связано с товаром, услугой или договором?" },
+        { "key": "docs_presence", "text": "Скажите, чек или договор у вас сохранились?" }
+      ],
+      "fallback_followup": "Поняла. Скажите, что сейчас хотите получить: возврат денег или исправление?",
+      "page_soft_prompt": "Поняла. Это вопрос по товару, услуге или возврату денег?"
+    },
+    {
+      "topic_key": "legal/auto_law/dkp",
+      "domain_area": "legal",
+      "practice_area": "auto_law",
+      "issue_type": "dkp",
+      "page_groups": ["auto-law/*"],
+      "summary_keywords": ["дкп", "авто", "автосалон", "договор купли", "навязанные услуги", "дтп", "осаго", "каско"],
+      "operator_opening_question": "Поняла. Вопрос по покупке авто, навязанным услугам или ДТП?",
+      "intent_patterns": {
+        "dkp": ["дкп", "договор\\s+купли", "купил\\s+авто", "продал\\s+авто"],
+        "forced_addons": ["навязанн", "доп\\s*услуг", "доплат", "страховк.*навяз", "навязали\\s+страховку"],
+        "accident_like": ["дтп", "авари", "осаго", "каско", "ущерб"],
+        "has_docs": ["есть\\s+документ", "чек\\s+есть", "квитанц", "скрин", "сохранил", "сохранились", "выписк"],
+        "no_docs": ["нет\\s+документ", "нет\\s+чек", "ничего\\s+не\\s+сохранил", "ничего\\s+нет"]
+      },
+      "allowed_next_questions": ["docs_presence", "core_incident"],
+      "first_questions": [
+        { "key": "auto_scope", "text": "Скажите, это вопрос по ДКП, навязанным услугам или ДТП?" },
+        { "key": "docs_presence", "text": "Скажите, договор и платёжные документы у вас на руках?" }
+      ],
+      "fallback_followup": "Поняла. Скажите, какой результат вам нужен в первую очередь?",
+      "page_soft_prompt": "Поняла. Это вопрос по ДКП, навязанным услугам или ДТП?"
+    }
+  ],
+  "page_mappings": [
+    {
+      "site_key": "keis-legalgroup",
+      "pathname_pattern": "^/$",
+      "page_type": "home",
+      "page_group": "home",
+      "domain_area": "legal"
+    },
+    {
+      "site_key": "keis-legalgroup",
+      "pathname_pattern": "^/news(/|$)",
+      "page_type": "news",
+      "page_group": "news",
+      "domain_area": "legal"
+    },
+    {
+      "site_key": "keis-legalgroup",
+      "pathname_pattern": "^/scam/broker(/|$)",
+      "page_type": "service",
+      "page_group": "scam/broker",
+      "domain_area": "legal",
+      "practice_area": "fraud",
+      "issue_type": "broker_withdrawal",
+      "topic_key": "legal/fraud/broker"
+    },
+    {
+      "site_key": "keis-legalgroup",
+      "pathname_pattern": "^/scam/hack(/|$)",
+      "page_type": "service",
+      "page_group": "scam/hack",
+      "domain_area": "legal",
+      "practice_area": "fraud",
+      "issue_type": "unauthorized_credit",
+      "topic_key": "legal/fraud/unauthorized_credit"
+    },
+    {
+      "site_key": "keis-legalgroup",
+      "pathname_pattern": "^/scam/pressure(/|$)",
+      "page_type": "service",
+      "page_group": "scam/pressure",
+      "domain_area": "legal",
+      "practice_area": "fraud",
+      "issue_type": "unauthorized_credit",
+      "topic_key": "legal/fraud/unauthorized_credit"
+    },
+    {
+      "site_key": "keis-legalgroup",
+      "pathname_pattern": "^/zpp(/|$)",
+      "page_type": "service",
+      "page_group": "zpp/*",
+      "domain_area": "legal",
+      "practice_area": "consumer",
+      "issue_type": "refund",
+      "topic_key": "legal/consumer/refund"
+    },
+    {
+      "site_key": "keis-legalgroup",
+      "pathname_pattern": "^/auto-law(/|$)",
+      "page_type": "service",
+      "page_group": "auto-law/*",
+      "domain_area": "legal",
+      "practice_area": "auto_law",
+      "issue_type": "dkp",
+      "topic_key": "legal/auto_law/dkp"
+    }
+  ]
+}

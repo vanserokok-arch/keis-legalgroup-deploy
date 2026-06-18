@@ -1,0 +1,1315 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta name="description" content="Разберём платежи лжеброкеру, доплаты за вывод, переводы на карты физлиц и псевдообменники. Подготовим требования к фактическим получателям денег.">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  
+  <link rel="canonical" href="/scam/broker/">
+  <meta name="theme-color" content="#0b0d0f">
+  <title>Вернём деньги после лжеброкеров и псевдообменников | КЕЙС</title>
+
+  <link rel="preload" href="../../assets/fonts/RobotoSlab-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/RobotoSlab-cyrillic-ext.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/RobotoSlab-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/Inter-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" as="image" href="/assets/block/buoffer1-1920.webp">
+  <script>
+(function () {
+  try {
+    if (new URLSearchParams(window.location.search).has('thanksReturn')) {
+      history.scrollRestoration = 'manual';
+      document.documentElement.classList.add('is-restoring-scroll');
+    }
+  } catch (e) {}
+})();
+</script>
+  <link rel="stylesheet" href="../../styles.css" />
+  <script src="https://mc.yandex.ru/metrika/tag.js" async></script>
+</head>
+
+<body class="page-investment" id="top" data-page="investment">
+
+  <!-- HEADER -->
+  <header class="keis-header" role="banner">
+    <div class="keis-header-inner">
+      <a href="./" class="keis-header-logo" aria-label="Кейс — на главную">
+        <img src="/assets/head/biglogo.svg" alt="" loading="eager" decoding="async"/>
+      </a>
+
+      <nav class="keis-header-nav" aria-label="Главная навигация">
+        <ul class="keis-header-nav-list">
+
+          <li class="has-children">
+            <a href="#" data-submenu-trigger="directions" aria-haspopup="true" aria-expanded="false">
+              Сферы защиты
+              <svg class="keis-dropdown-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M3.5 5.25L7 8.75L10.5 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+            <ul class="keis-header-nav-dropdown">
+              <li><a href="./">Инвестиционное мошенничество</a></li>
+              <li><a href="../pressure/">Перевод под влиянием</a></li>
+              <li><a href="../hack/">Взлом и оформление кредита</a></li>
+            </ul>
+          </li>
+
+          <li><a href="#cases">Практика</a></li>
+          <li><a href="#about">О нас</a></li>
+          <li><a href="/news/">Новости</a></li>
+        </ul>
+      </nav>
+
+        <div class="keis-header-center">
+          <div class="keis-header-contacts" aria-hidden="false">
+            <img src="../../assets/icons/phone.webp" alt="Телефон" class="keis-header-icon keis-header-icon--phone">
+            <a href="tel:+78003004624" class="keis-header-phone-text">8&nbsp;(800)&nbsp;300-46-24</a>
+            <span class="keis-header-contacts-divider" aria-hidden="true"></span>
+            <a href="https://t.me/zhenyatyazh" target="_blank" rel="noopener noreferrer" class="keis-header-telegram-link" aria-label="Наш Telegram">
+              <img src="../../assets/icons/telegram.webp" alt="Telegram" class="keis-header-icon keis-header-icon--telegram">
+              <span class="keis-header-telegram-text">Наш Telegram</span>
+            </a>
+            <span class="keis-header-contacts-divider" aria-hidden="true"></span>
+            <a href="https://max.ru/u/f9LHodD0cOLH3IC7AKJdDsOjA00hlbLGnXCHM8opJfBz99jA10sHad-_duU" target="_blank" rel="noopener noreferrer" class="keis-header-max-link" aria-label="Мы в MAX">
+              <svg class="keis-header-max-icon" viewBox="0 0 720 720" aria-hidden="true" focusable="false"><path fill="currentColor" d="M350.4,9.6C141.8,20.5,4.1,184.1,12.8,390.4c3.8,90.3,40.1,168,48.7,253.7,2.2,22.2-4.2,49.6,21.4,59.3,31.5,11.9,79.8-8.1,106.2-26.4,9-6.1,17.6-13.2,24.2-22,27.3,18.1,53.2,35.6,85.7,43.4,143.1,34.3,299.9-44.2,369.6-170.3C799.6,291.2,622.5-4.6,350.4,9.6h0ZM269.4,504c-11.3,8.8-22.2,20.8-34.7,27.7-18.1,9.7-23.7-.4-30.5-16.4-21.4-50.9-24-137.6-11.5-190.9,16.8-72.5,72.9-136.3,150-143.1,78-6.9,150.4,32.7,183.1,104.2,72.4,159.1-112.9,316.2-256.4,218.6h0Z"/></svg>
+              <span class="keis-header-max-text">Мы в MAX</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="keis-header-right">
+          <a href="#" class="keis-header-cta" data-open-contact-modal>Записаться</a>
+          <a class="keis-header-mobile-cta" href="#consult" data-open-contact-modal>Записаться</a>
+          <button type="button" class="keis-header-burger" id="burgerBtn" aria-label="Открыть меню" aria-expanded="false">
+            <svg class="keis-header-burger-icon" width="28" height="28" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path class="keis-burger-line keis-burger-line--top" d="M3 6 L19 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+              <path class="keis-burger-line keis-burger-line--middle" d="M3 11 L19 11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+              <path class="keis-burger-line keis-burger-line--bottom" d="M3 16 L19 16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+  </header>
+
+  <div class="kg-mm" id="kg-mm" aria-hidden="true">
+    <div class="kg-mm__overlay" data-kg-mm-close></div>
+    <aside class="kg-mm__panel" role="dialog" aria-modal="true" aria-label="Мобильное меню">
+      <nav class="kg-mm__nav" aria-label="Навигация по сайту">
+        <ul class="kg-mm__list">
+          <li class="kg-mm__item kg-mm__item--sub">
+            <button class="kg-mm__sub-toggle" type="button" aria-expanded="false">Сферы защиты</button>
+            <ul class="kg-mm__sublist" aria-hidden="true">
+              <li><a href="./">Инвестиционное мошенничество</a></li>
+              <li><a href="../pressure/">Перевод под влиянием</a></li>
+              <li><a href="../hack/">Взлом и оформление кредита</a></li>
+            </ul>
+          </li>
+          <li class="kg-mm__item"><a href="#cases">Практика</a></li>
+          <li class="kg-mm__item"><a href="#about">О нас</a></li>
+          <li class="kg-mm__item"><a href="/news/">Новости</a></li>
+        </ul>
+        <div class="kg-mm__contacts">
+          <a href="tel:+78003004624" class="kg-mm__phone">8&nbsp;(800)&nbsp;300-46-24</a>
+          <a href="https://t.me/zhenyatyazh" target="_blank" rel="noopener noreferrer" class="kg-mm__tg">Наш Telegram</a>
+          <a href="https://max.ru/u/f9LHodD0cOLH3IC7AKJdDsOjA00hlbLGnXCHM8opJfBz99jA10sHad-_duU" target="_blank" rel="noopener noreferrer" class="kg-mm__max"><svg class="kg-mm__max-icon" viewBox="0 0 720 720" aria-hidden="true" focusable="false"><path fill="currentColor" d="M350.4,9.6C141.8,20.5,4.1,184.1,12.8,390.4c3.8,90.3,40.1,168,48.7,253.7,2.2,22.2-4.2,49.6,21.4,59.3,31.5,11.9,79.8-8.1,106.2-26.4,9-6.1,17.6-13.2,24.2-22,27.3,18.1,53.2,35.6,85.7,43.4,143.1,34.3,299.9-44.2,369.6-170.3C799.6,291.2,622.5-4.6,350.4,9.6h0ZM269.4,504c-11.3,8.8-22.2,20.8-34.7,27.7-18.1,9.7-23.7-.4-30.5-16.4-21.4-50.9-24-137.6-11.5-190.9,16.8-72.5,72.9-136.3,150-143.1,78-6.9,150.4,32.7,183.1,104.2,72.4,159.1-112.9,316.2-256.4,218.6h0Z"/></svg>Мы в MAX</a>
+          <button class="kg-mm__cta" type="button" data-open-contact-modal>Записаться</button>
+        </div>
+      </nav>
+    </aside>
+  </div>
+
+  <!-- HERO / OFFER -->
+  <section class="hero-investment hero-v2" id="hero" data-keis-block="1">
+    <picture class="hero-investment__bg">
+      <source media="(max-width: 768px)" srcset="../../assets/block/mobu1.webp">
+      <img src="../../assets/block/buoffer1-1920.webp" srcset="../../assets/block/buoffer1-1920.webp 1x, ../../assets/block/buoffer1-2560.webp 2x" alt="" loading="eager" fetchpriority="high">
+    </picture>
+
+    <div class="section-container hero-investment__inner">
+      <div class="hero-investment__grid">
+        <div class="hero-investment__content">
+          <div class="hero-investment__badges">
+            <span class="hero-investment__badge">Инвестиционное мошенничество</span>
+            <span class="hero-investment__badge hero-investment__badge--accent">Возврат средств</span>
+          </div>
+
+          <h1 class="hero-investment__title">Вложили деньги<br>в «инвестиции»,<br>а вывести их не дают?<br><span class="hero-title--accent">Вернём деньги после переводов на карты и через псевдообменники</span></h1>
+
+          <ul class="hero-subpoints">
+            <li>Разберём, куда ушли деньги: карты, СБП, криптокошельки, обменники</li>
+            <li>Установим точную цепочку движения средств</li>
+            <li>Подготовим требования к тем, кто фактически получил деньги</li>
+          </ul>
+        </div>
+
+        <aside class="hero-investment__form">
+          <div class="hero-form-card">
+            <h3 class="hero-form-title">
+              <span class="hero-marker">Юрист свяжется с вами в течение 5 минут</span>
+            </h3>
+            <p class="hero-form-subtitle">
+              Изучим документы, объясним порядок действий и подготовим требования.
+            </p>
+            <div class="hero-form-divider" aria-hidden="true"></div>
+
+            <form class="hero-form" action="/api/telegram.php" method="POST">
+              <div class="hero-form-row">
+                <div class="hero-form-group">
+                  <label for="hero-name">Ваше имя</label>
+                  <input type="text" id="hero-name" name="name" placeholder="Сидоров Алексей" required>
+                </div>
+
+                <div class="hero-form-group">
+                  <label for="hero-phone">Телефон</label>
+                  <input type="tel" id="hero-phone" name="phone" inputmode="numeric" placeholder="Ваш номер" maxlength="16" required>
+                </div>
+              </div>
+
+              <div class="hero-form-group">
+                <label for="hero-case">Кратко о ситуации</label>
+                <textarea id="hero-case" name="message" rows="4" placeholder="Опишите, что произошло и на каком этапе сейчас ваше дело" required></textarea>
+              </div>
+
+              <button type="submit" class="btn-primary">Получить консультацию</button>
+
+              <p class="hero-form-disclaimer form-consent">
+                Отправляя форму, вы соглашаетесь с <a class="legal-link form-consent__link" href="/privacy-policy.html">политикой конфиденциальности и обработкой персональных данных.</a>
+              </p>
+            </form>
+          </div>
+        </aside>
+
+        <!-- BENEFITS (4 cards) -->
+        <div class="hero-benefits">
+          <div class="hero-benefits-grid hero-benefits-grid--intro">
+
+            <!-- 1 -->
+              <article class="hero-benefit-card hero-benefit-card--intro">
+                <div class="benefit-kpi">30+ лет</div>
+                <div class="benefit-desc">Практики у каждого нашего юриста</div>
+              </article>
+
+            <!-- 2 -->
+              <article class="hero-benefit-card hero-benefit-card--intro">
+                <div class="benefit-kpi">Гарантии</div>
+                <div class="benefit-desc">Работаем по договору — оплата всегда только за честный результат.</div>
+              </article>
+
+            <!-- 3 -->
+              <article class="hero-benefit-card hero-benefit-card--intro">
+                <div class="benefit-kpi">24/7</div>
+                <div class="benefit-desc">Юрист на связи всегда — ответит на вопросы в выходные дни и вечером</div>
+              </article>
+
+            <!-- 4 -->
+            <article class="hero-benefit-card hero-benefit-card--intro">
+              <div class="benefit-kpi">400 млн+</div>
+              <div class="benefit-desc">Вернули нашим клиентам в досудебном и судебном порядке</div>
+            </article>
+
+          </div>
+        </div>
+        <!-- /BENEFITS -->
+    </div>
+  </section>
+
+  <div class="keis-divider keis-divider--shards keis-divider--kgx-stories-bottom" aria-hidden="true"></div>
+
+  <div class="keis-ticker">
+    <div class="keis-ticker__track" data-ticker-track>
+      <span>Узкопрофильные специалисты</span>
+      <span>Юрист на связи всегда</span>
+      <span>Более 30 лет опыта имеет каждый юрист компании</span>
+      <span>Работаем на результат, а не на процесс</span>
+    </div>
+  </div>
+
+  <!-- KGX STORIES -->
+  <section id="kgx-stories-carousel" class="kgx-stories">
+    <div class="kgx-b4__container section-container">
+      <div class="kgx-stories__head section-header k-header is-big">
+        <div class="k-header__box">
+          <h2 class="k-title">Частые <span class="k-title__mark">проблемы</span></h2>
+          <p class="k-subtitle">С таких ситуаций обычно начинается спор.</p>
+        </div>
+      </div>
+
+      <div class="kgx-stories__band">
+        <div class="kgx-stories__tilt">
+          <div class="kgx-stories__viewport">
+            <div class="kgx-stories__rotator">
+              <div class="kgx-stories__track">
+
+                <article class="kgx-stories__slide kgx-stories__slide--angle-1">
+                  <div class="kgx-stories__media"></div>
+                  <div class="kgx-stories__overlay"></div>
+                  <div class="kgx-stories__body">
+                    <h3 class="kgx-stories__title">Псевдоевропейский брокер</h3>
+                    <p class="kgx-stories__text">Обещают «лицензию ЕС» и 20% годовых, после пополнений кабинет блокируют.</p>
+                  </div>
+                </article>
+
+                <article class="kgx-stories__slide kgx-stories__slide--angle-2">
+                  <div class="kgx-stories__media"></div>
+                  <div class="kgx-stories__overlay"></div>
+                  <div class="kgx-stories__body">
+                    <h3 class="kgx-stories__title">Платформа с «аналитиком»</h3>
+                    <p class="kgx-stories__text">«Аналитик» давит на новые взносы, перед выводом появляются «комиссии» и доплаты.</p>
+                  </div>
+                </article>
+
+                <article class="kgx-stories__slide kgx-stories__slide--angle-3">
+                  <div class="kgx-stories__media"></div>
+                  <div class="kgx-stories__overlay"></div>
+                  <div class="kgx-stories__body">
+                    <h3 class="kgx-stories__title">Инвестиции через мессенджер</h3>
+                    <p class="kgx-stories__text">Чат с «закрытыми сигналами», переводы на карты, после сделок группа исчезает.</p>
+                  </div>
+                </article>
+
+                <article class="kgx-stories__slide kgx-stories__slide--angle-4">
+                  <div class="kgx-stories__media"></div>
+                  <div class="kgx-stories__overlay"></div>
+                  <div class="kgx-stories__body">
+                    <h3 class="kgx-stories__title">Финансовая пирамида под видом фонда</h3>
+                    <p class="kgx-stories__text">Позиционируются как «закрытый фонд», сначала платят, затем схлопываются.</p>
+                  </div>
+                </article>
+
+                <article class="kgx-stories__slide kgx-stories__slide--angle-5">
+                  <div class="kgx-stories__media"></div>
+                  <div class="kgx-stories__overlay"></div>
+                  <div class="kgx-stories__body">
+                    <h3 class="kgx-stories__title">Кредиты под «спасение вклада»</h3>
+                    <p class="kgx-stories__text">Уговаривают взять кредит ради «разморозки прибыли», деньги уходят, долг остаётся.</p>
+                  </div>
+                </article>
+
+                <article class="kgx-stories__slide kgx-stories__slide--angle-6">
+                  <div class="kgx-stories__media"></div>
+                  <div class="kgx-stories__overlay"></div>
+                  <div class="kgx-stories__body">
+                    <h3 class="kgx-stories__title">Криптоплатформа без вывода</h3>
+                    <p class="kgx-stories__text">Баланс «растёт», но вывод блокирован, требуют «страховой депозит», потом блокируют.</p>
+                  </div>
+                </article>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kgx-stories__controls kgx-stories__controls--center">
+        <button class="kgx-stories__btn kgx-stories__btn--prev" type="button" aria-label="Назад">
+          <span class="kgx-stories__btn-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14.5 5.5L8 12l6.5 6.5" stroke="rgba(255,255,255,0.92)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+
+        <button class="kgx-stories__btn kgx-stories__btn--next" type="button" aria-label="Вперёд">
+          <span class="kgx-stories__btn-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9.5 5.5L16 12l-6.5 6.5" stroke="rgba(255,255,255,0.92)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- Decor layer for keisFraudFlagsInvestment (moved inside section) -->
+
+  <!-- TRUST -->
+  <section class="trust-parallax" id="trust">
+    <div class="trust-parallax-bg" aria-hidden="true"></div>
+
+    <div class="section-container trust-parallax-inner">
+      <header class="trust-header k-header">
+        <div class="k-header__box">
+          <h2 class="k-title">Выстраиваем честные <span class="k-title__mark">отношения с клиентами</span></h2>
+          <p class="k-subtitle">Клиент понимает весь порядок работы: что уже сделано, на каком этапе находится дело и какие действия запланированы дальше.</p>
+        </div>
+      </header>
+
+      <div class="trust-panel" role="group" aria-label="Почему дело нужно готовить заранее">
+        <div class="trust-mini-grid" role="list">
+          <article class="trust-mini" role="listitem">
+            <h3 class="trust-mini-title">Изучаем документы и обстоятельства дела</h3>
+            <p class="trust-mini-text">Проверяем переводы, переписку, личный кабинет, требования о доплатах и другие материалы по вашей ситуации.</p>
+          </article>
+
+          <article class="trust-mini" role="listitem">
+            <h3 class="trust-mini-title">Объясняем решение простым языком</h3>
+            <p class="trust-mini-text">Рассказываем, что можно сделать, какие есть варианты возврата и почему предлагаем именно такой порядок действий.</p>
+          </article>
+
+          <article class="trust-mini" role="listitem">
+            <h3 class="trust-mini-title">Определяем действия, необходимые для возврата денег</h3>
+            <p class="trust-mini-text">Показываем механизм решения: от подачи первичных документов до полного закрытия вопроса.</p>
+          </article>
+
+          <article class="trust-mini" role="listitem">
+            <h3 class="trust-mini-title">Все нужные действия берём на себя</h3>
+            <p class="trust-mini-text">Готовим претензии, заявления, иски и представляем ваши интересы в банках, полиции, суде и других органах.</p>
+          </article>
+
+          <article class="trust-mini" role="listitem">
+            <h3 class="trust-mini-title">Информируем клиента на каждом этапе работы</h3>
+            <p class="trust-mini-text">Сообщаем, что уже сделано, на каком этапе находится дело и какие действия будут выполняться дальше.</p>
+          </article>
+
+          <article class="trust-mini" role="listitem">
+            <h3 class="trust-mini-title">Работаем до полного завершения процесса</h3>
+            <p class="trust-mini-text">Клиент знает, что «Кейс» сопровождает дело до конца и не оставляет его на середине пути.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KEIS: Bridge block between Trust and Flags -->
+  <section class="keis-bridge" aria-hidden="false">
+    <div class="keis-bridge__inner section-container">
+      <div class="keis-bridge__metric" data-bridge-counter="money" data-target="400">
+        <div class="keis-bridge__metric-value" data-counter-value>
+          <span class="keis-bridge__metric-number">0</span>
+          <span class="keis-bridge__metric-suffix keis-bridge__suffix">млн+</span>
+        </div>
+        <div class="keis-bridge__metric-sublabel keis-bridge__label">Вернули нашим клиентам<br>в досудебном и судебном порядке</div>
+      </div>
+      <div class="keis-bridge__panel">
+        <p class="keis-bridge__quote">Разберём документы и определим, с кого и каким способом требовать деньги</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- KEIS: New Fraud Flags (Investment) -->
+  <section id="keisFraudFlagsInvestment" class="kf-flags ssot-isolate ssot-shield" aria-labelledby="keisFraudFlagsInvestment-title">
+    <div class="kf-flags__decor" aria-hidden="true">
+      <div class="kf-flags__bg" aria-hidden="true"></div>
+    </div>
+    <div class="kf-flags__inner section-container">
+      <header class="kf-flags__header k-header">
+        <div class="k-header__box">
+          <h2 id="keisFraudFlagsInvestment-title" class="k-title">Признаки <span class="k-title__mark">обмана</span></h2>
+          <p class="k-subtitle">Эти признаки показывают, что брокер — фикция. Их нужно собрать сразу.</p>
+        </div>
+      </header>
+
+      <div class="kf-flags__rows">
+        <div class="kf-flags__row">
+        <article class="kf-flag-card kf-flag kf-flag-card--p1" aria-label="Нереальная доходность" data-ink="left">
+          <div class="kf-flag-card__top">
+            <span class="kf-flag-card__num">01</span>
+            <h3 class="kf-flag-card__head">Нереальная доходность</h3>
+          </div>
+          <p class="kf-flag-card__text">Обещают 20–50% без риска и гарантию дохода. Реклама и расчёты подтверждают обещания дохода и обман.</p>
+          <svg class="kf-ink-underline kf-underline-arc kf-underline-ltr" aria-hidden="true" viewBox="0 0 180 48" preserveAspectRatio="none"><path class="kf-underline-path" d="M 0 18 A 90 26 0 0 0 180 18" fill="none" stroke="currentColor"/></svg><svg class="kf-ink-underline kf-underline-arc kf-underline-rtl" aria-hidden="true" viewBox="0 0 180 48" preserveAspectRatio="none"><path class="kf-underline-path" d="M 180 18 A 90 26 0 0 1 0 18" fill="none" stroke="currentColor"/></svg>
+        </article>
+
+        <article class="kf-flag-card kf-flag kf-flag-card--p2" aria-label="Проблемы с выводом" data-ink="right">
+          <div class="kf-flag-card__top">
+            <span class="kf-flag-card__num">02</span>
+            <h3 class="kf-flag-card__head">Проблемы с выводом</h3>
+          </div>
+          <p class="kf-flag-card__text">Каждый раз придумывают новую «комиссию» или «налог», затягивают сроки. Переписка и суммы нужны, чтобы требовать возврат денег.</p>
+          <svg class="kf-ink-underline kf-underline-arc kf-underline-ltr" aria-hidden="true" viewBox="0 0 180 48" preserveAspectRatio="none"><path class="kf-underline-path" d="M 0 18 A 90 26 0 0 0 180 18" fill="none" stroke="currentColor"/></svg><svg class="kf-ink-underline kf-underline-arc kf-underline-rtl" aria-hidden="true" viewBox="0 0 180 48" preserveAspectRatio="none"><path class="kf-underline-path" d="M 180 18 A 90 26 0 0 1 0 18" fill="none" stroke="currentColor"/></svg>
+        </article>
+        </div>
+
+        <div class="kf-flags__row">
+        <article class="kf-flag-card kf-flag kf-flag-card--p3" aria-label="Нет лицензии / юрлица" data-ink="left">
+          <div class="kf-flag-card__top">
+            <span class="kf-flag-card__num">03</span>
+            <h3 class="kf-flag-card__head">Нет лицензии / юрлица</h3>
+          </div>
+          <p class="kf-flag-card__text">У компании нет понятных реквизитов и лицензии. Сайт, договор и скриншоты прикладываем к требованиям.</p>
+          <svg class="kf-ink-underline kf-underline-arc kf-underline-ltr" aria-hidden="true" viewBox="0 0 180 48" preserveAspectRatio="none"><path class="kf-underline-path" d="M 0 18 A 90 26 0 0 0 180 18" fill="none" stroke="currentColor"/></svg><svg class="kf-ink-underline kf-underline-arc kf-underline-rtl" aria-hidden="true" viewBox="0 0 180 48" preserveAspectRatio="none"><path class="kf-underline-path" d="M 180 18 A 90 26 0 0 1 0 18" fill="none" stroke="currentColor"/></svg>
+        </article>
+
+        <article class="kf-flag-card kf-flag kf-flag-card--p4" aria-label="Комиссии/налоги вперёд" data-ink="right">
+          <div class="kf-flag-card__top">
+            <span class="kf-flag-card__num">04</span>
+            <h3 class="kf-flag-card__head">Комиссии/налоги «вперёд»</h3>
+          </div>
+          <p class="kf-flag-card__text">Просят оплатить сборы до вывода, иначе «заморозят счёт». Чеки и требования прикладываем к претензии.</p>
+          <svg class="kf-ink-underline kf-underline-arc kf-underline-ltr" aria-hidden="true" viewBox="0 0 180 48" preserveAspectRatio="none"><path class="kf-underline-path" d="M 0 18 A 90 26 0 0 0 180 18" fill="none" stroke="currentColor"/></svg><svg class="kf-ink-underline kf-underline-arc kf-underline-rtl" aria-hidden="true" viewBox="0 0 180 48" preserveAspectRatio="none"><path class="kf-underline-path" d="M 180 18 A 90 26 0 0 1 0 18" fill="none" stroke="currentColor"/></svg>
+        </article>
+        </div>
+
+        <div class="kf-flags__row">
+        <article class="kf-flag-card kf-flag kf-flag-card--p5" aria-label="Давление и спешка" data-ink="left">
+          <div class="kf-flag-card__top">
+            <span class="kf-flag-card__num">05</span>
+            <h3 class="kf-flag-card__head">Давление и спешка</h3>
+          </div>
+          <p class="kf-flag-card__text">Подталкивают к мгновенным переводам, пугают потерей прибыли. Записываем звонки и сообщения, чтобы показать давление.</p>
+          <svg class="kf-ink-underline kf-underline-arc kf-underline-ltr" aria-hidden="true" viewBox="0 0 180 48" preserveAspectRatio="none"><path class="kf-underline-path" d="M 0 18 A 90 26 0 0 0 180 18" fill="none" stroke="currentColor"/></svg><svg class="kf-ink-underline kf-underline-arc kf-underline-rtl" aria-hidden="true" viewBox="0 0 180 48" preserveAspectRatio="none"><path class="kf-underline-path" d="M 180 18 A 90 26 0 0 1 0 18" fill="none" stroke="currentColor"/></svg>
+        </article>
+
+        <article class="kf-flag-card kf-flag kf-flag-card--p6" aria-label="Переводы на карты физлиц" data-ink="right">
+          <div class="kf-flag-card__top">
+            <span class="kf-flag-card__num">06</span>
+            <h3 class="kf-flag-card__head">Переводы на карты физлиц</h3>
+          </div>
+          <p class="kf-flag-card__text">Деньги уходят на личные карты, а не на расчётный счёт. Эти платежки — ключ к поиску получателей.</p>
+          <svg class="kf-ink-underline kf-underline-arc kf-underline-ltr" aria-hidden="true" viewBox="0 0 180 48" preserveAspectRatio="none"><path class="kf-underline-path" d="M 0 18 A 90 26 0 0 0 180 18" fill="none" stroke="currentColor"/></svg><svg class="kf-ink-underline kf-underline-arc kf-underline-rtl" aria-hidden="true" viewBox="0 0 180 48" preserveAspectRatio="none"><path class="kf-underline-path" d="M 180 18 A 90 26 0 0 1 0 18" fill="none" stroke="currentColor"/></svg>
+        </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="keis-divider keis-divider--shards" aria-hidden="true"></div>
+
+  <section id="drop-cards" class="broker-topic-section broker-recovery-path broker-premium-section broker-premium-section--content-left" aria-labelledby="drop-cards-title">
+    <div class="section-container">
+      <div class="broker-premium-section__layout">
+        <div class="broker-premium-section__content">
+          <div class="broker-canon-head broker-canon-head--card">
+            <h2 id="drop-cards-title" class="broker-canon-head__title">Перевели деньги на <span class="k-title__mark">карту чужого человека?</span></h2>
+            <p class="broker-canon-head__lead">Лжеброкеры часто просят переводить не на компанию, а на обычную карту: по номеру телефона, через СБП или по реквизитам. Это не значит, что деньги пропали. В банке остаётся информация о переводе и получателе.</p>
+          </div>
+          <div class="broker-recovery-path__grid broker-premium-grid" role="list">
+            <article class="broker-premium-card" role="listitem">
+              <span class="broker-premium-card__num">01</span>
+              <h3>Перевод на карту — не значит, что деньги потеряны</h3>
+              <ul class="broker-premium-card__list">
+                <li>получатель известен банку</li>
+                <li>перевод подтверждается документами</li>
+                <li>банковский след остаётся</li>
+              </ul>
+            </article>
+            <article class="broker-premium-card" role="listitem">
+              <span class="broker-premium-card__num">02</span>
+              <h3>Даже если карта уже заблокирована</h3>
+              <ul class="broker-premium-card__list">
+                <li>остаётся история операций</li>
+                <li>остаются данные владельца счёта</li>
+                <li>можно установить получателя</li>
+              </ul>
+            </article>
+            <article class="broker-premium-card" role="listitem">
+              <span class="broker-premium-card__num">03</span>
+              <h3>Сайт брокера может исчезнуть</h3>
+              <ul class="broker-premium-card__list">
+                <li>переписка остаётся</li>
+                <li>чеки остаются</li>
+                <li>переводы остаются в банке</li>
+              </ul>
+            </article>
+            <article class="broker-premium-card" role="listitem">
+              <span class="broker-premium-card__num">04</span>
+              <h3>Важно не кому обещали перевести, а кому перевели</h3>
+              <ul class="broker-premium-card__list">
+                <li>смотрим фактических получателей</li>
+                <li>проверяем каждый платёж</li>
+                <li>готовим требования о возврате</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+        <div class="broker-premium-section__visual-space" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+  <section id="crypto-tracing" class="broker-topic-section broker-crypto-path broker-premium-section broker-premium-section--dark broker-premium-section--content-right" aria-labelledby="crypto-tracing-title">
+    <div class="section-container">
+      <div class="broker-premium-section__layout">
+        <div class="broker-premium-section__visual-space" aria-hidden="true"></div>
+        <div class="broker-premium-section__content">
+          <div class="broker-canon-head broker-canon-head--card">
+            <h2 id="crypto-tracing-title" class="broker-canon-head__title">Просили купить криптовалюту и <span class="k-title__mark">перевести её на другой кошелёк?</span></h2>
+            <p class="broker-canon-head__lead">Мошенники часто объясняют это «пополнением счёта», «активацией кабинета» или «быстрым способом перевода». На деле деньги уходят на чужой кошелёк, а вывести их потом не дают.</p>
+          </div>
+          <div class="broker-crypto-path__steps broker-premium-grid" role="list">
+            <article class="broker-premium-card broker-premium-card--timeline" role="listitem">
+              <span class="broker-premium-card__num">01</span>
+              <h3>Сохранились адреса кошельков</h3>
+              <ul class="broker-premium-card__list">
+                <li>цепочка последующих переводов прослеживается</li>
+                <li>важна вся история операций</li>
+                <li>нужны скриншоты и подтверждения</li>
+              </ul>
+            </article>
+            <article class="broker-premium-card broker-premium-card--timeline" role="listitem">
+              <span class="broker-premium-card__num">02</span>
+              <h3>Не удаляйте переписку</h3>
+              <ul class="broker-premium-card__list">
+                <li>в ней часто есть инструкции</li>
+                <li>сохраняются адреса и реквизиты</li>
+              </ul>
+            </article>
+            <article class="broker-premium-card broker-premium-card--timeline" role="listitem">
+              <span class="broker-premium-card__num">03</span>
+              <h3>Не платите за «разморозку»</h3>
+              <ul class="broker-premium-card__list">
+                <li>это частая схема давления</li>
+                <li>после оплаты требуют ещё</li>
+                <li>вывод обычно не открывают</li>
+              </ul>
+            </article>
+            <article class="broker-premium-card broker-premium-card--timeline" role="listitem">
+              <span class="broker-premium-card__num">04</span>
+              <h3>Новая оплата не откроет вывод</h3>
+              <ul class="broker-premium-card__list">
+                <li>после налога потребуют комиссию</li>
+                <li>после комиссии — страховку</li>
+                <li>после страховки — ещё один платёж</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="withdrawal-payments" class="broker-topic-section broker-international-path broker-premium-section broker-premium-section--content-left" aria-labelledby="withdrawal-payments-title">
+    <div class="section-container">
+      <div class="broker-premium-section__layout">
+        <div class="broker-premium-section__content">
+          <div class="broker-canon-head broker-canon-head--card">
+            <h2 id="withdrawal-payments-title" class="broker-canon-head__title">Не дают вывести деньги <span class="k-title__mark">без новых платежей</span></h2>
+            <p class="broker-canon-head__lead">После первого перевода появляются новые требования: налог, комиссия, страховка, финансовый код или другие платежи. Каждый раз обещают, что после оплаты деньги наконец поступят на ваш счёт.</p>
+          </div>
+          <div class="broker-international-path__grid broker-premium-grid" role="list">
+            <article class="broker-premium-card" role="listitem">
+              <span class="broker-premium-card__num">01</span>
+              <h3>Налог перед выводом</h3>
+              <ul class="broker-premium-card__list">
+                <li>один из самых частых предлогов</li>
+                <li>после оплаты появляется новый платёж</li>
+                <li>вывод не происходит</li>
+              </ul>
+            </article>
+            <article class="broker-premium-card" role="listitem">
+              <span class="broker-premium-card__num">02</span>
+              <h3>Страховой депозит</h3>
+              <ul class="broker-premium-card__list">
+                <li>обещают вернуть вместе с прибылью</li>
+                <li>деньги просто уходят дальше</li>
+                <li>схема повторяется</li>
+              </ul>
+            </article>
+            <article class="broker-premium-card" role="listitem">
+              <span class="broker-premium-card__num">03</span>
+              <h3>Финансовый код</h3>
+              <ul class="broker-premium-card__list">
+                <li>требуют внести деньги для активации</li>
+                <li>постоянно меняют условия</li>
+                <li>придумывают новые причины</li>
+              </ul>
+            </article>
+            <article class="broker-premium-card" role="listitem">
+              <span class="broker-premium-card__num">04</span>
+              <h3>Поручитель или доверенное лицо</h3>
+              <ul class="broker-premium-card__list">
+                <li>просят привлечь родственника</li>
+                <li>предлагают оформить кредит</li>
+                <li>увеличивают потери</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+        <div class="broker-premium-section__visual-space" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="proof-evidence" class="broker-topic-section broker-crypto-path broker-premium-section broker-premium-section--dark broker-premium-section--content-right" aria-labelledby="proof-evidence-title">
+    <div class="section-container">
+      <div class="broker-premium-section__layout">
+        <div class="broker-premium-section__visual-space" aria-hidden="true"></div>
+        <div class="broker-premium-section__content">
+          <div class="broker-canon-head broker-canon-head--card">
+            <h2 id="proof-evidence-title" class="broker-canon-head__title">Что может стать <span class="k-title__mark">доказательством</span></h2>
+            <p class="broker-canon-head__lead">Чем больше сохранилось переписки, переводов, скриншотов и других данных, тем проще восстановить события и подтвердить перевод денег.</p>
+          </div>
+          <div class="broker-crypto-path__steps broker-premium-grid" role="list">
+            <article class="broker-premium-card broker-premium-card--timeline" role="listitem">
+              <span class="broker-premium-card__num">01</span>
+              <h3>Переписка с брокером</h3>
+              <ul class="broker-premium-card__list">
+                <li>сообщения</li>
+                <li>голосовые</li>
+                <li>номера телефонов</li>
+              </ul>
+            </article>
+            <article class="broker-premium-card broker-premium-card--timeline" role="listitem">
+              <span class="broker-premium-card__num">02</span>
+              <h3>Платежи и чеки</h3>
+              <ul class="broker-premium-card__list">
+                <li>карты</li>
+                <li>СБП</li>
+                <li>криптокошельки, квитанции</li>
+              </ul>
+            </article>
+            <article class="broker-premium-card broker-premium-card--timeline" role="listitem">
+              <span class="broker-premium-card__num">03</span>
+              <h3>Личный кабинет</h3>
+              <ul class="broker-premium-card__list">
+                <li>баланс</li>
+                <li>заявки на вывод</li>
+                <li>история операций</li>
+              </ul>
+            </article>
+            <article class="broker-premium-card broker-premium-card--timeline" role="listitem">
+              <span class="broker-premium-card__num">04</span>
+              <h3>Требования о доплатах</h3>
+              <ul class="broker-premium-card__list">
+                <li>налоги</li>
+                <li>комиссии</li>
+                <li>страховки, коды вывода</li>
+              </ul>
+            </article>
+            <article class="broker-premium-card broker-premium-card--timeline" role="listitem">
+              <span class="broker-premium-card__num">05</span>
+              <h3>Данные получателей</h3>
+              <ul class="broker-premium-card__list">
+                <li>карты</li>
+                <li>счета</li>
+                <li>телефоны, имена, реквизиты</li>
+              </ul>
+            </article>
+            <article class="broker-premium-card broker-premium-card--timeline" role="listitem">
+              <span class="broker-premium-card__num">06</span>
+              <h3>Реклама и обещания</h3>
+              <ul class="broker-premium-card__list">
+                <li>доходность</li>
+                <li>гарантии</li>
+                <li>переписка с аналитиком</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="kgx-b4" id="kgx-b4">
+    <div class="kgx-b4__container section-container">
+      <div class="kgx-b4__titlebox k-header">
+        <div class="k-header__box">
+          <h2 class="k-title">Почему самостоятельно вернуть деньги <span class="k-title__mark">так сложно?</span></h2>
+          <p class="k-subtitle">После обмана важно не просто пожаловаться, а правильно выстроить порядок действий. Ошибка в начале может затянуть возврат денег или закрыть рабочий путь.</p>
+        </div>
+      </div>
+
+            <div class="kgx-b4__layout">
+        <div class="kgx-b4__panel" role="list">
+        <article class="kgx-b4__item" role="listitem">
+          <div class="kgx-b4__item-badge">01</div>
+          <h3 class="kgx-b4__item-title">Сложно понять, что делать первым</h3>
+          <p class="kgx-b4__item-text">После обмана человек обычно хватается за всё сразу: пишет в банк, полицию, поддержку сайта, ищет жалобы в интернете. Без правильного порядка действий время уходит, а результата нет.</p>
+          <span class="kgx-b4__item-tag">НУЖЕН ПОРЯДОК ДЕЙСТВИЙ</span>
+          <span class="kgx-b4__icon" aria-hidden="true"><img src="../../assets/icons/s1.webp" alt=""></span>
+        </article>
+
+        <article class="kgx-b4__item" role="listitem">
+          <div class="kgx-b4__item-badge">02</div>
+          <h3 class="kgx-b4__item-title">Заявление подают как крик души</h3>
+          <p class="kgx-b4__item-text">Банку не нужны общие фразы «меня обманули». Нужно показать, что произошло, когда это случилось, какие суммы ушли и почему вы требуете возврата.</p>
+          <span class="kgx-b4__item-tag">НУЖНЫ ФАКТЫ, А НЕ ЭМОЦИИ</span>
+          <span class="kgx-b4__icon" aria-hidden="true"><img src="../../assets/icons/s2.webp" alt=""></span>
+        </article>
+
+        <article class="kgx-b4__item" role="listitem">
+          <div class="kgx-b4__item-badge">03</div>
+          <h3 class="kgx-b4__item-title">Не всегда понятно, к кому обращаться</h3>
+          <p class="kgx-b4__item-text">Брокер может исчезнуть, сайт перестать работать, а деньги фактически получили другие люди или организации.</p>
+          <span class="kgx-b4__item-tag">ВАЖНО НАЙТИ ПОЛУЧАТЕЛЯ</span>
+          <span class="kgx-b4__icon" aria-hidden="true"><img src="../../assets/icons/s3.webp" alt=""></span>
+        </article>
+
+        <article class="kgx-b4__item" role="listitem">
+          <div class="kgx-b4__item-badge">04</div>
+          <h3 class="kgx-b4__item-title">Банк может дать отписку</h3>
+          <p class="kgx-b4__item-text">Если не объяснить ситуацию правильно, перевод выглядит как обычная добровольная операция, а не как часть схемы обмана.</p>
+          <span class="kgx-b4__item-tag">НУЖНА ПРАВИЛЬНАЯ ПОЗИЦИЯ</span>
+          <span class="kgx-b4__icon" aria-hidden="true"><img src="../../assets/icons/s4.webp" alt=""></span>
+        </article>
+
+        <article class="kgx-b4__item" role="listitem">
+          <div class="kgx-b4__item-badge">05</div>
+          <h3 class="kgx-b4__item-title">Время уходит на неправильные действия</h3>
+          <p class="kgx-b4__item-text">Пока человек ждёт ответов, общается с брокером, верит обещаниям или спорит с поддержкой банка, возможность вернуть деньги становится слабее.</p>
+          <span class="kgx-b4__item-tag">НЕЛЬЗЯ ТЯНУТЬ</span>
+          <span class="kgx-b4__icon" aria-hidden="true"><img src="../../assets/icons/s5.webp" alt=""></span>
+        </article>
+
+        <article class="kgx-b4__item" role="listitem">
+          <div class="kgx-b4__item-badge">06</div>
+          <h3 class="kgx-b4__item-title">Сложно довести дело до результата</h3>
+          <p class="kgx-b4__item-text">Нужно не только подать документы, но и пройти весь процесс до конца: понимать механизм возврата, контролировать сроки и знать, с кого требовать деньги.</p>
+          <span class="kgx-b4__item-tag">ВАЖЕН ВЕСЬ ПРОЦЕСС</span>
+          <span class="kgx-b4__icon" aria-hidden="true"><img src="../../assets/icons/s6.webp" alt=""></span>
+        </article>
+        </div>
+        <div class="kgx-b4__images" aria-hidden="true"></div>
+      </div>
+
+      <div class="kgx-b4__cta kg-cta">
+        <div class="kgx-b4__cta-inner kg-cta__inner">
+          <div class="kgx-b4__cta-text kg-cta__copy">
+            <h3 class="kgx-b4__cta-title">Остались вопросы по вашей ситуации?</h3>
+            <div class="hero-form-divider" aria-hidden="true"></div>
+            <p class="kgx-b4__cta-subtitle">
+              Изучим документы, ответим на вопросы и объясним дальнейший порядок действий на консультации.
+            </p>
+          </div>
+
+          <form class="kgx-b4__form kg-cta__panel kg-cta__form" action="/api/telegram.php" method="POST" data-b4-form>
+            <div class="kgx-b4__fields kg-cta__grid">
+              <label class="kgx-b4__field kg-cta__field">
+                <span>Ваше имя</span>
+                <input type="text" name="name" placeholder="Введите имя" required class="kg-cta__input">
+              </label>
+
+              <label class="kgx-b4__field kg-cta__field">
+                <span>Телефон</span>
+                <input type="tel" name="phone" inputmode="numeric" placeholder="Введите телефон" required class="kg-cta__input">
+              </label>
+            </div>
+
+            <button type="submit" class="kgx-b4__btn faq-ask-btn kg-cta__submit" data-b4-submit>
+              <span class="faq-ask-btn__text">Получить консультацию</span>
+              <span class="faq-ask-btn__icon" aria-hidden="true">→</span>
+            </button>
+
+            <div class="kgx-b4__disclaimer form-consent">Отправляя форму, вы соглашаетесь с <a class="legal-link form-consent__link" href="/privacy-policy.html">политикой конфиденциальности и обработкой персональных данных.</a></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ <!-- KEIS: Motivational bridge block before Process -->
+  <section class="keis-bridge keis-bridge--process" aria-hidden="false">
+    <div class="keis-bridge__inner section-container">
+      <div class="keis-bridge__metric" data-bridge-counter="years" data-target="30">
+        <div class="keis-bridge__metric-value" data-counter-value>
+          <span class="keis-bridge__metric-number">0</span>
+          <span class="keis-bridge__metric-suffix keis-bridge__suffix">лет+</span>
+        </div>
+        <div class="keis-bridge__metric-label keis-bridge__label">Стаж по борьбе с мошенничеством у каждого юриста</div>
+      </div>
+      <div class="keis-bridge__panel">
+        <p class="keis-bridge__quote">В сложном споре важны документы, сроки и правильно заявленные требования.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="investment-process" id="process">
+    <div class="kgx-b4__container section-container">
+      <div class="section-header k-header">
+        <div class="k-header__box">
+          <h2 class="k-title">Что поможет <span class="k-title__mark">в возврате денег</span></h2>
+          <p class="k-subtitle">Три простых действия, которые помогут быстрее разобраться в ситуации и перейти к её решению.</p>
+        </div>
+      </div>
+
+      <div class="process-steps">
+        <article class="work-step">
+          <div class="work-step-media" aria-hidden="true"></div>
+          <div class="work-step-body">
+            <div class="work-step-kicker">01 шаг</div>
+            <h3 class="work-step-title">Сохраните переписку, сделайте скриншоты</h3>
+            <p class="work-step-text">
+              Сообщения, голосовые сообщения, электронные письма и контакты людей, с которыми вы общались.
+            </p>
+          </div>
+        </article>
+
+        <article class="work-step is-reverse">
+          <div class="work-step-media" aria-hidden="true"></div>
+          <div class="work-step-body">
+            <div class="work-step-kicker">02 шаг</div>
+            <h3 class="work-step-title">Подготовьте документы по всем переводам</h3>
+            <p class="work-step-text">
+              Чеки, выписки, СБП-переводы, реквизиты карт, счетов и другие подтверждения платежей.
+            </p>
+          </div>
+        </article>
+
+        <article class="work-step">
+          <div class="work-step-media" aria-hidden="true"></div>
+          <div class="work-step-body">
+            <div class="work-step-kicker">03 шаг</div>
+            <h3 class="work-step-title">Примите решение начать возврат ваших денег</h3>
+            <p class="work-step-text">
+              Перестаньте верить обещаниям лжеброкеров, не переводите новые платежи и не ждите очередного «вывода средств». Сейчас важно остановить дальнейшие потери и начать решать вопрос по возврату денег.
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+  <!-- CASES -->
+  <section class="investment-cases case-showcase" id="cases">
+    <div class="case-showcase__head">
+      <h2>Наши <span>кейсы</span></h2>
+      <p>Отражаем состав доказательств, заявленные требования и итог рассмотрения.</p>
+    </div>
+
+    <div class="case-showcase__layout">
+      <article class="case-showcase__main">
+        <div class="case-showcase__meta">
+          <span>Брокер</span>
+          <span>Инвестиции</span>
+        </div>
+
+        <h3>Обещали доход, деньги не вывели</h3>
+
+        <p class="case-showcase__lead">Клиент переводил деньги на карты физлиц и через онлайн-банк. После просьбы вывести средства начались новые требования.</p>
+
+        <div class="case-showcase__result">
+          <span>Вернули клиенту</span>
+          <strong>1 600 000 ₽</strong>
+        </div>
+
+        <div class="case-showcase__docs">
+          <div class="case-doc">Претензия</div>
+          <div class="case-doc">Исковое заявление</div>
+          <div class="case-doc">Решение суда</div>
+          <div class="case-doc">Исполнительный лист</div>
+        </div>
+      </article>
+
+      <div class="case-showcase__rail">
+        <button class="case-showcase__item is-active" type="button" aria-label="Кейс 1" data-title="Брокер не вывел деньги" data-lead="Клиент переводил деньги на карты физлиц и через онлайн-банк. После просьбы вывести средства начались новые требования о комиссиях и налогах." data-result="1 600 000 ₽" data-duration="6 месяцев" data-tags="Карты физлиц,СБП" data-docs="Претензия,Исковое заявление,Решение суда,Исполнительный лист">
+          <span>01</span>
+          <strong>Брокер не вывел деньги</strong>
+          <em>1 600 000 ₽</em>
+        </button>
+        <button class="case-showcase__item" type="button" aria-label="Кейс 2" data-title="Потребовали налог за вывод" data-lead="Перед выводом денег клиента убедили перевести дополнительную сумму якобы для комиссии и налога. Платежи подготовили и предъявили требования получателям." data-result="1 120 000 ₽" data-duration="7 месяцев" data-tags="Комиссия,Налог" data-docs="Претензия,Исковое заявление,Решение суда,Исполнительный лист">
+          <span>02</span>
+          <strong>Потребовали “налог” за вывод</strong>
+          <em>1 120 000 ₽</em>
+        </button>
+        <button class="case-showcase__item" type="button" aria-label="Кейс 3" data-title="Выплаты прекратились после взносов" data-lead="Клиенту обещали регулярные выплаты, но после нескольких переводов связь начала пропадать. Деньги ушли на карты физлиц." data-result="1 340 000 ₽" data-duration="5 месяцев" data-tags="Карты физлиц,Выплаты" data-docs="Претензия,Исковое заявление,Решение суда,Исполнительный лист">
+          <span>03</span>
+          <strong>Выплаты прекратились после взносов</strong>
+          <em>1 340 000 ₽</em>
+        </button>
+        <button class="case-showcase__item" type="button" aria-label="Кейс 4" data-title="Прибыль показали, деньги не отдали" data-lead="В личном кабинете показывали прибыль, но вывод заблокировали. Затем потребовали страховку и комиссию, чтобы получить деньги." data-result="1 080 000 ₽" data-duration="8 месяцев" data-tags="Вывод средств,Комиссия" data-docs="Претензия,Исковое заявление,Решение суда,Исполнительный лист">
+          <span>04</span>
+          <strong>Прибыль показали, деньги не отдали</strong>
+          <em>1 080 000 ₽</em>
+        </button>
+        <button class="case-showcase__item" type="button" aria-label="Кейс 5" data-title="Счёт заблокировали после пополнений" data-lead="После серии переводов клиенту сообщили, что счёт заморожен до новых платежей. Мы собрали платежи и подготовили требования о возврате." data-result="1 210 000 ₽" data-duration="9 месяцев" data-tags="Блокировка счёта,Пополнения" data-docs="Претензия,Исковое заявление,Решение суда,Исполнительный лист">
+          <span>05</span>
+          <strong>Счёт заблокировали после пополнений</strong>
+          <em>1 210 000 ₽</em>
+        </button>
+        <button class="case-showcase__item" type="button" aria-label="Кейс 6" data-title="Договор не дали, деньги приняли" data-lead="Клиент перевёл деньги за управление активами, но договор, отчёты и реквизиты компании не предоставили. Получателей установили по банковскому следу." data-result="1 470 000 ₽" data-duration="10 месяцев" data-tags="Договор,Банковский след" data-docs="Претензия,Исковое заявление,Решение суда,Исполнительный лист">
+          <span>06</span>
+          <strong>Договор не дали, деньги приняли</strong>
+          <em>1 470 000 ₽</em>
+        </button>
+
+        <button class="case-showcase__item" type="button" aria-label="Кейс 7" data-title="Деньги ушли на карты физлиц" data-lead="Клиент переводил деньги не на счёт компании, а на личные карты получателей. Мы восстановили платежи, подготовили требования и вышли на взыскание." data-result="1 250 000 ₽" data-duration="11 месяцев" data-tags="Карты физлиц,СБП" data-docs="Претензия,Исковое заявление,Решение суда,Исполнительный лист">
+          <span>07</span>
+          <strong>Деньги ушли на карты физлиц</strong>
+          <em>1 250 000 ₽</em>
+        </button>
+        <button class="case-showcase__item" type="button" aria-label="Кейс 8" data-title="Псевдообменник принял перевод и исчез" data-lead="Клиент перевёл деньги через псевдообменник для пополнения инвестиционного кабинета. После оплаты связь прекратилась, а получатели начали скрываться." data-result="1 030 000 ₽" data-duration="6 месяцев" data-tags="Псевдообменник,Перевод" data-docs="Претензия,Исковое заявление,Решение суда,Исполнительный лист">
+          <span>08</span>
+          <strong>Псевдообменник принял перевод и исчез</strong>
+          <em>1 030 000 ₽</em>
+        </button>
+      </div>
+    </div>
+  </section>
+
+<!-- Bridge with cases counter: 1700 дел+ -->
+  <section class="keis-bridge keis-bridge--cases" aria-hidden="false">
+    <div class="keis-bridge__inner section-container">
+      <div class="keis-bridge__metric" data-bridge-counter="cases" data-target="1700">
+        <div class="keis-bridge__metric-value" data-counter-value>
+          <span class="keis-bridge__metric-number">1</span>
+          <span class="keis-bridge__metric-suffix">дел+</span>
+        </div>
+        <div class="keis-bridge__metric-sublabel">Успешно разрешенных ситуаций<br>нашим клиентам</div>
+      </div>
+      <div class="keis-bridge__panel">
+        <p class="keis-bridge__quote">Это не статистика. Это решения, которые вернули людям деньги и уверенность.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="investment-faq" id="faq">
+    <div class="kgx-b4__container section-container">
+      <div class="section-header k-header">
+        <div class="k-header__box">
+          <h2 class="k-title">Частые <span class="k-title__mark">вопросы</span></h2>
+          <p class="k-subtitle">Коротко и по делу — без воды</p>
+        </div>
+      </div>
+
+      <div class="faq-grid">
+        <div class="faq-list">
+
+          <div class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              Можно ли взыскать деньги, если они ушли на карту физлица?
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer">
+              Да, если удаётся подтвердить перевод конкретному получателю и отсутствие законного основания получения денег. В таких случаях готовится позиция о взыскании неосновательного обогащения с владельца счёта.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              Что делать, если я переводил USDT или другую криптовалюту?
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer">
+              Нужны tx hash, сеть перевода, адрес отправителя, адрес получателя, сумму, дату и переписку, где вам дали реквизиты. По этим данным можно строить цепочку движения актива.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              Можно ли найти владельца криптокошелька?
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer">
+              Сам блокчейн показывает движение средств, но не паспорт владельца. Поэтому ищется точка идентификации: биржа, обменник, P2P, банковская карта, email, телефон, IP или иной связанный аккаунт.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              Если получатель в другой стране — есть смысл начинать?
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer">
+              Да, если есть точка, через которую можно установить лицо или заблокировать актив: биржа с KYC, обменник, банк, P2P-аккаунт, имущество или юрисдикция, где возможно исполнение.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              Что делать, если брокер требует налог или комиссию перед выводом?
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer">
+              Не переводить новые деньги до юридической проверки. Требования оплатить налог, страховку, верификацию или комиссию перед выводом часто являются частью схемы.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              Нужно ли обращаться в полицию?
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer">
+              Обычно да, но заявление должно быть предметным: с реквизитами, tx hash, суммами, адресами, перепиской и конкретными просьбами о запросах в банки, биржи и обменники.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              Можно ли взыскать проценты и расходы?
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer">
+              В зависимости от выбранного способа защиты можно заявлять не только основную сумму, но и проценты за пользование чужими денежными средствами, госпошлину и расходы на представителя.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              Какие документы нужны для консультации?
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer">
+              Чеки, выписки, скриншоты личного кабинета, переписка, номера телефонов, ссылки на сайт брокера, данные карт/счетов, tx hash, адреса кошельков, заявления и ответы полиции или банков, если они уже есть.
+            </div>
+          </div>
+
+          <div class="faq-spacer" aria-hidden="true"></div>
+          <div class="faq-ask">
+            <div class="faq-ask-panel" role="group" aria-label="Задать вопрос">
+              <div class="faq-ask-copy">
+                <div class="faq-ask-title">Не нашли ответа на свой вопрос?</div>
+              </div>
+              <button type="button" class="faq-ask-btn" data-open-contact-modal>
+                <span class="faq-ask-btn__text">Нужна консультация</span>
+                <span class="faq-ask-btn__icon" aria-hidden="true">→</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+        <div class="faq-aside--visual" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reviews-section" id="reviews" data-reviews-source="/assets/reviews/reviews.json">
+  <div class="reviews-heading-card">
+    <h2 class="reviews-section__title">Отзывы наших <span class="reviews-section__title-mark">клиентов</span></h2>
+    <p class="reviews-section__subtitle">Реальные отзывы людей, которые обращались к нам за юридической помощью.</p>
+  </div>
+  <div class="reviews-panel">
+    <div class="reviews-section__top">
+    </div>
+    <div class="reviews-grid" data-reviews-grid>
+      <article class="review-card">
+        <div class="review-card__head"><img class="review-card__avatar" src="https://avatars.mds.yandex.net/get-yapic/47747/0f-6/islands-68" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"><div><h3>Андрей Кур</h3><p>Яндекс Карты</p></div><span class="review-card__rating" aria-label="5 из 5">★★★★★</span></div>
+        <p class="review-card__text">Обратился в компанию с безнадёжным вопросом. Меня внимательно выслушали и согласились помочь. За два месяца сделали то, что две другие компании не могли сделать восемь лет.</p>
+        <div class="review-card__meta"><span>28 февраля 2025</span><span>Яндекс Карты</span></div>
+      </article>
+      <article class="review-card">
+        <div class="review-card__head"><img class="review-card__avatar" src="https://avatars.mds.yandex.net/get-yapic/25358/wbflBnItpDQCErMPNmBdyhhw-1/islands-68" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"><div><h3>Екатерина Басова</h3><p>Яндекс Карты</p></div><span class="review-card__rating" aria-label="5 из 5">★★★★★</span></div>
+        <p class="review-card__text">Обратилась за помощью после неудачной покупки автомобиля. Юристы внимательно выслушали, запросили документы и предложили чёткий план действий.</p>
+        <div class="review-card__meta"><span>10 июля 2025</span><span>Яндекс Карты</span></div>
+      </article>
+      <article class="review-card">
+        <div class="review-card__head"><img class="review-card__avatar" src="https://avatars.mds.yandex.net/get-yapic/31804/8HCAgFnTgHxLuGz8TTqYTnEcI-1/islands-68" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"><div><h3>Полина Игоревна</h3><p>Яндекс Карты</p></div><span class="review-card__rating" aria-label="5 из 5">★★★★★</span></div>
+        <p class="review-card__text">Купила машину в автосалоне, а потом выяснилось, что с ней не всё гладко. Уже на первой консультации мне подробно объяснили шансы и порядок действий.</p>
+        <div class="review-card__meta"><span>10 июля 2025</span><span>Яндекс Карты</span></div>
+      </article>
+      <article class="review-card">
+        <div class="review-card__head"><img class="review-card__avatar" src="https://avatars.mds.yandex.net/get-yapic/26057/0k-9/islands-68" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"><div><h3>Rebekka 100</h3><p>Яндекс Карты</p></div><span class="review-card__rating" aria-label="5 из 5">★★★★★</span></div>
+        <p class="review-card__text">Спасибо «Кейсу» за помощь с возвратом денег по незаконно оформленному кредиту. Всё объясняли понятно и по делу.</p>
+        <div class="review-card__meta"><span>8 февраля 2025</span><span>Яндекс Карты</span></div>
+      </article>
+    </div>
+    <a class="reviews-section__map-link reviews-map-link" href="https://yandex.ru/maps/org/keys/64216225429/reviews/" target="_blank" rel="noopener noreferrer"><span>Смотреть все отзывы на</span><img src="/assets/icons/yandex-map-pin-original.svg" class="reviews-map-link__icon" alt="" aria-hidden="true"><span>Яндекс.Картах</span><span class="reviews-map-link__arrow">→</span></a>
+  </div>
+</section>
+
+    <footer class="site-footer" id="about">
+  <div id="bottom-cta" aria-hidden="true"></div>
+  <div class="site-footer__cab" aria-hidden="true">
+  <img
+    class="site-footer__cab-image"
+    src="/assets/block/cab-podval.webp"
+    alt=""
+    loading="lazy"
+    decoding="async"
+  >
+</div>
+  <div class="site-footer__map" aria-hidden="true">
+  <img
+    class="site-footer__map-image"
+    src="/assets/block/map-podval.webp"
+    alt=""
+    loading="lazy"
+    decoding="async"
+  >
+  <img
+    src="/assets/block/footer-map-overlay.svg"
+    alt=""
+    class="site-footer__map-overlay"
+    loading="lazy"
+    decoding="async"
+    fetchpriority="low"
+  >
+
+  <svg class="site-footer__map-pins" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <g class="footer-anim-stage" role="presentation">
+        <g class="footer-pin footer-pin-office" role="presentation">
+          <circle class="footer-pin__dot" cx="0" cy="0" r="11"></circle>
+        </g>
+        <g class="footer-pin-office-label" role="presentation">
+          <text class="footer-pin__label" x="0" y="0">Кейс</text>
+        </g>
+        <g class="footer-pin-office-address" role="presentation">
+          <text class="footer-pin__label footer-pin__label--sub" x="0" y="0">Большая Пушкарская, 41</text>
+        </g>
+        <g class="footer-pin-streets" role="presentation">
+          <text class="footer-pin__street footer-pin__street--ordinary" x="0" y="0">ОРДИНАРНАЯ УЛ.</text>
+          <text class="footer-pin__street footer-pin__street--kamennoostrovsky" x="0" y="0">КАМЕННООСТРОВСКИЙ ПРОСП.</text>
+          <text class="footer-pin__street footer-pin__street--bolshaya" x="0" y="0">БОЛЬШАЯ ПУШКАРСКАЯ</text>
+          <text class="footer-pin__street footer-pin__street--bolshoy" x="0" y="0">БОЛЬШОЙ ПРОСПЕКТ П.С.</text>
+        </g>
+        <g class="footer-pin footer-pin-metro" role="presentation">
+          <circle class="footer-pin__dot" cx="0" cy="0" r="9"></circle>
+        </g>
+        <g class="footer-pin-metro-label" role="presentation">
+          <text class="footer-pin__label" x="0" y="0">м. Петроградская</text>
+        </g>
+        <g class="footer-pin-walk-route" role="presentation">
+          <path class="footer-pin-walk-route__path footer-pin-walk-route__path--left" data-walk-route="a" d="M598 80 L690 260"></path>
+          <path class="footer-pin-walk-route__path footer-pin-walk-route__path--right" data-walk-route="a" d="M598 80 L690 260"></path>
+          <path class="footer-pin-walk-route__path footer-pin-walk-route__path--left" data-walk-route="b" d="M690 260 L603 376"></path>
+          <path class="footer-pin-walk-route__path footer-pin-walk-route__path--right" data-walk-route="b" d="M690 260 L603 376"></path>
+        </g>
+        <g class="footer-motion-walker" role="presentation">
+          <circle class="footer-motion-walker__head" cx="0" cy="-16" r="4.5"></circle>
+          <path class="footer-motion-walker__body" d="M-2 -10 C4 -10 8 -7 10 -2 C12 3 15 6 18 8 C20 10 20 13 18 15 C16 17 13 17 11 15 C8 12 5 9 3 5 L2 13 C5 16 8 20 10 25 C11 28 10 31 7 32 C4 33 2 31 1 28 L-3 19 L-7 26 C-9 30 -11 33 -14 34 C-17 35 -20 33 -20 30 C-20 28 -18 26 -17 24 C-14 20 -12 15 -11 10 L-10 1 C-12 4 -13 8 -15 13 C-16 16 -19 17 -21 15 C-23 14 -23 11 -22 9 C-20 3 -18 -3 -15 -7 C-12 -10 -7 -10 -2 -10 Z"></path>
+          <path class="footer-motion-walker__cut" d="M1 13 C-2 15 -5 17 -8 20"></path>
+          <path class="footer-motion-walker__glow" d="M-10 1 C-12 4 -13 8 -15 13"></path>
+        </g>
+        <g class="footer-pin-walk-time" role="presentation">
+          <g class="footer-pin-walk-time__clock" aria-hidden="true">
+            <circle class="footer-pin-walk-time__clock-face" cx="-21" cy="2" r="14"></circle>
+            <circle class="footer-pin-walk-time__clock-center" cx="-21" cy="2" r="2.2"></circle>
+            <path class="footer-pin-walk-time__clock-tick" d="M-21 -9 V-14 M-21 13 V18 M-32 2 H-37 M-10 2 H-5"></path>
+            <path class="footer-pin-walk-time__clock-hand footer-pin-walk-time__clock-hand--minute" d="M-21 2 L-21 -8"></path>
+            <path class="footer-pin-walk-time__clock-hand footer-pin-walk-time__clock-hand--hour" d="M-21 2 L-13 2"></path>
+          </g>
+          <text class="footer-pin__label footer-pin__label--walk-time" x="0" y="0">
+            <tspan x="0" dy="0">5 минут</tspan>
+            <tspan x="0" dy="18">пешком</tspan>
+          </text>
+        </g>
+        <g class="footer-pin-car-route" role="presentation">
+          <path class="footer-pin-car-route__path footer-pin-car-route__path--left" data-car-route="main" d="M520 475 L602 393 Q622 370 667 392"></path>
+          <path class="footer-pin-car-route__path footer-pin-car-route__path--right" data-car-route="main" d="M520 475 L602 393 Q622 370 667 392"></path>
+        </g>
+        <g class="footer-motion-car" role="presentation">
+          <g class="footer-motion-car__shape">
+          <path class="footer-motion-car__body" d="M-15 0 C-15 -3 -12 -5 -9 -6 L-4 -11 C-2 -13 1 -14 4 -14 H10 C13 -14 15 -13 17 -11 L24 -4 C28 -3 31 0 32 3 L32 8 C32 11 30 13 27 13 H22 C21 18 17 21 12 21 C7 21 3 18 2 13 H-8 C-9 18 -13 21 -18 21 C-23 21 -27 18 -28 13 H-30 C-33 13 -35 11 -35 8 V3 C-35 0 -32 -2 -29 -3 L-22 -4 C-19 -5 -17 -7 -15 -9 Z"></path>
+          <path class="footer-motion-car__window footer-motion-car__window--rear" d="M-16 -4 L-5 -11 H-1 V-4 Z"></path>
+          <path class="footer-motion-car__window footer-motion-car__window--front" d="M3 -11 H10 C12 -11 13 -10 15 -8 L19 -4 H3 Z"></path>
+          <path class="footer-motion-car__door" d="M0 -11 V3"></path>
+          <path class="footer-motion-car__handle footer-motion-car__handle--rear" d="M-20 1 H-17"></path>
+          <path class="footer-motion-car__handle footer-motion-car__handle--front" d="M6 1 H10"></path>
+          <circle class="footer-motion-car__wheel" cx="-18" cy="13" r="5"></circle>
+          <circle class="footer-motion-car__wheel-inner" cx="-18" cy="13" r="2.4"></circle>
+          <circle class="footer-motion-car__wheel" cx="12" cy="13" r="5"></circle>
+          <circle class="footer-motion-car__wheel-inner" cx="12" cy="13" r="2.4"></circle>
+          <path class="footer-motion-car__light footer-motion-car__light--rear" d="M-34 3 H-31 V8 H-34"></path>
+          <path class="footer-motion-car__light footer-motion-car__light--front" d="M29 3 H32 V8 H29"></path>
+          </g>
+        </g>
+        <g class="footer-pin-parking-label" role="presentation">
+          <g class="footer-pin-parking-label__barrier">
+            <path class="footer-pin-parking-label__barrier-post" d="M-30 -14 V18"></path>
+            <path class="footer-pin-parking-label__barrier-base" d="M-37 18 H-23"></path>
+            <g class="footer-pin-parking-label__barrier-arm-group">
+              <path class="footer-pin-parking-label__barrier-arm" d="M-30 -9 L6 -9"></path>
+              <path class="footer-pin-parking-label__barrier-stripe" d="M-21 -9 L-16 -9 M-7 -9 L-2 -9"></path>
+            </g>
+            <circle class="footer-pin-parking-label__barrier-joint" cx="-30" cy="-9" r="3.4"></circle>
+          </g>
+          <text class="footer-pin__label footer-pin__label--parking" x="0" y="0">
+            <tspan x="10" dy="0">Во дворе</tspan>
+            <tspan x="0" dy="18">бесплатная</tspan>
+            <tspan x="0" dy="18">парковка</tspan>
+          </text>
+        </g>
+      </g>
+    </svg>
+
+</div>
+  <div class="site-footer__content">
+  <div class="site-footer__inner site-footer__sections">
+    <div class="site-footer__col site-footer__brand-col site-footer__about site-footer__section footer-section">
+      <img class="site-footer__logo" src="/assets/head/head_logo.webp" alt="КЕЙС — юридическая компания" loading="lazy" decoding="async">
+      <h2 class="site-footer__title footer-section-title">О НАС</h2>
+      <p class="site-footer__text site-footer__about-text">Работаем со сложными делами и защищаем интересы клиентов на всех этапах — от первой консультации до исполнения решения.</p>
+      <ul class="site-footer__about-points" aria-label="Принципы работы">
+        <li><span class="site-footer__about-point-dot" aria-hidden="true"></span><span>Без скрытых условий</span></li>
+        <li><span class="site-footer__about-point-dot" aria-hidden="true"></span><span>Не обещаем невозможного</span></li>
+        <li><span class="site-footer__about-point-dot" aria-hidden="true"></span><span>Оплата за честный результат</span></li>
+      </ul>
+      <div class="site-footer__place site-footer__location"><span class="site-footer__location-line site-footer__about-line"><svg class="footer-russia-svg footer-russia-spb" viewBox="0 0 22 22" aria-hidden="true" focusable="false"><path class="footer-russia-spb-pin" d="M11 2.7c-3.35 0-6.05 2.66-6.05 5.97 0 4.36 6.05 10.63 6.05 10.63s6.05-6.27 6.05-10.63c0-3.31-2.7-5.97-6.05-5.97zm0 8.25a2.28 2.28 0 1 1 0-4.56 2.28 2.28 0 0 1 0 4.56z"/><path class="footer-russia-outline" d="M3.2 20.1h15.6"/></svg><span class="footer-russia-caption">Санкт-Петербург</span></span><div class="site-footer__coverage-row site-footer__coverage-row--russia site-footer__about-line"><svg class="footer-russia-svg" viewBox="0 0 72 30" aria-hidden="true" focusable="false"><path class="footer-russia-outline" d="M3.1 14.8l4.7-4.2 5.5.7 3.1-2.9 5.7 1.5 3.3-3.7 4.6 1.1 5.5-2.4 4.4 3.6 6.2-.8 3.1 3.5 4.9.6 2.8 4.2 6.8.4 3.4 3.1-2.1 4-6.9.8-2.8 2.3-4.6-.9-3.2 2.6-6.5-.7-3.4 2.8-4.9-2.2-5.2 1.5-3.5-2.5-5.8 1.1-3.5-3.5-6-.3z"/></svg><span class="footer-russia-caption">Работаем по всей России</span></div></div>
+    </div>
+    <nav class="site-footer__col site-footer__directions site-footer__section footer-section footer-directions" aria-label="Направления работы">
+      <h2 class="site-footer__title footer-section-title">НАПРАВЛЕНИЯ</h2>
+      <ul class="site-footer__list">
+        <li><a class="site-footer__direction-link" href="/scam/"><span class="site-footer__direction-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><path d="M5.2 2.8L10.8 8l-5.6 5.2-1.2-1.3L8.2 8 4 4.1z"/></svg></span><span>Вернём деньги от мошенников</span></a></li>
+        <li><a class="site-footer__direction-link" href="/zpp/"><span class="site-footer__direction-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><path d="M5.2 2.8L10.8 8l-5.6 5.2-1.2-1.3L8.2 8 4 4.1z"/></svg></span><span>Оспорим навязанные услуги</span></a></li>
+        <li><a class="site-footer__direction-link" href="/scam/hack/"><span class="site-footer__direction-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><path d="M5.2 2.8L10.8 8l-5.6 5.2-1.2-1.3L8.2 8 4 4.1z"/></svg></span><span>Разберёмся с кредитом</span></a></li>
+        
+      </ul>
+    </nav>
+    <div class="site-footer__col site-footer__contacts site-footer__section footer-section">
+      <h2 class="site-footer__title footer-section-title">КОНТАКТЫ</h2>
+      <a class="site-footer__contact site-footer__contact-link site-footer__phone-link" href="tel:88003004624"><span class="site-footer__contact-icon site-footer__contact-icon--phone" aria-hidden="true"></span>8 (800) 300-46-24</a>
+      <a class="site-footer__contact site-footer__contact-link site-footer__telegram-link" href="https://t.me/zhenyatyazh" target="_blank" rel="noopener noreferrer"><span class="site-footer__contact-icon site-footer__contact-icon--telegram" aria-hidden="true"></span>Наш Telegram</a>
+      <a class="site-footer__contact site-footer__contact-link site-footer__max-link" href="https://max.ru/u/f9LHodD0cOLH3IC7AKJdDsOjA00hlbLGnXCHM8opJfBz99jA10sHad-_duU" target="_blank" rel="noopener noreferrer"><svg class="site-footer__contact-icon site-footer__contact-icon--max" viewBox="0 0 720 720" aria-hidden="true" focusable="false"><path fill="currentColor" d="M350.4,9.6C141.8,20.5,4.1,184.1,12.8,390.4c3.8,90.3,40.1,168,48.7,253.7,2.2,22.2-4.2,49.6,21.4,59.3,31.5,11.9,79.8-8.1,106.2-26.4,9-6.1,17.6-13.2,24.2-22,27.3,18.1,53.2,35.6,85.7,43.4,143.1,34.3,299.9-44.2,369.6-170.3C799.6,291.2,622.5-4.6,350.4,9.6h0ZM269.4,504c-11.3,8.8-22.2,20.8-34.7,27.7-18.1,9.7-23.7-.4-30.5-16.4-21.4-50.9-24-137.6-11.5-190.9,16.8-72.5,72.9-136.3,150-143.1,78-6.9,150.4,32.7,183.1,104.2,72.4,159.1-112.9,316.2-256.4,218.6h0Z"/></svg>Мы в MAX</a>
+      <a class="site-footer__contact site-footer__contact-link site-footer__map-link site-footer__map-open" href="https://yandex.ru/maps/org/keys/64216225429/" target="_blank" rel="noopener noreferrer"><img src="/assets/icons/yandex-map-pin-keis.svg" class="site-footer__icon site-footer__map-link-icon" alt="" aria-hidden="true"><span>Кейс, открыть в Яндекс.Картах</span></a>
+      <a class="site-footer__button" href="#" data-open-contact-modal>Написать нам</a>
+    </div>
+  </div>
+  <div class="site-footer__bottom">
+    <div class="site-footer__location site-footer__location--bottom"><div class="site-footer__place site-footer__location"><span class="site-footer__location-line site-footer__about-line"><svg class="footer-russia-svg footer-russia-spb" viewBox="0 0 22 22" aria-hidden="true" focusable="false"><path class="footer-russia-spb-pin" d="M11 2.7c-3.35 0-6.05 2.66-6.05 5.97 0 4.36 6.05 10.63 6.05 10.63s6.05-6.27 6.05-10.63c0-3.31-2.7-5.97-6.05-5.97zm0 8.25a2.28 2.28 0 1 1 0-4.56 2.28 2.28 0 0 1 0 4.56z"/><path class="footer-russia-outline" d="M3.2 20.1h15.6"/></svg><span class="footer-russia-caption">Санкт-Петербург</span></span><div class="site-footer__coverage-row site-footer__coverage-row--russia site-footer__about-line"><svg class="footer-russia-svg" viewBox="0 0 72 30" aria-hidden="true" focusable="false"><path class="footer-russia-outline" d="M3.1 14.8l4.7-4.2 5.5.7 3.1-2.9 5.7 1.5 3.3-3.7 4.6 1.1 5.5-2.4 4.4 3.6 6.2-.8 3.1 3.5 4.9.6 2.8 4.2 6.8.4 3.4 3.1-2.1 4-6.9.8-2.8 2.3-4.6-.9-3.2 2.6-6.5-.7-3.4 2.8-4.9-2.2-5.2 1.5-3.5-2.5-5.8 1.1-3.5-3.5-6-.3z"/></svg><span class="footer-russia-caption">Работаем по всей России</span></div></div></div>
+    <div class="site-footer__bottom-inner site-footer__legal">
+      <div class="site-footer__legal-line site-footer__legal-line--main"><span class="site-footer__legal-mark" aria-hidden="true">©</span> 2019 ООО «Креатор Групп»</div>
+      <div class="site-footer__legal-line site-footer__legal-line--inn">ИНН 7839122570</div>
+      <div class="site-footer__legal-line site-footer__legal-line--links"><a href="/privacy-policy.html">Политика конфиденциальности</a> <a href="/cookies/">Политика использования cookie</a></div>
+    </div>
+  </div>
+  </div>
+</footer>
+
+
+
+  <!-- CONTACT MODAL -->
+  <div class="keis-modal" id="contactModal" aria-hidden="true">
+    <div class="keis-modal__overlay" data-close-contact-modal aria-hidden="true"></div>
+
+    <div class="keis-modal__panel" role="dialog" aria-modal="true" aria-label="Форма обратной связи">
+      <button type="button" class="keis-modal__close" data-close-contact-modal aria-label="Закрыть">×</button>
+
+      <div class="keis-modal__head">
+        <h3 class="keis-modal__title">Юрист свяжется с вами в течение 5 минут</h3>
+        <p class="keis-modal__subtitle">Изучим документы, объясним порядок действий и подготовим требования.</p>
+      </div>
+
+      <div class="hero-form-divider" aria-hidden="true"></div>
+
+      <form class="hero-form hero-form--modal" action="/api/telegram.php" method="POST">
+        <div class="hero-form-row">
+          <div class="hero-form-group">
+            <label for="modal-name">Ваше имя</label>
+            <input type="text" id="modal-name" name="name" placeholder="Как к вам обращаться" required>
+          </div>
+
+          <div class="hero-form-group">
+            <label for="modal-phone">Телефон</label>
+            <input type="tel" id="modal-phone" name="phone" inputmode="numeric" placeholder="Ваш номер" maxlength="16" required>
+          </div>
+        </div>
+
+        <div class="hero-form-group">
+          <label for="modal-case">Кратко о ситуации</label>
+          <textarea id="modal-case" name="message" rows="4" placeholder="Опишите, что произошло и на каком этапе сейчас ваше дело" required></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary">Получить консультацию</button>
+
+        <p class="hero-form-disclaimer form-consent">
+          Отправляя форму, вы соглашаетесь с <a class="legal-link form-consent__link" href="/privacy-policy.html">политикой конфиденциальности и обработкой персональных данных.</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- SUCCESS MODAL -->
+  <div class="keis-success-modal" id="successModal" aria-hidden="true">
+    <div class="keis-success-modal__overlay" data-close-success-modal aria-hidden="true"></div>
+    <div class="keis-success-modal__panel" role="dialog" aria-modal="true" aria-label="Подтверждение отправки">
+      <button type="button" class="keis-success-modal__close" data-close-success-modal aria-label="Закрыть">×</button>
+      <div class="keis-success-modal__content">
+        <h3 class="keis-success-modal__title">Ваша заявка отправлена</h3>
+        <div class="hero-form-divider" aria-hidden="true"></div>
+        <p class="keis-success-modal__text">С вами свяжутся в течение 5 минут, ожидайте звонка, держите телефон при себе</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../script.js" defer></script>
+
+  <!-- JivoChat Widget (temporarily disabled for footer map debugging) -->
+  <!-- <script src="https://code.jivo.ru/widget/CgMP7mbMCA" async></script> -->
+</body>
+</html>

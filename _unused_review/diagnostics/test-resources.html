@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>KXchat Resources Test</title>
+  <style>
+    body { font-family: monospace; background: #222; color: #ddd; padding: 20px; }
+    .section { background: #333; padding: 15px; margin: 15px 0; border-left: 3px solid #0f7; }
+    .error { color: #f44; }
+    .success { color: #0f7; }
+    code { background: #1a1a1a; padding: 2px 4px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<h1>KXchat Resources Loading Test</h1>
+
+<div class="section">
+  <h3>1. Testing Path Resolution</h3>
+  <p>Current page: <code id="location"></code></p>
+  <p>Expected CSS path: <code>/assets/kxchat/kxchat-widget.css</code></p>
+  <p>Expected Config path: <code>/assets/kxchat/kxchat-config.js</code></p>
+  <p>Expected Widget path from scam/broker/:  <code>../../assets/kxchat/kxchat-widget.js</code> → <code>/assets/kxchat/kxchat-widget.js</code></p>
+</div>
+
+<div class="section">
+  <h3>2. Simulating scam/broker/index.html paths</h3>
+  <p id="pathtest"></p>
+</div>
+
+<div class="section">
+  <h3>3. Testing window globals after injection</h3>
+  <div id="globals"></div>
+</div>
+
+<div class="section">
+  <h3>4. Testing DOM elements after injection</h3>
+  <div id="domtest"></div>
+</div>
+
+<script>
+document.getElementById('location').textContent = location.href;
+
+// Test path resolution
+const testPath = {
+  'From scam/broker/index.html': '../../assets/kxchat/kxchat-widget.js',
+  'Resolves to': new URL('../../assets/kxchat/kxchat-widget.js', 'http://127.0.0.1:5507/scam/broker/index.html').href,
+  'Should equal': 'http://127.0.0.1:5507/assets/kxchat/kxchat-widget.js'
+};
+
+let pathHtml = '<pre>';
+for (const [key, val] of Object.entries(testPath)) {
+  pathHtml += `${key}: ${val}\n`;
+}
+pathHtml += '</pre>';
+document.getElementById('pathtest').innerHTML = pathHtml;
+
+// Load KXchat resources dynamically and test
+const links = Array.from(document.querySelectorAll('link'));
+const scripts = Array.from(document.scripts);
+
+console.log('=== Current page resources ===');
+console.log('Links:', links.length);
+console.log('Scripts:', scripts.length);
+
+// Inject KXchat resources
+const cssLink = document.createElement('link');
+cssLink.rel = 'stylesheet';
+cssLink.href = '/assets/kxchat/kxchat-widget.css';
+cssLink.onerror = () => console.error('CSS failed to load:', cssLink.href);
+cssLink.onload = () => console.log('CSS loaded:', cssLink.href);
+document.head.appendChild(cssLink);
+
+const configScript = document.createElement('script');
+configScript.src = '/assets/kxchat/kxchat-config.js';
+configScript.onerror = () => console.error('Config failed:', configScript.src);
+configScript.onload = () => console.log('Config loaded:', configScript.src);
+document.head.appendChild(configScript);
+
+const widgetScript = document.createElement('script');
+widgetScript.src = '/assets/kxchat/kxchat-widget.js';
+widgetScript.onerror = () => console.error('Widget failed:', widgetScript.src);
+widgetScript.onload = () => console.log('Widget loaded:', widgetScript.src);
+document.head.appendChild(widgetScript);
+
+// Check global after a delay
+setTimeout(() => {
+  let globalsHtml = '<table border="1" cellpadding="5"><tr><th>Variable</th><th>Value</th></tr>';
+  globalsHtml += `<tr><td>window.KXCHAT_CONFIG</td><td>${window.KXCHAT_CONFIG ? 'LOADED' : '<span class="error">NOT FOUND</span>'}</td></tr>`;
+  globalsHtml += `<tr><td>window.KXchatWidget</td><td>${window.KXchatWidget ? 'LOADED' : '<span class="error">NOT FOUND</span>'}</td></tr>`;
+  globalsHtml += `<tr><td>document.getElementById("kxchat-launcher")</td><td>${document.getElementById('kxchat-launcher') ? '<span class="success">FOUND</span>' : '<span class="error">NOT FOUND</span>'}</td></tr>`;
+  globalsHtml += `<tr><td>document.getElementById("kxchat-widget")</td><td>${document.getElementById('kxchat-widget') ? '<span class="success">FOUND</span>' : '<span class="error">NOT FOUND</span>'}</td></tr>`;
+  globalsHtml += '</table>';
+  document.getElementById('globals').innerHTML = globalsHtml;
+  
+  const launcher = document.getElementById('kxchat-launcher');
+  const widget = document.getElementById('kxchat-widget');
+  
+  let domHtml = '<p>';
+  if (launcher) {
+    const cs = getComputedStyle(launcher);
+    domHtml += `<strong>Launcher visible:</strong> display=${cs.display}, opacity=${cs.opacity}, visibility=${cs.visibility}<br>`;
+  }
+  if (widget) {
+    const cs = getComputedStyle(widget);
+    domHtml += `<strong>Widget visible:</strong> display=${cs.display}, opacity=${cs.opacity}, visibility=${cs.visibility}<br>`;
+  }
+  if (!launcher && !widget) {
+    domHtml += '<span class="error">NO KXchat ELEMENTS FOUND IN DOM</span>';
+  }
+  domHtml += '</p>';
+  document.getElementById('domtest').innerHTML = domHtml;
+}, 2000);
+
+// Log everything
+setTimeout(() => {
+  console.log('=== Final check ===');
+  console.log('window.KXCHAT_CONFIG:', window.KXCHAT_CONFIG);
+  console.log('window.KXchatWidget:', window.KXchatWidget);
+  console.log('launcher element:', document.getElementById('kxchat-launcher'));
+  console.log('widget element:', document.getElementById('kxchat-widget'));
+}, 3000);
+</script>
+</body>
+</html>

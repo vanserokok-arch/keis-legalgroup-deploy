@@ -1,0 +1,110 @@
+[
+  {
+    "page": "/news/",
+    "viewport": "1440x900",
+    "mapExists": true,
+    "iframeExists": true,
+    "src": "https://yandex.ru/map-widget/v1/?lang=ru_RU&scroll=false&source=constructor-api&um=constructor%3Af17f65a6621225d3835104480ab4749b6b697a2a7bd7cec797b7c987e7221db5",
+    "scrollFalse": true,
+    "noFixed800x400": true,
+    "iframeRect": {
+      "w": 864,
+      "h": 417
+    },
+    "jivo": true,
+    "kx": false,
+    "consoleErrors": 0,
+    "pageErrors": 0,
+    "screenshot": "artifacts/footer-map-check/news-desktop-final.png"
+  },
+  {
+    "page": "/news/",
+    "viewport": "375x812",
+    "mapExists": true,
+    "iframeExists": true,
+    "src": "https://yandex.ru/map-widget/v1/?lang=ru_RU&scroll=false&source=constructor-api&um=constructor%3Af17f65a6621225d3835104480ab4749b6b697a2a7bd7cec797b7c987e7221db5",
+    "scrollFalse": true,
+    "noFixed800x400": true,
+    "iframeRect": {
+      "w": 375,
+      "h": 1138
+    },
+    "jivo": true,
+    "kx": false,
+    "consoleErrors": 0,
+    "pageErrors": 0,
+    "screenshot": "artifacts/footer-map-check/news-mobile-final.png"
+  },
+  {
+    "page": "/scam/hack/",
+    "viewport": "1440x900",
+    "mapExists": true,
+    "iframeExists": true,
+    "src": "https://yandex.ru/map-widget/v1/?lang=ru_RU&scroll=false&source=constructor-api&um=constructor%3Af17f65a6621225d3835104480ab4749b6b697a2a7bd7cec797b7c987e7221db5",
+    "scrollFalse": true,
+    "noFixed800x400": true,
+    "iframeRect": {
+      "w": 864,
+      "h": 417
+    },
+    "jivo": true,
+    "kx": false,
+    "consoleErrors": 0,
+    "pageErrors": 0,
+    "screenshot": "artifacts/footer-map-check/scam-hack-desktop-final.png"
+  },
+  {
+    "page": "/scam/hack/",
+    "viewport": "375x812",
+    "mapExists": true,
+    "iframeExists": true,
+    "src": "https://yandex.ru/map-widget/v1/?lang=ru_RU&scroll=false&source=constructor-api&um=constructor%3Af17f65a6621225d3835104480ab4749b6b697a2a7bd7cec797b7c987e7221db5",
+    "scrollFalse": true,
+    "noFixed800x400": true,
+    "iframeRect": {
+      "w": 375,
+      "h": 1144
+    },
+    "jivo": true,
+    "kx": false,
+    "consoleErrors": 0,
+    "pageErrors": 0,
+    "screenshot": "artifacts/footer-map-check/scam-hack-mobile-final.png"
+  },
+  {
+    "page": "/zpp/renovation/",
+    "viewport": "1440x900",
+    "mapExists": true,
+    "iframeExists": true,
+    "src": "https://yandex.ru/map-widget/v1/?lang=ru_RU&scroll=false&source=constructor-api&um=constructor%3Af17f65a6621225d3835104480ab4749b6b697a2a7bd7cec797b7c987e7221db5",
+    "scrollFalse": true,
+    "noFixed800x400": true,
+    "iframeRect": {
+      "w": 864,
+      "h": 417
+    },
+    "jivo": true,
+    "kx": false,
+    "consoleErrors": 0,
+    "pageErrors": 0,
+    "screenshot": "artifacts/footer-map-check/zpp-renovation-desktop-final.png"
+  },
+  {
+    "page": "/zpp/renovation/",
+    "viewport": "375x812",
+    "mapExists": true,
+    "iframeExists": true,
+    "src": "https://yandex.ru/map-widget/v1/?lang=ru_RU&scroll=false&source=constructor-api&um=constructor%3Af17f65a6621225d3835104480ab4749b6b697a2a7bd7cec797b7c987e7221db5",
+    "scrollFalse": true,
+    "noFixed800x400": true,
+    "iframeRect": {
+      "w": 375,
+      "h": 1144
+    },
+    "jivo": true,
+    "kx": false,
+    "consoleErrors": 0,
+    "pageErrors": 0,
+    "screenshot": "artifacts/footer-map-check/zpp-renovation-mobile-final.png"
+  }
+]

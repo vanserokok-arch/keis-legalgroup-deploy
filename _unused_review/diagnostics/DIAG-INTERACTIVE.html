@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KXchat Diagnostic Page</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; background: #0d1117; color: #c9d1d9; font-family: 'Monaco', monospace; }
+    .diagnostic-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      background: #0d1117;
+      z-index: 999999999;
+    }
+    .header {
+      background: #161b22;
+      padding: 15px;
+      border-bottom: 2px solid #58a6ff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 {
+      color: #58a6ff;
+      font-size: 16px;
+    }
+    .close-btn {
+      background: #58a6ff;
+      color: #0d1117;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+    }
+    .log-entry {
+      margin: 3px 0;
+      padding: 4px 0;
+      font-size: 12px;
+      line-height: 1.4;
+      border-left: 3px solid transparent;
+      padding-left: 8px;
+    }
+    .log-boot { color: #58a6ff; border-left-color: #58a6ff; }
+    .log-create { color: #79c0ff; border-left-color: #79c0ff; }
+    .log-init { color: #a3b9ff; border-left-color: #a3b9ff; }
+    .log-error { color: #f85149; border-left-color: #f85149; font-weight: bold; }
+    .log-success { color: #3fb950; border-left-color: #3fb950; }
+    .log-warn { color: #d29922; border-left-color: #d29922; }
+    .log-info { color: #8b949e; border-left-color: #8b949e; }
+    .section-title {
+      color: #79c0ff;
+      font-weight: bold;
+      margin: 15px 0 8px 0;
+      padding: 8px 0;
+      border-top: 1px solid #30363d;
+    }
+    .status-box {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 4px;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    .status-ok { border-left: 3px solid #3fb950; }
+    .status-error { border-left: 3px solid #f85149; }
+    #target-page {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="diagnostic-panel">
+  <div class="header">
+    <h1>🔍 KXchat Diagnostic Console</h1>
+    <button class="close-btn" onclick="closePanel()">Close Panel</button>
+  </div>
+  <div class="content" id="logs"></div>
+</div>
+
+<iframe id="target-page" src="http://127.0.0.1:5507/scam/broker/index.html"></iframe>
+
+<script>
+const logsDiv = document.getElementById('logs');
+const logs = [];
+
+function log(msg, type = 'info') {
+  logs.push({ msg, type });
+  render();
+  console.log(`[${type.toUpperCase()}] ${msg}`);
+}
+
+function render() {
+  const html = logs.map(entry => {
+    let className = 'log-' + entry.type;
+    return `<div class="log-entry ${className}">${escapeHtml(entry.msg)}</div>`;
+  }).join('');
+  logsDiv.innerHTML = html;
+  logsDiv.scrollTop = logsDiv.scrollHeight;
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function closePanel() {
+  document.querySelector('.diagnostic-panel').style.display = 'none';
+  document.getElementById('target-page').style.display = 'block';
+}
+
+function showTargetPage() {
+  document.querySelector('.diagnostic-panel').style.display = 'none';
+  document.getElementById('target-page').style.display = 'block';
+}
+
+// Start diagnostics
+log('=== KXchat Diagnostic Started ===', 'boot');
+log('Time: ' + new Date().toISOString(), 'info');
+
+// Wait for iframe to load
+const iframe = document.getElementById('target-page');
+
+iframe.onload = function() {
+  try {
+    const win = iframe.contentWindow;
+    const doc = iframe.contentDocument;
+
+    log('', 'info');
+    log('=== TARGET PAGE LOADED ===', 'boot');
+    log('URL: ' + doc.location.href, 'info');
+
+    // Intercept console of target page
+    const originalLog = win.console.log;
+    const originalError = win.console.error;
+    const originalWarn = win.console.warn;
+
+    win.console.log = function(...args) {
+      const msg = args.join(' ');
+      if (msg.includes('[KXCHAT')) {
+        log(msg, msg.includes('ERROR') ? 'error' : msg.includes('WARN') ? 'warn' : 'init');
+      }
+      if (originalLog) originalLog.apply(win.console, args);
+    };
+
+    win.console.error = function(...args) {
+      const msg = args.join(' ');
+      log('ERROR: ' + msg, 'error');
+      if (originalError) originalError.apply(win.console, args);
+    };
+
+    win.console.warn = function(...args) {
+      const msg = args.join(' ');
+      log('WARN: ' + msg, 'warn');
+      if (originalWarn) originalWarn.apply(win.console, args);
+    };
+
+    // Analysis function
+    function analyze() {
+      log('', 'info');
+      log('=== DOM STATE ANALYSIS ===', 'create');
+
+      const launcher = doc.getElementById('kxchat-launcher');
+      const widget = doc.getElementById('kxchat-widget');
+      const allKxchat = doc.querySelectorAll('[id^="kxchat"]');
+
+      log(`launcher element: ${launcher ? 'FOUND' : 'NOT FOUND'}`, launcher ? 'success' : 'error');
+      log(`widget element: ${widget ? 'FOUND' : 'NOT FOUND'}`, widget ? 'success' : 'error');
+      log(`Total KXchat elements: ${allKxchat.length}`, allKxchat.length > 0 ? 'success' : 'error');
+
+      if (allKxchat.length > 0) {
+        log('', 'info');
+        log('Elements found:', 'success');
+        allKxchat.forEach((el, i) => {
+          log(`  ${i}: <${el.tagName}> id="${el.id}"`, 'info');
+        });
+      }
+
+      // Check globals
+      log('', 'info');
+      log('=== WINDOW GLOBALS ===', 'create');
+      log(`window.KXchatWidget: ${win.KXchatWidget ? 'TRUE' : 'NOT SET'}`, win.KXchatWidget ? 'success' : 'error');
+      log(`window.KXCHAT_CONFIG: ${win.KXCHAT_CONFIG ? 'LOADED' : 'NOT SET'}`, win.KXCHAT_CONFIG ? 'success' : 'error');
+
+      // Check styles if elements exist
+      if (launcher || widget) {
+        log('', 'info');
+        log('=== COMPUTED STYLES ===', 'create');
+
+        if (launcher) {
+          const cs = win.getComputedStyle(launcher);
+          const visible = cs.display !== 'none' && cs.visibility !== 'hidden' && parseFloat(cs.opacity) > 0.1;
+          log(`launcher: display=${cs.display}, opacity=${cs.opacity}, visible=${visible}`, visible ? 'success' : 'warn');
+        }
+
+        if (widget) {
+          const cs = win.getComputedStyle(widget);
+          log(`widget: display=${cs.display}, opacity=${cs.opacity}`, 'info');
+        }
+      }
+
+      // Root cause
+      log('', 'info');
+      log('=== ROOT CAUSE ===', 'error');
+      if (allKxchat.length === 0) {
+        log('CRITICAL: No KXchat elements in DOM', 'error');
+        log('Possible causes:', 'error');
+        log('  1. createWidget() did not execute', 'error');
+        log('  2. appendChild() failed', 'error');
+        log('  3. Elements removed by other code', 'error');
+      } else if (!launcher) {
+        log('CRITICAL: Launcher missing from DOM', 'error');
+      } else if (!widget) {
+        log('CRITICAL: Widget missing from DOM', 'error');
+      } else {
+        log('✓ Both elements present', 'success');
+        const cs = win.getComputedStyle(launcher);
+        if (cs.display !== 'none' && parseFloat(cs.opacity) > 0) {
+          log('✓ Launcher should be visible', 'success');
+        } else {
+          log('✗ Launcher is hidden by CSS', 'error');
+        }
+      }
+    }
+
+    // Analyze at different times to catch async issues
+    log('Waiting for initialization...', 'info');
+    setTimeout(() => analyze(), 1000);
+    setTimeout(() => {
+      log('', 'info');
+      log('=== SECOND CHECK (after 3s) ===', 'create');
+      analyze();
+    }, 3000);
+
+  } catch (e) {
+    log('ERROR: ' + e.message, 'error');
+    log('Stack: ' + e.stack, 'error');
+  }
+};
+
+iframe.onerror = () => {
+  log('Failed to load target page', 'error');
+};
+
+// Start loading
+log('Loading target: http://127.0.0.1:5507/scam/broker/index.html', 'info');
+</script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+Copy the entire code below and paste it into your browser's DevTools Console (Ctrl+Shift+J or Cmd+Option+J)
+
+==================================================
+PASTE THIS ENTIRE BLOCK INTO CONSOLE:
+==================================================
+
+(() => {
+  console.clear();
+  console.log('%c=== KXCHAT FORENSIC DIAGNOSTIC ===', 'color: #58a6ff; font-size: 14px; font-weight: bold');
+  
+  const results = {};
+  
+  // 1. File loading check
+  console.log('%c1. File Loading', 'color: #79c0ff; font-weight: bold');
+  const stylesheets = Array.from(document.styleSheets);
+  const scripts = Array.from(document.scripts);
+  const cssLoaded = stylesheets.some(s => s.href && s.href.includes('kxchat-widget.css'));
+  const configLoaded = scripts.some(s => s.src && s.src.includes('kxchat-config.js'));
+  const widgetLoaded = scripts.some(s => s.src && s.src.includes('kxchat-widget.js'));
+  
+  console.log(`  CSS: ${cssLoaded ? '✓ LOADED' : '✗ NOT FOUND'}`);
+  console.log(`  Config: ${configLoaded ? '✓ LOADED' : '✗ NOT FOUND'}`);
+  console.log(`  Widget: ${widgetLoaded ? '✓ LOADED' : '✗ NOT FOUND'}`);
+  results.filesLoaded = { css: cssLoaded, config: configLoaded, widget: widgetLoaded };
+  
+  // 2. DOM check
+  console.log('%c2. DOM Elements', 'color: #79c0ff; font-weight: bold');
+  const launcher = document.getElementById('kxchat-launcher');
+  const widget = document.getElementById('kxchat-widget');
+  const all = document.querySelectorAll('[id^="kxchat"]');
+  
+  console.log(`  Launcher: ${launcher ? '✓ FOUND' : '✗ NOT FOUND'}`);
+  console.log(`  Widget: ${widget ? '✓ FOUND' : '✗ NOT FOUND'}`);
+  console.log(`  Total KXchat elements: ${all.length}`);
+  results.domElements = {
+    launcherExists: !!launcher,
+    widgetExists: !!widget,
+    totalCount: all.length
+  };
+  
+  if (all.length > 0) {
+    console.log('  Elements found:');
+    all.forEach((el, i) => {
+      console.log(`    ${i}: <${el.tagName}> id="${el.id}"`);
+    });
+  }
+  
+  // 3. Window globals
+  console.log('%c3. Window Globals', 'color: #79c0ff; font-weight: bold');
+  console.log(`  window.KXchatWidget: ${window.KXchatWidget ? '✓ true' : '✗ undefined'}`);
+  console.log(`  window.KXCHAT_CONFIG: ${window.KXCHAT_CONFIG ? '✓ loaded' : '✗ undefined'}`);
+  if (window.KXCHAT_CONFIG) {
+    console.log(`    API_BASE: ${window.KXCHAT_CONFIG.API_BASE}`);
+  }
+  results.globals = {
+    kxchatWidget: !!window.KXchatWidget,
+    configLoaded: !!window.KXCHAT_CONFIG,
+    apiBase: window.KXCHAT_CONFIG?.API_BASE
+  };
+  
+  // 4. Computed styles
+  console.log('%c4. Computed Styles', 'color: #79c0ff; font-weight: bold');
+  if (!launcher && !widget) {
+    console.log('  NO ELEMENTS - CANNOT CHECK STYLES');
+    results.styles = null;
+  } else {
+    if (launcher) {
+      const cs = getComputedStyle(launcher);
+      console.log('  Launcher:');
+      console.log(`    display: ${cs.display}`);
+      console.log(`    visibility: ${cs.visibility}`);
+      console.log(`    opacity: ${cs.opacity}`);
+      console.log(`    zIndex: ${cs.zIndex}`);
+      console.log(`    position: ${cs.position}`);
+      
+      const isVisible = cs.display !== 'none' && cs.visibility !== 'hidden' && parseFloat(cs.opacity) > 0.1;
+      console.log(`    VISIBLE: ${isVisible ? '✓ YES' : '✗ NO'}`);
+    }
+    
+    if (widget) {
+      const cs = getComputedStyle(widget);
+      console.log('  Widget:');
+      console.log(`    display: ${cs.display}`);
+      console.log(`    visibility: ${cs.visibility}`);
+      console.log(`    opacity: ${cs.opacity}`);
+      console.log(`    zIndex: ${cs.zIndex}`);
+      console.log(`    position: ${cs.position}`);
+    }
+  }
+  
+  // 5. ROOT CAUSE
+  console.log('%c5. ROOT CAUSE Analysis', 'color: #f85149; font-weight: bold');
+  if (all.length === 0) {
+    console.log('  ✗ CRITICAL: NO KXchat ELEMENTS IN DOM');
+    if (!window.KXchatWidget) {
+      console.log('    CAUSE: Script did not execute properly');
+      console.log('    CHECK: Browser console for syntax errors');
+    } else {
+      console.log('    CAUSE: createWidget() did not work');
+      console.log('    CHECK: Look for errors above');
+    }
+  } else if (!launcher) {
+    console.log('  ✗ CRITICAL: Launcher element missing from DOM');
+  } else if (!widget) {
+    console.log('  ✗ CRITICAL: Widget element missing from DOM');
+  } else {
+    const cs = getComputedStyle(launcher);
+    const visible = cs.display !== 'none' && cs.visibility !== 'hidden' && parseFloat(cs.opacity) > 0.1;
+    if (visible) {
+      console.log('  ✓ OK: Launcher should be visible');
+    } else {
+      console.log('  ✗ Launcher hidden by CSS or inline styles');
+      console.log(`    display=${cs.display}, visibility=${cs.visibility}, opacity=${cs.opacity}`);
+    }
+  }
+  
+  // 6. Final summary
+  console.log('%c6. SUMMARY', 'color: #3fb950; font-weight: bold');
+  console.log(JSON.stringify(results, null, 2));
+})();
+
+==================================================
+END OF DIAGNOSTIC CODE
+==================================================
+
+After running, look for:
+1. RED text with "✗ CRITICAL" = ROOT CAUSE
+2. [KXCHAT-*] log entries = Shows init progress
+3. Any ERROR messages
+
+Send the complete console output back.

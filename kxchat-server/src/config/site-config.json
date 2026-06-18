@@ -1,0 +1,27 @@
+{
+  "default_site_key": "keis-legalgroup",
+  "sites": [
+    {
+      "site_key": "keis-legalgroup",
+      "brand_name": "Кейс",
+      "agent_name": "Ольга Сергеевна",
+      "hotline": "8-800-300-4624",
+      "management_phone": "8-904-808-5909",
+      "office": {
+        "address": "Санкт-Петербург, Невский проспект, 114-116",
+        "nearest_metro": null,
+        "route_hint": null,
+        "landmark": null,
+        "parking": null
+      },
+      "domain_area": "legal",
+      "base_tone": "calm_direct_human",
+      "call_policy": {
+        "offer_after_context_depth": 3
+      },
+      "lead_policy": {
+        "confirm_ambiguous_name": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+Follow CURSOR_RULES.md strictly. Single Source of Truth per block. No tail overrides. No duplicate media sets. Fix in-place.
