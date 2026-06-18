@@ -432,6 +432,10 @@ function createRafScheduler() {
 }
 
 const REVIEWS_MAP_URL = 'https://yandex.ru/maps/org/keys/64216225429/reviews/';
+const REVIEWS_RATING_SUMMARY = {
+  average: 4.9,
+  count: 63,
+};
 const reviewsCarouselStates = new WeakMap();
 
 function getReviewInitials(name) {
@@ -628,11 +632,11 @@ function getReviewsStats(items) {
   };
 }
 
-function updateReviewsRatingSummary(section, items) {
+function updateReviewsRatingSummary(section, summary = REVIEWS_RATING_SUMMARY) {
   const rating = section.querySelector('[data-reviews-rating]');
   if (!rating) return;
 
-  const stats = getReviewsStats(items);
+  const stats = Array.isArray(summary) ? getReviewsStats(summary) : summary;
   const ratingValue = rating.querySelector('.reviews-panel__rating-value');
   const stars = rating.querySelector('.reviews-panel__rating-stars');
   const count = rating.querySelector('.reviews-panel__rating-count');
@@ -1155,9 +1159,8 @@ function initReviewsSection() {
       link.href = REVIEWS_MAP_URL;
     });
 
-    const fallbackReviewItems = Array.from(grid.querySelectorAll('.review-card')).map(() => ({ rating: 5 }));
     initReviewsCarousel(section);
-    updateReviewsRatingSummary(section, fallbackReviewItems);
+    updateReviewsRatingSummary(section);
 
     if (typeof fetch !== 'function') return;
 
@@ -1173,7 +1176,7 @@ function initReviewsSection() {
         state.renderReview = renderReview;
         const reviews = items.filter(Boolean);
         state.reviewItems = reviews.slice(0, 14);
-        updateReviewsRatingSummary(section, reviews);
+        updateReviewsRatingSummary(section);
         updateReviewsCarousel(section, { keepLogical: false });
         scheduleReviewsAutoplay(section);
       })
