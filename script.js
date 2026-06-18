@@ -600,6 +600,53 @@ function buildReviewsLoopCards(state) {
   return cards;
 }
 
+function formatReviewsRating(value) {
+  const normalized = Number.isFinite(value) ? Math.max(0, Math.min(5, value)) : 0;
+  return normalized.toFixed(1);
+}
+
+function getReviewsCountLabel(count) {
+  const value = Math.max(0, Number(count) || 0);
+  const mod10 = value % 10;
+  const mod100 = value % 100;
+  if (mod10 === 1 && mod100 !== 11) return `${value} оценка`;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return `${value} оценки`;
+  return `${value} оценок`;
+}
+
+function getReviewsStats(items) {
+  const reviews = Array.isArray(items) ? items : [];
+  const ratings = reviews
+    .map((item) => Number(item && item.rating))
+    .filter((value) => Number.isFinite(value) && value > 0);
+  const average = ratings.length
+    ? ratings.reduce((sum, value) => sum + value, 0) / ratings.length
+    : 0;
+  return {
+    average,
+    count: reviews.length,
+  };
+}
+
+function updateReviewsRatingSummary(section, items) {
+  const rating = section.querySelector('[data-reviews-rating]');
+  if (!rating) return;
+
+  const stats = getReviewsStats(items);
+  const ratingValue = rating.querySelector('.reviews-panel__rating-value');
+  const stars = rating.querySelector('.reviews-panel__rating-stars');
+  const count = rating.querySelector('.reviews-panel__rating-count');
+  const formatted = formatReviewsRating(stats.average);
+  const roundedStars = Math.max(0, Math.min(5, Math.round(stats.average)));
+
+  if (ratingValue) ratingValue.textContent = formatted;
+  if (stars) {
+    stars.textContent = '★'.repeat(roundedStars) + '☆'.repeat(5 - roundedStars);
+    stars.setAttribute('aria-label', `Рейтинг ${formatted} из 5`);
+  }
+  if (count) count.textContent = getReviewsCountLabel(stats.count);
+}
+
 function updateReviewsCarousel(section, options = {}) {
   const { keepLogical = true } = options;
   const state = reviewsCarouselStates.get(section);
@@ -879,7 +926,7 @@ function initReviewsCarousel(section) {
     const rating = document.createElement('div');
     rating.className = 'reviews-panel__rating';
     rating.setAttribute('data-reviews-rating', '');
-    rating.innerHTML = '<div class="reviews-panel__rating-row"><strong class="reviews-panel__rating-value">4.8</strong><span class="reviews-panel__rating-stars" aria-label="Рейтинг 4.8">★★★★★</span><span class="reviews-panel__rating-divider" aria-hidden="true"></span><span class="reviews-panel__rating-count">45 оценок</span></div>';
+    rating.innerHTML = '<div class="reviews-panel__rating-row"><strong class="reviews-panel__rating-value">0.0</strong><span class="reviews-panel__rating-stars" aria-label="Рейтинг 0.0 из 5">☆☆☆☆☆</span><span class="reviews-panel__rating-divider" aria-hidden="true"></span><span class="reviews-panel__rating-count">0 оценок</span></div>';
     top.prepend(rating);
   }
   const mapLink = panel.querySelector('.reviews-section__map-link');
@@ -1108,7 +1155,9 @@ function initReviewsSection() {
       link.href = REVIEWS_MAP_URL;
     });
 
+    const fallbackReviewItems = Array.from(grid.querySelectorAll('.review-card')).map(() => ({ rating: 5 }));
     initReviewsCarousel(section);
+    updateReviewsRatingSummary(section, fallbackReviewItems);
 
     if (typeof fetch !== 'function') return;
 
@@ -1122,7 +1171,9 @@ function initReviewsSection() {
         const state = reviewsCarouselStates.get(section);
         if (!state) return;
         state.renderReview = renderReview;
-        state.reviewItems = items.slice(0, 14);
+        const reviews = items.filter(Boolean);
+        state.reviewItems = reviews.slice(0, 14);
+        updateReviewsRatingSummary(section, reviews);
         updateReviewsCarousel(section, { keepLogical: false });
         scheduleReviewsAutoplay(section);
       })
