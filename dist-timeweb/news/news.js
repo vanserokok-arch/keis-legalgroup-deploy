@@ -42,6 +42,18 @@
     'Роспотребнадзор': '/assets/news/news-rospotreb.webp'
   };
 
+  const EDITORIAL_IMAGE_SEQUENCE = [
+    CATEGORY_IMAGES['ЦБ РФ'],
+    CATEGORY_IMAGES['Кредиты и банки'],
+    CATEGORY_IMAGES['Законы'],
+    CATEGORY_IMAGES['Суды'],
+    CATEGORY_IMAGES['Недвижимость'],
+    CATEGORY_IMAGES['Защита прав потребителей'],
+    CATEGORY_IMAGES['Прокуратура'],
+    CATEGORY_IMAGES['Мошенничество'],
+    CATEGORY_IMAGES['Все новости']
+  ];
+
   const CATEGORY_COPY = {
     'Кредиты и банки': {
       summary: 'Изменения касаются банковских продуктов, ставок, лимитов или правил обслуживания. Для клиента это важно при кредите, вкладе, карте или споре с банком.',
@@ -393,23 +405,35 @@
     const summaryLooksUseful = rawSummary.length >= 80 && !/^(дл|юл|ип)\s*[–-]/i.test(rawSummary);
 
     return {
-      summary: clampText(summaryLooksUseful ? rawSummary : (rule?.summary || note.happened || variant?.summary || categoryCopy.summary), 168),
-      clientMeaning: clampText(rule?.client || note.step || variant?.client || categoryCopy.client, 150),
+      summary: clampText(summaryLooksUseful ? rawSummary : (rule?.summary || note.happened || variant?.summary || categoryCopy.summary), 138),
+      clientMeaning: clampText(rule?.client || note.step || variant?.client || categoryCopy.client, 128),
       audience: clampText(note.audience || '', 120),
       title
     };
   };
 
-  const buildImage = (rawItem, category) => {
+  const buildImage = (rawItem, category, index = 0) => {
     const image = normalizeText(rawItem?.image);
     if (image && !/def\.png|placeholder|default/i.test(image)) {
       try {
         return new URL(image, window.location.origin).pathname;
       } catch (_) {
-        return CATEGORY_IMAGES[category] || CATEGORY_IMAGES['Все новости'];
+        return CATEGORY_IMAGES[category] || EDITORIAL_IMAGE_SEQUENCE[index % EDITORIAL_IMAGE_SEQUENCE.length];
       }
     }
-    return CATEGORY_IMAGES[category] || CATEGORY_IMAGES['Все новости'];
+    const source = normalizeText(rawItem?.source).toLowerCase();
+    const title = normalizeText(rawItem?.title).toLowerCase();
+    const isRegulatorSeries = category === 'ЦБ РФ'
+      || source.includes('банк россии')
+      || source.includes('цб')
+      || title.includes('банк россии')
+      || title.includes('банком россии');
+    if (isRegulatorSeries) {
+      return EDITORIAL_IMAGE_SEQUENCE[index % EDITORIAL_IMAGE_SEQUENCE.length];
+    }
+    const categoryImage = CATEGORY_IMAGES[category];
+    if (!categoryImage) return EDITORIAL_IMAGE_SEQUENCE[index % EDITORIAL_IMAGE_SEQUENCE.length];
+    return index % 5 === 0 ? EDITORIAL_IMAGE_SEQUENCE[index % EDITORIAL_IMAGE_SEQUENCE.length] : categoryImage;
   };
 
   const buildReadingTime = (item) => {
@@ -461,7 +485,7 @@
       dateTime,
       dateISO,
       url,
-      image: buildImage(item, category)
+      image: buildImage(item, category, index)
     };
     normalized.readingTime = buildReadingTime(normalized);
     return normalized;
