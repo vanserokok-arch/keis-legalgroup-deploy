@@ -3558,6 +3558,50 @@ function initKgxStoriesSlider() {
     return;
   }
 
+  const ensureStoriesVideoBackground = () => {
+    if (root.dataset.videoBgReady === 'true' || root.querySelector('.kgx-stories__video-bg')) {
+      root.dataset.videoBgReady = 'true';
+      return;
+    }
+
+    const video = document.createElement('video');
+    video.className = 'kgx-stories__video-bg';
+    video.autoplay = true;
+    video.muted = true;
+    video.defaultMuted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.preload = 'metadata';
+    video.poster = '/assets/block/video/justice-law-bg-poster.webp';
+    video.setAttribute('aria-hidden', 'true');
+    video.setAttribute('tabindex', '-1');
+    video.setAttribute('playsinline', '');
+    video.setAttribute('muted', '');
+
+    const webm = document.createElement('source');
+    webm.src = '/assets/block/video/justice-law-bg.webm';
+    webm.type = 'video/webm';
+    video.appendChild(webm);
+
+    const mp4 = document.createElement('source');
+    mp4.src = '/assets/block/video/justice-law-bg.mp4';
+    mp4.type = 'video/mp4';
+    video.appendChild(mp4);
+
+    video.addEventListener('loadeddata', () => root.classList.add('is-video-ready'), { once: true });
+    video.addEventListener('error', () => root.classList.add('is-video-failed'), { once: true });
+
+    root.insertBefore(video, root.firstChild);
+    root.dataset.videoBgReady = 'true';
+
+    const playAttempt = video.play();
+    if (playAttempt && typeof playAttempt.catch === 'function') {
+      playAttempt.catch(() => root.classList.add('is-video-paused'));
+    }
+  };
+
+  ensureStoriesVideoBackground();
+
   // Slider enabled: autoplay + pause on hover/focus, looped.
 
   const viewportEl = root.querySelector('.kgx-stories__viewport');
