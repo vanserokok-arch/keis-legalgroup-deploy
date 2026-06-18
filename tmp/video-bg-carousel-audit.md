@@ -160,3 +160,44 @@ Additional verification:
 - `/assets/block/video/justice-law-bg-poster.webp?v=20260618hq`: `200 OK`, `image/webp`, `Content-Length: 100506`.
 - Browser check on `/scam/pressure/`: video source is 1920x1080, `readyState=4`, no 404, no console errors, no horizontal overflow.
 - Updated screenshot: `tmp/video-bg-carousel-shots/kgx-stories-1920-hq.png`.
+
+## Full-frame visual pass
+
+After another visual review of all 125 source frames, the real issue was found in the source motion, not only compression:
+
+- the source video starts with a clean dark Lady Justice frame;
+- after roughly the first second, the source pans into a bright/overexposed background;
+- the statue and scales move too far across the frame for a full-width page background;
+- when looped in the carousel section, this created visible blur/doubling and inconsistent brightness behind the cards.
+
+Audit artifacts:
+
+- `tmp/video-frame-audit/source-all-frames.jpg` - all 125 source frames.
+- `tmp/video-frame-audit/current-all-frames.jpg` - all frames of the previous generated video.
+- `tmp/video-frame-audit/source-large-sample.jpg` - larger sampled source frames.
+- `tmp/video-frame-audit/stable-loop-frames.jpg` - sampled frames of the final stable loop.
+- `tmp/video-frame-audit/stable-first-mid-last.jpg` - first/middle/last frame of the final stable loop.
+
+Final fix:
+
+- selected a clean early source frame at `00:00:00.45`;
+- generated an 8-second 1920x1080 loop from that clean frame;
+- added only subtle pan/zoom movement so the background remains video, but no longer pans into bad frames;
+- kept the same file names so existing HTML/JS integration remains stable;
+- updated the cache-bust query to `?v=20260618stable`.
+
+Commands used:
+
+```bash
+ffmpeg -y -ss 00:00:00.45 -i assets/block/video/Justice_Law.mp4 -frames:v 1 -vf "scale=1920:1080:flags=lanczos,unsharp=3:3:0.35:3:3:0.14" tmp/video-frame-audit/stable/justice-law-clean-frame.png
+ffmpeg -y -loop 1 -framerate 24 -t 8 -i tmp/video-frame-audit/stable/justice-law-clean-frame.png -vf "scale=2048:1152:flags=lanczos,crop=1920:1080:x='64+18*sin(2*PI*n/192)':y='36+10*cos(2*PI*n/192)',fps=24,format=yuv420p" -c:v libvpx-vp9 -b:v 0 -crf 26 -row-mt 1 -deadline good -cpu-used 2 assets/block/video/justice-law-bg.webm
+ffmpeg -y -loop 1 -framerate 24 -t 8 -i tmp/video-frame-audit/stable/justice-law-clean-frame.png -vf "scale=2048:1152:flags=lanczos,crop=1920:1080:x='64+18*sin(2*PI*n/192)':y='36+10*cos(2*PI*n/192)',fps=24,format=yuv420p" -c:v libx264 -crf 20 -preset slow -movflags +faststart -pix_fmt yuv420p assets/block/video/justice-law-bg.mp4
+cwebp -quiet -q 88 tmp/video-frame-audit/stable/justice-law-clean-frame.png -o assets/block/video/justice-law-bg-poster.webp
+rsync -a assets/block/video/justice-law-bg.webm assets/block/video/justice-law-bg.mp4 assets/block/video/justice-law-bg-poster.webp dist-timeweb/assets/block/video/
+```
+
+Final stable loop result:
+
+- `justice-law-bg.webm` - 282 KB, VP9, 1920x1080, 24 fps, 8 s.
+- `justice-law-bg.mp4` - 364 KB, H.264, 1920x1080, 24 fps, 8 s, `+faststart`.
+- `justice-law-bg-poster.webp` - 106 KB.
