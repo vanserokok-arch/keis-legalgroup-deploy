@@ -1020,11 +1020,46 @@ function initReviewsCarousel(section) {
   scheduleReviewsAutoplay(section);
 }
 
+function initReviewsJivoQuietMode(sections) {
+  if (!sections.length || !('IntersectionObserver' in window)) return;
+
+  const root = document.documentElement;
+  const mobileQuery = window.matchMedia('(max-width: 520px)');
+  const visibleSections = new Set();
+  const sync = () => {
+    root.classList.toggle('reviews-jivo-quiet', mobileQuery.matches && visibleSections.size > 0);
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting && entry.intersectionRatio > 0.12) {
+        visibleSections.add(entry.target);
+      } else {
+        visibleSections.delete(entry.target);
+      }
+    });
+    sync();
+  }, {
+    root: null,
+    rootMargin: '-72px 0px -18% 0px',
+    threshold: [0, 0.12, 0.28],
+  });
+
+  sections.forEach((section) => observer.observe(section));
+  if (typeof mobileQuery.addEventListener === 'function') {
+    mobileQuery.addEventListener('change', sync);
+  } else if (typeof mobileQuery.addListener === 'function') {
+    mobileQuery.addListener(sync);
+  }
+  sync();
+}
+
 function initReviewsSection() {
   if (!guardInit('reviews-section')) return;
 
   const sections = Array.from(document.querySelectorAll('.reviews-section[data-reviews-source]'));
   if (!sections.length) return;
+  initReviewsJivoQuietMode(sections);
 
   const renderReview = (review, index) => {
     const card = document.createElement('article');

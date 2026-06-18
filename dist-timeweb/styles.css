@@ -12243,6 +12243,7 @@ form:not([data-b4-form]) button[type="submit"], form:not([data-b4-form]) input[t
   background: #080c11;
   min-height: 0;
   height: auto;
+  scroll-margin-top: calc(var(--keis-header-h, 72px) + 16px);
   padding: clamp(28px, 3.8vw, 52px) clamp(16px, 2.2vw, 32px) clamp(16px, 2.2vw, 30px);
   color: rgba(255,255,255,.82);
   border-top: 0 !important;
@@ -12809,21 +12810,23 @@ form:not([data-b4-form]) button[type="submit"], form:not([data-b4-form]) input[t
 
 @media (max-width: 520px) {
   .reviews-section__top {
+    flex-direction: column;
     flex-wrap: nowrap;
-    align-items: flex-start;
-    gap: 10px;
+    align-items: stretch;
+    gap: 12px;
   }
   .reviews-panel__rating {
-    flex: 0 0 auto;
-    min-width: 132px;
+    flex: 0 1 auto;
+    width: 100%;
+    min-width: 0;
   }
   .reviews-panel__rating-row {
     display: grid !important;
-    grid-template-columns: auto auto;
+    grid-template-columns: auto 1fr;
     align-items: center;
     justify-content: start;
-    column-gap: 8px;
-    row-gap: 5px;
+    column-gap: 10px;
+    row-gap: 4px;
   }
   .reviews-panel__rating-divider {
     display: none !important;
@@ -12833,26 +12836,33 @@ form:not([data-b4-form]) button[type="submit"], form:not([data-b4-form]) input[t
     padding-left: 1px !important;
   }
   .reviews-section__top > .reviews-section__map-link {
-    width: auto;
-    max-width: calc(100% - 142px);
-    margin-left: auto;
-    justify-content: flex-end;
-    text-align: right;
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+    justify-content: flex-start;
+    text-align: left;
   }
 }
 
 @media (max-width: 430px) {
   .reviews-section { padding: 22px 10px 12px; }
-  .reviews-panel { padding: 16px 10px 20px; border-radius: 16px; gap: 14px; }
+  .reviews-panel { padding: 14px 8px 16px; border-radius: 16px; gap: 12px; }
   .reviews-section__top {
     margin-bottom: 0;
   }
   .reviews-section__top > .reviews-section__map-link {
     font-size: 13px;
   }
+  .reviews-carousel__viewport {
+    margin-left: -4px;
+    margin-right: -4px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
   .reviews-carousel__nav {
     width: 100%;
     gap: 8px;
+    margin-top: 10px;
   }
   .reviews-carousel__button {
     width: 46px;
@@ -12863,7 +12873,39 @@ form:not([data-b4-form]) button[type="submit"], form:not([data-b4-form]) input[t
   .reviews-carousel__indicator {
     min-width: 0;
   }
-  .review-card { min-height: 250px; }
+  .review-card {
+    min-height: 214px;
+    padding: 16px;
+    gap: 12px;
+    border-radius: 16px;
+  }
+  .review-card__head {
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 10px;
+  }
+  .review-card__avatar {
+    width: 42px;
+    height: 42px;
+  }
+  .review-card__person h3 {
+    font-size: 1rem;
+  }
+  .review-card__person p {
+    margin-top: 4px;
+    font-size: .82rem;
+  }
+  .review-card__text {
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    font-size: .9rem;
+    line-height: 1.42;
+  }
+  .review-card__meta {
+    flex-wrap: wrap;
+    row-gap: 4px;
+    padding-top: 10px;
+    font-size: .74rem;
+  }
 }
 @media (min-width: 431px) and (max-width: 899px) {
   .review-card { min-height: 230px; }
@@ -27217,6 +27259,14 @@ html.footer-debug-jivo-off jdiv,
 html.footer-debug-jivo-off [class*="jivo"],
 html.footer-debug-jivo-off iframe[src*="jivo"] { display:none !important; }
 
+@media (max-width: 520px) {
+  html.reviews-jivo-quiet jdiv[class*="container__"]:has(jdiv[class*="agent__"]):has(jdiv[class*="content__"]) {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
+
 .site-footer {
   --footer-pad-y: 22px;
   --footer-pad-x: 18px;
@@ -31157,6 +31207,81 @@ body.page-investment .investment-process .work-step-media::after {
 }
 
 @media (max-width: 520px) {
+  body.page-influence #kgx-stories-carousel {
+    --kgx-card-w: clamp(284px, 86vw, 344px);
+    --kgx-gap: 12px;
+    padding: 32px 0 18px;
+    min-height: calc((var(--app-vh, 1vh) * 100) - var(--keis-header-h, 72px));
+    box-sizing: border-box;
+  }
+
+  body.page-influence #kgx-stories-carousel > .section-container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  body.page-influence #kgx-stories-carousel .kgx-stories__head {
+    width: min(100%, 330px);
+    margin: 0 auto 14px;
+  }
+
+  body.page-influence #kgx-stories-carousel .k-header__box {
+    padding: 18px 20px 20px;
+    border-radius: 20px;
+    gap: 12px;
+  }
+
+  body.page-influence #kgx-stories-carousel .k-title {
+    max-width: 100%;
+    margin-bottom: 0;
+    font-size: clamp(25px, 7.1vw, 30px);
+    line-height: 1.08;
+    letter-spacing: 0;
+    hyphens: none;
+    -webkit-hyphens: none;
+  }
+
+  body.page-influence #kgx-stories-carousel .k-subtitle {
+    max-width: 100%;
+    padding-left: 15px;
+    font-size: clamp(15px, 4.1vw, 16px);
+    line-height: 1.42;
+  }
+
+  body.page-influence #kgx-stories-carousel .k-subtitle::before {
+    top: 2px;
+    bottom: 2px;
+  }
+
+  body.page-influence #kgx-stories-carousel .kgx-stories__band {
+    margin-top: 0;
+  }
+
+  body.page-influence #kgx-stories-carousel .kgx-stories__viewport {
+    width: 100vw;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  body.page-influence #kgx-stories-carousel .kgx-stories__slide {
+    aspect-ratio: 16 / 9.7;
+    border-radius: 16px;
+  }
+
+  body.page-influence #kgx-stories-carousel .kgx-stories__body {
+    padding: 18px 16px 16px;
+  }
+
+  body.page-influence #kgx-stories-carousel .kgx-stories__title {
+    font-size: clamp(21px, 6.1vw, 25px);
+    line-height: 1.08;
+  }
+
+  body.page-influence #kgx-stories-carousel .kgx-stories__text {
+    font-size: clamp(15px, 4vw, 16px);
+    line-height: 1.34;
+  }
+
   body.page-influence #kgx-stories-carousel .kgx-stories__slide--angle-1 .kgx-stories__media {
     background-position: 56% 50%;
   }
@@ -31294,5 +31419,39 @@ body[data-page="auto-law-unavailable"] {
 
   .auto-unavailable__button {
     width: 100%;
+  }
+}
+
+/* Restore card hover motion in the mid-page problem blocks without re-enabling running glare. */
+@media (hover: hover) and (pointer: fine) {
+  body #kgx-b4 .kgx-b4__item,
+  body .investment-challenges .challenge-card,
+  body[data-page^="consumer-protection"] .investment-challenges .challenge-card {
+    pointer-events: auto !important;
+    transform: translate3d(0, 0, 0) !important;
+    transition:
+      transform 220ms cubic-bezier(.2,.7,.2,1) !important,
+      border-color 220ms ease !important,
+      box-shadow 220ms ease !important,
+      background-color 220ms ease !important,
+      filter 220ms ease !important;
+    will-change: transform, border-color, box-shadow, filter !important;
+  }
+
+  body #kgx-b4 .kgx-b4__item:hover,
+  body .investment-challenges .challenge-card:hover,
+  body[data-page^="consumer-protection"] .investment-challenges .challenge-card:hover {
+    animation: kg-glass-shimmer 720ms cubic-bezier(.22,.61,.36,1) 1 !important;
+    transform: translate3d(0, -4px, 0) !important;
+    filter: brightness(1.045) saturate(1.035) !important;
+    border-color: rgba(236, 132, 58, .42) !important;
+    box-shadow:
+      0 18px 44px rgba(0, 0, 0, .42),
+      inset 0 1px 0 rgba(255, 255, 255, .12),
+      inset 0 0 0 1px rgba(236, 132, 58, .10) !important;
+  }
+
+  body #kgx-b4 .kgx-b4__item:hover .kgx-b4__item-title::after {
+    transform: scaleX(1) !important;
   }
 }
