@@ -131,72 +131,141 @@
   </div>
 
   <main class="kg-news" id="newsTop">
-    <section class="kg-news__hero">
+    <section class="kg-news__hero" aria-labelledby="newsTitle">
       <div class="section-container kg-news__container">
-        <p class="kg-news__kicker">Лента обновлений</p>
-        <h1 class="kg-news__title">Новости и разборы изменений</h1>
-        <p class="kg-news__subtitle">Здесь коротко объясняем важные изменения: что произошло и как это может повлиять на ваш спор.</p>
-
-        <div class="kg-news-layout">
-          <div class="kg-news-back">
-            <a href="/" class="privacy-return__btn" data-news-back>
-              <span class="privacy-return__icon" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M9.75 3.5 5.25 8l4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M5.75 8H13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-              <span class="privacy-return__text">Вернуться</span>
-            </a>
+        <div class="kg-news__hero-grid">
+          <div class="kg-news__hero-copy">
+            <p class="kg-news__kicker">Юридический журнал КЕЙС</p>
+            <h1 class="kg-news__title" id="newsTitle">Новости и разборы изменений</h1>
+            <p class="kg-news__subtitle">Коротко объясняем важные изменения: что произошло, кого касается и что делать.</p>
           </div>
 
-          <div class="kg-news-content">
-            <form class="kg-news-controls" id="newsControls" role="search" aria-label="Поиск новостей">
-              <label class="kg-news-controls__field">
-                <span class="kg-news-controls__label">Поиск по заголовку</span>
-                <input type="search" id="newsSearch" placeholder="Например: изменения по договорам" autocomplete="off">
-              </label>
+          <aside class="kg-news__brief" aria-label="Редакционный фокус">
+            <span class="kg-news__brief-label">Фокус выпуска</span>
+            <p>Банки, суды, регуляторы и потребительские споры — только то, что может повлиять на деньги, документы и сроки.</p>
+          </aside>
+        </div>
 
-              <label class="kg-news-controls__field" id="newsSourceWrap" hidden>
-                <span class="kg-news-controls__label">Источник</span>
-                <select id="newsSourceFilter">
-                  <option value="all">Все источники</option>
-                </select>
-              </label>
+        <form class="kg-news-controls" id="newsControls" role="search" aria-label="Поиск новостей">
+          <label class="kg-news-controls__field">
+            <span class="kg-news-controls__label">Поиск по материалам</span>
+            <input type="search" id="newsSearch" placeholder="Например: кредит, суд, мошенники" autocomplete="off">
+          </label>
 
-            </form>
+          <label class="kg-news-controls__field" id="newsSourceWrap" hidden>
+            <span class="kg-news-controls__label">Источник</span>
+            <select id="newsSourceFilter">
+              <option value="all">Все источники</option>
+            </select>
+          </label>
+        </form>
 
-            <div class="kg-news-feedback" id="newsStatus" role="status" aria-live="polite"></div>
+        <div class="kg-news-rubrics" role="tablist" aria-label="Рубрики новостей">
+          <button class="kg-news-rubric is-active" type="button" role="tab" aria-selected="true" data-news-category="Все новости">Все новости</button>
+          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Кредиты и банки">Кредиты и банки</button>
+          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Мошенничество">Мошенничество</button>
+          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Защита прав потребителей">Защита прав потребителей</button>
+          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Суды">Суды</button>
+          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Недвижимость">Недвижимость</button>
+          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Автомобили">Автомобили</button>
+          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Медицина">Медицина</button>
+          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Законы">Законы</button>
+          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="ЦБ РФ">ЦБ РФ</button>
+          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Прокуратура">Прокуратура</button>
+          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="ФАС">ФАС</button>
+          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Роспотребнадзор">Роспотребнадзор</button>
+        </div>
 
-            <ul class="kg-news-list" id="newsList" aria-live="polite" aria-busy="true">
-              <li class="kg-news-card is-skeleton" aria-hidden="true">
-                <div class="kg-news-skeleton kg-news-skeleton--meta"></div>
-                <div class="kg-news-skeleton kg-news-skeleton--title"></div>
-                <div class="kg-news-skeleton kg-news-skeleton--text"></div>
-                <div class="kg-news-skeleton kg-news-skeleton--text short"></div>
-                <div class="kg-news-skeleton kg-news-skeleton--cta"></div>
-              </li>
-              <li class="kg-news-card is-skeleton" aria-hidden="true">
-                <div class="kg-news-skeleton kg-news-skeleton--meta"></div>
-                <div class="kg-news-skeleton kg-news-skeleton--title"></div>
-                <div class="kg-news-skeleton kg-news-skeleton--text"></div>
-                <div class="kg-news-skeleton kg-news-skeleton--text short"></div>
-                <div class="kg-news-skeleton kg-news-skeleton--cta"></div>
-              </li>
-              <li class="kg-news-card is-skeleton" aria-hidden="true">
-                <div class="kg-news-skeleton kg-news-skeleton--meta"></div>
-                <div class="kg-news-skeleton kg-news-skeleton--title"></div>
-                <div class="kg-news-skeleton kg-news-skeleton--text"></div>
-                <div class="kg-news-skeleton kg-news-skeleton--text short"></div>
-                <div class="kg-news-skeleton kg-news-skeleton--cta"></div>
-              </li>
-            </ul>
+        <div class="kg-news-feedback" id="newsStatus" role="status" aria-live="polite"></div>
 
-            <div class="kg-news-load-more" id="newsLoadMoreWrap" hidden>
-              <button type="button" class="kg-news-load-more__btn" id="newsLoadMoreBtn">Показать ещё</button>
+        <section class="kg-news-editorial" aria-label="Главные материалы">
+          <article class="kg-news-featured is-skeleton" id="newsFeatured" aria-busy="true">
+            <div class="kg-news-skeleton kg-news-skeleton--cover"></div>
+            <div class="kg-news-skeleton kg-news-skeleton--title"></div>
+            <div class="kg-news-skeleton kg-news-skeleton--text"></div>
+          </article>
+
+          <section class="kg-news-today" aria-labelledby="newsTodayTitle">
+            <div class="kg-news-block-head">
+              <h2 id="newsTodayTitle">Главное сегодня</h2>
+              <span>Обновляется</span>
             </div>
+            <div class="kg-news-today__list" id="newsTodayList" aria-busy="true"></div>
+          </section>
+
+          <aside class="kg-news-popular kg-news-popular--top" aria-labelledby="newsPopularTopTitle">
+            <div class="kg-news-block-head">
+              <h2 id="newsPopularTopTitle">Популярные разборы</h2>
+              <span>Выбор редакции</span>
+            </div>
+            <ol class="kg-news-popular__list" id="newsPopularTop" aria-busy="true"></ol>
+          </aside>
+        </section>
+      </div>
+    </section>
+
+    <section class="kg-news-stream" aria-label="Все новости">
+      <div class="section-container kg-news__container kg-news-stream__grid">
+        <div class="kg-news-main-column">
+          <div class="kg-news-section-head">
+            <div>
+              <p class="kg-news-section-head__eyebrow">Лента</p>
+              <h2>Все новости</h2>
+            </div>
+            <span id="newsResultCount">Загрузка</span>
+          </div>
+
+          <ul class="kg-news-list" id="newsList" aria-live="polite" aria-busy="true">
+            <li class="kg-news-card is-skeleton" aria-hidden="true">
+              <div class="kg-news-skeleton kg-news-skeleton--cover"></div>
+              <div class="kg-news-skeleton kg-news-skeleton--meta"></div>
+              <div class="kg-news-skeleton kg-news-skeleton--title"></div>
+              <div class="kg-news-skeleton kg-news-skeleton--text"></div>
+              <div class="kg-news-skeleton kg-news-skeleton--cta"></div>
+            </li>
+            <li class="kg-news-card is-skeleton" aria-hidden="true">
+              <div class="kg-news-skeleton kg-news-skeleton--cover"></div>
+              <div class="kg-news-skeleton kg-news-skeleton--meta"></div>
+              <div class="kg-news-skeleton kg-news-skeleton--title"></div>
+              <div class="kg-news-skeleton kg-news-skeleton--text"></div>
+              <div class="kg-news-skeleton kg-news-skeleton--cta"></div>
+            </li>
+            <li class="kg-news-card is-skeleton" aria-hidden="true">
+              <div class="kg-news-skeleton kg-news-skeleton--cover"></div>
+              <div class="kg-news-skeleton kg-news-skeleton--meta"></div>
+              <div class="kg-news-skeleton kg-news-skeleton--title"></div>
+              <div class="kg-news-skeleton kg-news-skeleton--text"></div>
+              <div class="kg-news-skeleton kg-news-skeleton--cta"></div>
+            </li>
+          </ul>
+
+          <div class="kg-news-load-more" id="newsLoadMoreWrap" hidden>
+            <button type="button" class="kg-news-load-more__btn" id="newsLoadMoreBtn">Показать ещё</button>
           </div>
         </div>
+
+        <aside class="kg-news-sidebar" aria-label="Дополнительные материалы">
+          <section class="kg-news-sidecard" aria-labelledby="newsPopularSideTitle">
+            <div class="kg-news-block-head">
+              <h2 id="newsPopularSideTitle">Популярные разборы</h2>
+            </div>
+            <ol class="kg-news-side-list" id="newsPopularSidebar" aria-busy="true"></ol>
+          </section>
+
+          <section class="kg-news-sidecard" aria-labelledby="newsLawChangesTitle">
+            <div class="kg-news-block-head">
+              <h2 id="newsLawChangesTitle">Последние изменения законодательства</h2>
+            </div>
+            <div class="kg-news-law-list" id="newsLawChanges" aria-busy="true"></div>
+          </section>
+
+          <section class="kg-news-ask" aria-labelledby="newsAskTitle">
+            <p class="kg-news-ask__label">Спросить юриста</p>
+            <h2 id="newsAskTitle">Не уверены, касается ли это вас?</h2>
+            <p>Опишите ситуацию — юрист подскажет, как изменение может повлиять на ваши деньги, документы и сроки.</p>
+            <button type="button" class="kg-news-consult-btn" data-news-consult>Получить консультацию</button>
+          </section>
+        </aside>
       </div>
     </section>
   </main>
@@ -248,7 +317,7 @@
   </div>
 
   <script src="../script.js" defer></script>
-  <script src="./news.js?v=20260618-sources" defer></script>
+  <script src="./news.js?v=20260618-premium" defer></script>
   <script src="https://code.jivo.ru/widget/CgMP7mbMCA" async></script>
 </body>
 </html>
