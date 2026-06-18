@@ -1,0 +1,10 @@
+RewriteEngine On
+
+<Files "telegram.config.php">
+  Require all denied
+  Deny from all
+</Files>
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+)$ $1/index.html [L]
