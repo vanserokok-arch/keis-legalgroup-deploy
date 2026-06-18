@@ -3572,19 +3572,19 @@ function initKgxStoriesSlider() {
     video.loop = true;
     video.playsInline = true;
     video.preload = 'metadata';
-    video.poster = '/assets/block/video/justice-law-bg-poster.webp?v=20260618stable';
+    video.poster = '/assets/block/video/justice-law-bg-poster.webp?v=20260618smooth';
     video.setAttribute('aria-hidden', 'true');
     video.setAttribute('tabindex', '-1');
     video.setAttribute('playsinline', '');
     video.setAttribute('muted', '');
 
     const webm = document.createElement('source');
-    webm.src = '/assets/block/video/justice-law-bg.webm?v=20260618stable';
+    webm.src = '/assets/block/video/justice-law-bg.webm?v=20260618smooth';
     webm.type = 'video/webm';
     video.appendChild(webm);
 
     const mp4 = document.createElement('source');
-    mp4.src = '/assets/block/video/justice-law-bg.mp4?v=20260618stable';
+    mp4.src = '/assets/block/video/justice-law-bg.mp4?v=20260618smooth';
     mp4.type = 'video/mp4';
     video.appendChild(mp4);
 

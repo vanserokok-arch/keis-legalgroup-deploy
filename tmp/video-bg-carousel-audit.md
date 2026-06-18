@@ -95,6 +95,38 @@ Result:
 - `assets/block/video/justice-law-bg-poster.webp` - 41 KB.
 - Same files exist under `dist-timeweb/assets/block/video/`.
 
+## Smooth motion pass
+
+Repro after the first stable rebuild:
+
+- `justice-law-bg.mp4` was 1920x1080, 8 s, 24 fps, 192 frames.
+- The source frame was clean, but the artificial motion was too small:
+  - crop movement only `18px` horizontally and `10px` vertically at 24 fps;
+  - browser playback rounded this into barely visible integer-pixel steps;
+  - visually the video looked almost frozen and sometimes jerked.
+- Motion audit sheets:
+  - `tmp/video-motion-audit/stable-24fps-all.jpg`
+  - `tmp/video-motion-audit/stable-keyframes.jpg`
+
+Fix:
+
+```bash
+ffmpeg -y -loop 1 -framerate 60 -t 8 -i tmp/video-frame-audit/stable/justice-law-clean-frame.png -vf "scale=3840:2160:flags=lanczos,crop=3200:1800:x='320+150*sin(2*PI*n/480)':y='180+70*cos(2*PI*n/480)',scale=1920:1080:flags=lanczos,fps=60,format=yuv420p" -c:v libvpx-vp9 -b:v 0 -crf 24 -row-mt 1 -deadline good -cpu-used 2 assets/block/video/justice-law-bg.webm
+ffmpeg -y -loop 1 -framerate 60 -t 8 -i tmp/video-frame-audit/stable/justice-law-clean-frame.png -vf "scale=3840:2160:flags=lanczos,crop=3200:1800:x='320+150*sin(2*PI*n/480)':y='180+70*cos(2*PI*n/480)',scale=1920:1080:flags=lanczos,fps=60,format=yuv420p" -c:v libx264 -crf 18 -preset slow -movflags +faststart -pix_fmt yuv420p assets/block/video/justice-law-bg.mp4
+rsync -a assets/block/video/justice-law-bg.webm assets/block/video/justice-law-bg.mp4 assets/block/video/justice-law-bg-poster.webp dist-timeweb/assets/block/video/
+```
+
+Result:
+
+- `assets/block/video/justice-law-bg.webm` - 1.0 MB, VP9, 1920x1080, 60 fps, 8 s.
+- `assets/block/video/justice-law-bg.mp4` - 2.7 MB, H.264, 1920x1080, 60 fps, 8 s.
+- `assets/block/video/justice-law-bg-poster.webp` - 106 KB.
+- Cache bust updated from `?v=20260618stable` to `?v=20260618smooth` in source and deploy CSS/JS.
+- Motion audit sheets:
+  - `tmp/video-motion-audit/smooth-sample.jpg`
+  - `tmp/video-motion-audit/smooth-keyframes.jpg`
+  - `tmp/video-motion-audit/smooth-first-second.jpg`
+
 ## Verification
 
 - `npm run build`: passed (`Static validation passed: 24 HTML/CSS files checked.`).
@@ -126,78 +158,32 @@ Result:
   - `kgx-stories-1440.png`
   - `kgx-stories-1920.png`
 
-## Quality pass
+## Smooth motion verification
 
-After visual review on a 1920px viewport, the first optimized files were too compressed for a full-width background:
-
-- previous mp4: 1280x720, about 1.3 Mbps, 847 KB;
-- previous webm: 1280x720, about 1.9 Mbps, 1.2 MB.
-
-The source itself is sharper: 1280x720, about 4.8 Mbps. The final background files were regenerated as 1920x1080 with Lanczos upscale, mild sharpening, and less aggressive compression.
-
-Commands used:
-
-```bash
-ffmpeg -y -i assets/block/video/Justice_Law.mp4 -an -map_metadata -1 -sn -dn -vf "scale=1920:-2:flags=lanczos,fps=24,unsharp=3:3:0.42:3:3:0.18" -c:v libvpx-vp9 -b:v 0 -crf 25 -row-mt 1 -deadline good -cpu-used 2 assets/block/video/justice-law-bg.webm
-ffmpeg -y -i assets/block/video/Justice_Law.mp4 -an -map_metadata -1 -sn -dn -vf "scale=1920:-2:flags=lanczos,fps=24,unsharp=3:3:0.42:3:3:0.18" -c:v libx264 -crf 20 -preset slow -movflags +faststart -pix_fmt yuv420p assets/block/video/justice-law-bg.mp4
-ffmpeg -y -ss 00:00:02 -i assets/block/video/Justice_Law.mp4 -frames:v 1 -vf "scale=1920:-2:flags=lanczos,unsharp=3:3:0.42:3:3:0.18" tmp/video-bg-quality-check/poster-hq.png
-cwebp -quiet -q 86 tmp/video-bg-quality-check/poster-hq.png -o assets/block/video/justice-law-bg-poster.webp
-rsync -a assets/block/video/justice-law-bg.webm assets/block/video/justice-law-bg.mp4 assets/block/video/justice-law-bg-poster.webp dist-timeweb/assets/block/video/
-```
-
-Final result:
-
-- `justice-law-bg.webm` - 3.5 MB, VP9, 1920x1080, 24 fps.
-- `justice-law-bg.mp4` - 3.6 MB, H.264, 1920x1080, 24 fps, `+faststart`.
-- `justice-law-bg-poster.webp` - 98 KB.
-
-The video and poster paths now use `?v=20260618hq` in JS/CSS, so Chrome does not keep using the old over-compressed local cache.
-
-Additional verification:
-
-- `/assets/block/video/justice-law-bg.webm?v=20260618hq`: `200 OK`, `video/webm`, `Content-Length: 3711639`.
-- `/assets/block/video/justice-law-bg.mp4?v=20260618hq`: `200 OK`, `video/mp4`, `Content-Length: 3815302`.
-- `/assets/block/video/justice-law-bg-poster.webp?v=20260618hq`: `200 OK`, `image/webp`, `Content-Length: 100506`.
-- Browser check on `/scam/pressure/`: video source is 1920x1080, `readyState=4`, no 404, no console errors, no horizontal overflow.
-- Updated screenshot: `tmp/video-bg-carousel-shots/kgx-stories-1920-hq.png`.
-
-## Full-frame visual pass
-
-After another visual review of all 125 source frames, the real issue was found in the source motion, not only compression:
-
-- the source video starts with a clean dark Lady Justice frame;
-- after roughly the first second, the source pans into a bright/overexposed background;
-- the statue and scales move too far across the frame for a full-width page background;
-- when looped in the carousel section, this created visible blur/doubling and inconsistent brightness behind the cards.
-
-Audit artifacts:
-
-- `tmp/video-frame-audit/source-all-frames.jpg` - all 125 source frames.
-- `tmp/video-frame-audit/current-all-frames.jpg` - all frames of the previous generated video.
-- `tmp/video-frame-audit/source-large-sample.jpg` - larger sampled source frames.
-- `tmp/video-frame-audit/stable-loop-frames.jpg` - sampled frames of the final stable loop.
-- `tmp/video-frame-audit/stable-first-mid-last.jpg` - first/middle/last frame of the final stable loop.
-
-Final fix:
-
-- selected a clean early source frame at `00:00:00.45`;
-- generated an 8-second 1920x1080 loop from that clean frame;
-- added only subtle pan/zoom movement so the background remains video, but no longer pans into bad frames;
-- kept the same file names so existing HTML/JS integration remains stable;
-- updated the cache-bust query to `?v=20260618stable`.
-
-Commands used:
-
-```bash
-ffmpeg -y -ss 00:00:00.45 -i assets/block/video/Justice_Law.mp4 -frames:v 1 -vf "scale=1920:1080:flags=lanczos,unsharp=3:3:0.35:3:3:0.14" tmp/video-frame-audit/stable/justice-law-clean-frame.png
-ffmpeg -y -loop 1 -framerate 24 -t 8 -i tmp/video-frame-audit/stable/justice-law-clean-frame.png -vf "scale=2048:1152:flags=lanczos,crop=1920:1080:x='64+18*sin(2*PI*n/192)':y='36+10*cos(2*PI*n/192)',fps=24,format=yuv420p" -c:v libvpx-vp9 -b:v 0 -crf 26 -row-mt 1 -deadline good -cpu-used 2 assets/block/video/justice-law-bg.webm
-ffmpeg -y -loop 1 -framerate 24 -t 8 -i tmp/video-frame-audit/stable/justice-law-clean-frame.png -vf "scale=2048:1152:flags=lanczos,crop=1920:1080:x='64+18*sin(2*PI*n/192)':y='36+10*cos(2*PI*n/192)',fps=24,format=yuv420p" -c:v libx264 -crf 20 -preset slow -movflags +faststart -pix_fmt yuv420p assets/block/video/justice-law-bg.mp4
-cwebp -quiet -q 88 tmp/video-frame-audit/stable/justice-law-clean-frame.png -o assets/block/video/justice-law-bg-poster.webp
-rsync -a assets/block/video/justice-law-bg.webm assets/block/video/justice-law-bg.mp4 assets/block/video/justice-law-bg-poster.webp dist-timeweb/assets/block/video/
-```
-
-Final stable loop result:
-
-- `justice-law-bg.webm` - 282 KB, VP9, 1920x1080, 24 fps, 8 s.
-- `justice-law-bg.mp4` - 364 KB, H.264, 1920x1080, 24 fps, 8 s, `+faststart`.
-- `justice-law-bg-poster.webp` - 106 KB.
+- `npm run build`: passed (`Static validation passed: 24 HTML/CSS files checked.`).
+- `node --check script.js`: passed.
+- `node --check dist-timeweb/script.js`: passed.
+- `ffprobe`:
+  - `justice-law-bg.webm`: VP9, 1920x1080, 60 fps, 8 s, 1,078,831 bytes.
+  - `justice-law-bg.mp4`: H.264, 1920x1080, 60 fps, 8 s, 480 frames, 2,817,367 bytes.
+- curl from `dist-timeweb` server on port `5516`:
+  - `/assets/block/video/justice-law-bg.webm?v=20260618smooth`: `200 OK`, `Content-type: video/webm`, `Content-Length: 1078831`.
+  - `/assets/block/video/justice-law-bg.mp4?v=20260618smooth`: `200 OK`, `Content-type: video/mp4`, `Content-Length: 2817367`.
+  - `/assets/block/video/justice-law-bg-poster.webp?v=20260618smooth`: `200 OK`, `Content-type: image/webp`, `Content-Length: 108294`.
+- Playwright checked all 14 pages with `#kgx-stories-carousel`:
+  - one `.kgx-stories__video-bg` per page;
+  - source is `justice-law-bg.webm?v=20260618smooth`;
+  - `readyState: 4`, `paused: false`, `muted: true`, `loop: true`;
+  - `duration: 8`, `videoWidth: 1920`, `videoHeight: 1080`;
+  - `currentTime` grows during playback on every page;
+  - same-origin `404`: none;
+  - JS console/page errors: none;
+  - horizontal overflow: none.
+- Fresh smooth screenshots saved in `tmp/video-bg-carousel-shots/`:
+  - `kgx-stories-390-smooth.png`
+  - `kgx-stories-430-smooth.png`
+  - `kgx-stories-768-smooth.png`
+  - `kgx-stories-1024-smooth.png`
+  - `kgx-stories-1200-smooth.png`
+  - `kgx-stories-1440-smooth.png`
+  - `kgx-stories-1920-smooth.png`
