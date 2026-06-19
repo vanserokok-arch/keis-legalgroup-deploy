@@ -26,33 +26,30 @@
     'Роспотребнадзор'
   ];
 
-  const CATEGORY_IMAGES = {
-    'Все новости': '/assets/news/news-default.webp',
-    'Кредиты и банки': '/assets/news/news-bank.webp',
-    'Мошенничество': '/assets/news/news-fraud.webp',
-    'Защита прав потребителей': '/assets/news/news-consumer.webp',
-    'Суды': '/assets/news/news-court.webp',
-    'Недвижимость': '/assets/news/news-real-estate.webp',
-    'Автомобили': '/assets/news/news-auto.webp',
-    'Медицина': '/assets/news/news-medical.webp',
-    'Законы': '/assets/news/news-law.webp',
-    'ЦБ РФ': '/assets/news/news-regulator.webp',
-    'Прокуратура': '/assets/news/news-prosecutor.webp',
-    'ФАС': '/assets/news/news-fas.webp',
-    'Роспотребнадзор': '/assets/news/news-rospotreb.webp'
+  const coverSet = (slug) => Array.from(
+    { length: 8 },
+    (_, index) => `/assets/news/covers/${slug}/${slug}-${String(index + 1).padStart(2, '0')}.webp`
+  );
+
+  const CATEGORY_COVERS = {
+    'Все новости': coverSet('laws'),
+    'Кредиты и банки': coverSet('banks'),
+    'Мошенничество': coverSet('fraud'),
+    'Защита прав потребителей': coverSet('consumer'),
+    'Суды': coverSet('courts'),
+    'Недвижимость': coverSet('real-estate'),
+    'Автомобили': coverSet('auto'),
+    'Медицина': coverSet('medical'),
+    'Законы': coverSet('laws'),
+    'ЦБ РФ': coverSet('cb-rf'),
+    'Прокуратура': coverSet('prosecutor'),
+    'ФАС': coverSet('fas'),
+    'Роспотребнадзор': coverSet('rospotreb')
   };
 
-  const EDITORIAL_IMAGE_SEQUENCE = [
-    CATEGORY_IMAGES['ЦБ РФ'],
-    CATEGORY_IMAGES['Кредиты и банки'],
-    CATEGORY_IMAGES['Законы'],
-    CATEGORY_IMAGES['Суды'],
-    CATEGORY_IMAGES['Недвижимость'],
-    CATEGORY_IMAGES['Защита прав потребителей'],
-    CATEGORY_IMAGES['Прокуратура'],
-    CATEGORY_IMAGES['Мошенничество'],
-    CATEGORY_IMAGES['Все новости']
-  ];
+  const CATEGORY_IMAGES = Object.fromEntries(
+    Object.entries(CATEGORY_COVERS).map(([category, covers]) => [category, covers[0]])
+  );
 
   const CATEGORY_COPY = {
     'Кредиты и банки': {
@@ -412,28 +409,9 @@
     };
   };
 
-  const buildImage = (rawItem, category, index = 0) => {
-    const image = normalizeText(rawItem?.image);
-    if (image && !/def\.png|placeholder|default/i.test(image)) {
-      try {
-        return new URL(image, window.location.origin).pathname;
-      } catch (_) {
-        return CATEGORY_IMAGES[category] || EDITORIAL_IMAGE_SEQUENCE[index % EDITORIAL_IMAGE_SEQUENCE.length];
-      }
-    }
-    const source = normalizeText(rawItem?.source).toLowerCase();
-    const title = normalizeText(rawItem?.title).toLowerCase();
-    const isRegulatorSeries = category === 'ЦБ РФ'
-      || source.includes('банк россии')
-      || source.includes('цб')
-      || title.includes('банк россии')
-      || title.includes('банком россии');
-    if (isRegulatorSeries) {
-      return EDITORIAL_IMAGE_SEQUENCE[index % EDITORIAL_IMAGE_SEQUENCE.length];
-    }
-    const categoryImage = CATEGORY_IMAGES[category];
-    if (!categoryImage) return EDITORIAL_IMAGE_SEQUENCE[index % EDITORIAL_IMAGE_SEQUENCE.length];
-    return index % 5 === 0 ? EDITORIAL_IMAGE_SEQUENCE[index % EDITORIAL_IMAGE_SEQUENCE.length] : categoryImage;
+  const buildImage = (_rawItem, category, index = 0) => {
+    const covers = CATEGORY_COVERS[category] || CATEGORY_COVERS['Все новости'];
+    return covers[index % covers.length];
   };
 
   const buildReadingTime = (item) => {
@@ -454,7 +432,7 @@
     return match ? match[0] : '';
   };
 
-  const normalizeItem = (item, index) => {
+  const normalizeItem = (item, index, coverIndex = index) => {
     const category = detectCategory(item);
     const note = parseKeisNote(item);
     const title = buildTitle(item?.title);
@@ -485,7 +463,7 @@
       dateTime,
       dateISO,
       url,
-      image: buildImage(item, category, index)
+      image: buildImage(item, category, coverIndex)
     };
     normalized.readingTime = buildReadingTime(normalized);
     return normalized;
@@ -524,7 +502,7 @@
 
   const buildItems = (rawPayload) => {
     const payload = extractPayload(rawPayload);
-    return payload.items
+    const items = payload.items
       .map(normalizeItem)
       .filter((item) => Boolean(item.title))
       .sort((a, b) => {
@@ -533,6 +511,15 @@
         return bTime - aTime;
       })
       .slice(0, MAX_ITEMS);
+    const coverCounters = Object.create(null);
+    return items.map((item) => {
+      const coverIndex = coverCounters[item.category] || 0;
+      coverCounters[item.category] = coverIndex + 1;
+      return {
+        ...item,
+        image: buildImage(null, item.category, coverIndex)
+      };
+    });
   };
 
   const fillSourceFilter = (preferredValue, proxySourceStatuses = null) => {
@@ -652,7 +639,7 @@
     refs.todayList.removeAttribute('aria-busy');
     refs.todayList.innerHTML = items.map((item) => `
       <a class="kg-news-today-item" ${linkAttrs(item)}>
-        <img src="${escapeAttr(item.image)}" alt="" loading="lazy" decoding="async">
+        <img src="${escapeAttr(item.image)}" alt="" loading="eager" decoding="async">
         <span>
           <span class="kg-news-today-item__meta">
             <span>${escapeHtml(item.category)}</span>
@@ -673,7 +660,7 @@
         <a ${linkAttrs(item)}>
           <span class="kg-news-popular-item__num">${String(index + 1).padStart(2, '0')}</span>
           <span class="kg-news-popular-item__title">${escapeHtml(item.title)}</span>
-          <img src="${escapeAttr(item.image)}" alt="" loading="lazy" decoding="async">
+          <img src="${escapeAttr(item.image)}" alt="" loading="eager" decoding="async">
         </a>
       </li>
     `).join('');
