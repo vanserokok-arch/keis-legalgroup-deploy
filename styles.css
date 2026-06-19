@@ -18035,6 +18035,8 @@ body.page-news .kg-news-stream .kg-news-cta-inline__button {
     position: fixed;
     inset: 0;
     z-index: 2400;
+    opacity: 0;
+    visibility: hidden;
     pointer-events: none;
     overflow: clip;
   }
@@ -18042,6 +18044,8 @@ body.page-news .kg-news-stream .kg-news-cta-inline__button {
     overflow: visible;
   }
   body.kg-mm-open .kg-mm {
+    opacity: 1;
+    visibility: visible;
     pointer-events: auto;
   }
 .kg-mm__overlay {
@@ -33978,6 +33982,18 @@ body.page-main .fraud-direction-card__content::after {
   display: none !important;
 }
 
+body.page-main #kgx-stories-carousel .kgx-stories__slide,
+body.page-main #kgx-stories-carousel .kgx-stories__slide:hover,
+body.page-main #kgx-stories-carousel .kgx-stories__slide:focus-visible,
+body.page-main #kgx-stories-carousel .kgx-stories__slide *,
+body.page-main #kgx-stories-carousel .kgx-stories__slide *:hover,
+body.page-main #kgx-stories-carousel .kgx-stories__slide *:focus-visible,
+body.page-main #kgx-stories-carousel .kgx-stories__title,
+body.page-main #kgx-stories-carousel .kgx-stories__text {
+  text-decoration: none !important;
+  -webkit-text-decoration: none !important;
+}
+
 .investment-process .work-step {
   position: relative;
   overflow: hidden;
@@ -34099,6 +34115,1101 @@ body.page-main .fraud-direction-card__content::after {
   }
 }
 
+.hero-stats-carousel {
+  grid-area: benefits;
+  width: min(100%, 560px);
+  max-width: 100%;
+  min-width: 0;
+  align-self: end;
+  justify-self: start;
+  margin: 0;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  pointer-events: auto !important;
+}
+
+.hero-stats-carousel__viewport {
+  width: 100%;
+  max-width: 100%;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  pointer-events: auto !important;
+}
+
+.hero-stats-carousel__viewport::before,
+.hero-stats-carousel__viewport::after {
+  content: none;
+}
+
+.hero-stats-carousel__track {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(12px, 1vw, 24px);
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  pointer-events: auto !important;
+}
+
+.hero-stats-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 88px;
+  padding: clamp(14px, 1vw, 20px);
+  border-radius: clamp(14px, 1vw, 22px);
+  background:
+    radial-gradient(145% 150% at 12% 0%, rgba(255, 229, 198, 0.18), rgba(255, 166, 86, 0.06) 42%, transparent 70%),
+    radial-gradient(130% 120% at 100% 100%, rgba(255, 132, 36, 0.14), transparent 62%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.035) 44%, rgba(18, 11, 7, 0.34) 100%),
+    rgba(13, 9, 6, 0.42);
+  border: 1px solid rgba(255, 204, 154, 0.18);
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(255, 132, 36, 0.10);
+  backdrop-filter: blur(14px) saturate(1.12);
+  -webkit-backdrop-filter: blur(14px) saturate(1.12);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-content: center;
+  gap: 7px;
+  pointer-events: auto !important;
+}
+
+.hero-stats-card::before,
+.hero-stats-card::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.hero-stats-card::before {
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(118deg, rgba(255, 255, 255, 0.22) 0%, transparent 30%, transparent 70%, rgba(255, 151, 60, 0.10) 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 4px);
+  opacity: 0.72;
+}
+
+.hero-stats-card::after {
+  left: -25%;
+  top: -42%;
+  width: 68%;
+  height: 120%;
+  transform: rotate(18deg);
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 238, 214, 0.20) 50%, transparent 100%);
+  opacity: 0.42;
+}
+
+.hero-stats-card[data-hero-stats-clone] {
+  display: none;
+}
+
+.hero-stats-card:nth-child(1) {
+  border-left: 2px solid rgba(255, 180, 120, 0.12);
+}
+
+.hero-stats-card:nth-child(2) {
+  border-top: 2px solid rgba(255, 154, 60, 0.12);
+}
+
+.hero-stats-card:nth-child(3) {
+  border-right: 2px solid rgba(255, 138, 0, 0.12);
+}
+
+.hero-stats-card:nth-child(4) {
+  border-bottom: 2px solid rgba(255, 200, 140, 0.12);
+}
+
+.hero-stats-card__kpi {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(15px, 1.6vw, 18px);
+  line-height: 1.1;
+  color: rgba(255, 242, 225, 0.98);
+}
+
+.hero-stats-card__text {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(12px, 0.95vw, 15px);
+  line-height: 1.34;
+  color: rgba(243, 233, 220, 0.9);
+}
+
+.hero-stats-carousel__pagination {
+  display: none;
+}
+
+@media (min-width: 981px) {
+  .hero-stats-carousel {
+    width: min(100%, 540px);
+    max-width: 540px;
+  }
+
+  .hero-stats-carousel__viewport {
+    overflow: visible;
+    border-radius: 0;
+  }
+
+  .hero-stats-carousel__track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(14px, 1vw, 18px);
+    padding: 0;
+    overflow: visible;
+    scroll-snap-type: none;
+    cursor: default;
+  }
+
+  .hero-stats-card {
+    min-height: clamp(118px, 8.8vw, 136px);
+    padding: clamp(16px, 1.15vw, 20px);
+    border-radius: clamp(16px, 1.2vw, 20px);
+    align-content: center;
+    justify-items: start;
+  }
+
+  .hero-stats-card__kpi {
+    max-width: 8.5ch;
+    font-size: clamp(1.5rem, 2vw, 2rem);
+    line-height: 0.98;
+    letter-spacing: 0;
+  }
+
+  .hero-stats-card__text {
+    max-width: 19ch;
+    font-size: clamp(0.92rem, 0.98vw, 1.04rem);
+    line-height: 1.18;
+  }
+
+  .hero-stats-carousel__pagination {
+    display: none !important;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 980px) {
+  .hero-stats-carousel {
+    --hero-stats-peek: 30px;
+    --hero-stats-gap: 12px;
+    position: relative;
+    isolation: isolate;
+    width: min(100%, 520px);
+    max-width: 520px;
+    margin-top: 8px;
+  }
+
+  .hero-stats-carousel__viewport {
+    position: relative;
+    overflow: visible;
+    border-radius: 16px;
+    pointer-events: auto !important;
+  }
+
+  .hero-stats-carousel__viewport::before,
+  .hero-stats-carousel__viewport::after {
+    content: none;
+  }
+
+  .hero-stats-carousel__track {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - (var(--hero-stats-peek) * 2) - (var(--hero-stats-gap) * 3)) / 2);
+    gap: var(--hero-stats-gap);
+    padding: 6px var(--hero-stats-peek) 28px;
+    overflow: visible;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: none;
+    scroll-padding-inline: 0;
+    scroll-behavior: auto;
+    scrollbar-width: none;
+    touch-action: pan-y;
+    cursor: grab;
+    pointer-events: auto !important;
+  }
+
+  .hero-stats-carousel__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hero-stats-carousel__track.is-dragging {
+    scroll-snap-type: none;
+    scroll-behavior: auto;
+    cursor: grabbing;
+    user-select: none;
+  }
+
+  .hero-stats-card {
+    min-height: 118px;
+    scroll-snap-align: start;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    pointer-events: auto !important;
+  }
+
+  .hero-stats-card[data-hero-stats-clone] {
+    display: flex;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .hero-stats-card:hover,
+    .hero-stats-card.is-hovered {
+      position: relative;
+      z-index: 2;
+      transform: scale(1.04);
+      border-color: rgba(255, 154, 60, 0.45);
+      box-shadow:
+        0 18px 42px rgba(0, 0, 0, 0.52),
+        0 0 22px rgba(255, 132, 36, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    }
+  }
+
+  .hero-stats-carousel__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+    margin: 14px auto 0;
+  }
+
+  .hero-stats-carousel__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.28);
+    transition: width 0.22s ease, background 0.22s ease;
+  }
+
+  .hero-stats-carousel__dot.is-active {
+    width: 26px;
+    border-radius: 999px;
+    background: var(--cases-accent-2, #ff8a1f);
+  }
+}
+
+/* 2026-06-19: mobile hero compaction for first block across fraud/investment/credit/influence pages. */
+@media (max-width: 760px) {
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type {
+    padding-bottom: clamp(42px, 10vw, 56px) !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .section-container {
+    width: min(100%, 414px) !important;
+    padding-inline: clamp(10px, 3.2vw, 14px) !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-investment__inner {
+    padding-top: clamp(72px, 17vw, 88px) !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-investment__grid {
+    gap: clamp(10px, 3vw, 14px) !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-investment__content {
+    gap: clamp(8px, 2.2vw, 12px) !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-investment__title,
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-v2 .hero-investment__title {
+    font-size: clamp(1.88rem, 6.9vw, 2.38rem) !important;
+    line-height: 0.98 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-bottom: clamp(4px, 1.6vw, 8px) !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-investment__subtitle,
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-v2 .hero-investment__subtitle,
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-subpoints {
+    font-size: clamp(0.75rem, 2.95vw, 0.84rem) !important;
+    line-height: 1.34 !important;
+    width: min(74%, 292px) !important;
+    max-width: min(74%, 292px) !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-subpoints {
+    gap: 5px !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-subpoints li {
+    padding-left: 18px !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-investment__form {
+    width: min(100%, 300px) !important;
+    max-width: 300px !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    justify-self: start !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-form-card {
+    padding: 10px 10px 8px !important;
+    border-radius: 16px !important;
+    gap: 6px !important;
+  }
+
+  body:is(
+    .page-influence,
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-subpoints {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    justify-self: start !important;
+    align-self: start !important;
+  }
+
+  body:is(
+    .page-influence,
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-investment__form {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+    justify-self: end !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-form-title {
+    font-size: clamp(0.94rem, 4.1vw, 1.08rem) !important;
+    line-height: 1.08 !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 0 !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-marker {
+    margin-bottom: 4px !important;
+    max-width: 24ch !important;
+    padding: 0 !important;
+    line-height: 1.08 !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-form-subtitle {
+    font-size: clamp(0.64rem, 2.45vw, 0.72rem) !important;
+    line-height: 1.14 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-inline: 4px !important;
+    margin: 8px auto 10px !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-form-subtitle::after {
+    bottom: -6px !important;
+    width: 54% !important;
+    max-width: 144px !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-form {
+    gap: 6px !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-form-row {
+    gap: 4px !important;
+    margin-bottom: 6px !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-form > .hero-form-group {
+    margin-top: 6px !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-form-group label {
+    font-size: 0.66rem !important;
+    line-height: 1.12 !important;
+    margin-bottom: 7px !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-form input,
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-form textarea {
+    min-height: 38px !important;
+    padding: 8px 11px !important;
+    font-size: 0.76rem !important;
+    line-height: 1.2 !important;
+    border-radius: 10px !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-form input::placeholder,
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-form textarea::placeholder {
+    font-size: 0.72rem !important;
+    line-height: 1.16 !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-form textarea {
+    min-height: 58px !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-form .btn-primary {
+    min-height: 42px !important;
+    height: 42px !important;
+    padding: 10px 12px !important;
+    font-size: 0.8rem !important;
+    border-radius: 11px !important;
+    margin-top: 8px !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-form-card .form-consent,
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-form-card .form-consent a {
+    font-size: 0.58rem !important;
+    line-height: 1.22 !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-carousel {
+    --hero-stats-peek: 18px;
+    --hero-stats-side-reveal: 2px;
+    --hero-stats-gap: 12px;
+    position: relative !important;
+    isolation: isolate !important;
+    width: min(100%, 338px) !important;
+    max-width: 338px !important;
+    margin-top: 6px !important;
+    margin-bottom: 34px !important;
+    pointer-events: auto !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-carousel__viewport {
+    position: relative !important;
+    overflow: visible !important;
+    border-radius: 14px !important;
+    pointer-events: auto !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-carousel__viewport::before,
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-carousel__viewport::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    bottom: 24px !important;
+    z-index: 3 !important;
+    width: 24px !important;
+    pointer-events: none !important;
+    background: transparent !important;
+    backdrop-filter: blur(2px) saturate(0.96) !important;
+    -webkit-backdrop-filter: blur(2px) saturate(0.96) !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-carousel__viewport::before {
+    left: -1px !important;
+    mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.68) 46%, transparent 100%) !important;
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.68) 46%, transparent 100%) !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-carousel__viewport::after {
+    right: -1px !important;
+    mask-image: linear-gradient(270deg, #000 0%, rgba(0, 0, 0, 0.68) 46%, transparent 100%) !important;
+    -webkit-mask-image: linear-gradient(270deg, #000 0%, rgba(0, 0, 0, 0.68) 46%, transparent 100%) !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-carousel__track {
+    display: grid !important;
+    grid-template-columns: none !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: calc((100% - var(--hero-stats-side-reveal) - var(--hero-stats-gap)) / 2) !important;
+    width: 100% !important;
+    max-width: none !important;
+    gap: var(--hero-stats-gap) !important;
+    margin: 0 !important;
+    padding: 4px var(--hero-stats-peek) 30px !important;
+    overflow: visible !important;
+    overscroll-behavior-x: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-snap-type: none !important;
+    scroll-padding-inline: 0 !important;
+    scroll-behavior: auto !important;
+    scrollbar-width: none !important;
+    touch-action: pan-y !important;
+    cursor: grab !important;
+    pointer-events: auto !important;
+    mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.32) 0%, #000 18px, #000 calc(100% - 18px), rgba(0, 0, 0, 0.32) 100%) !important;
+    -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.32) 0%, #000 18px, #000 calc(100% - 18px), rgba(0, 0, 0, 0.32) 100%) !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-carousel__track:active {
+    cursor: grabbing !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-carousel__track.is-dragging {
+    scroll-snap-type: none !important;
+    scroll-behavior: auto !important;
+    cursor: grabbing !important;
+    user-select: none !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-carousel__viewport::before,
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-carousel__viewport::after {
+    content: "" !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-carousel__track::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-card {
+    min-height: 124px !important;
+    padding: 14px 13px 12px !important;
+    border-radius: 16px !important;
+    background:
+      radial-gradient(145% 150% at 10% 0%, rgba(255, 235, 214, 0.24), rgba(255, 166, 86, 0.075) 40%, transparent 70%),
+      radial-gradient(130% 120% at 100% 100%, rgba(255, 132, 36, 0.18), transparent 62%),
+      linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.045) 44%, rgba(18, 11, 7, 0.38) 100%),
+      rgba(13, 9, 6, 0.50) padding-box !important;
+    background-clip: padding-box !important;
+    border-color: rgba(255, 204, 154, 0.26) !important;
+    box-shadow:
+      0 18px 34px rgba(0, 0, 0, 0.38),
+      inset 0 1px 0 rgba(255, 255, 255, 0.24),
+      inset 0 -1px 0 rgba(255, 132, 36, 0.12) !important;
+    backdrop-filter: blur(15px) saturate(1.16) !important;
+    -webkit-backdrop-filter: blur(15px) saturate(1.16) !important;
+    display: grid !important;
+    grid-template-rows: auto 1fr !important;
+    align-content: center !important;
+    justify-items: start !important;
+    gap: 7px !important;
+    scroll-snap-align: start !important;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease !important;
+    pointer-events: auto !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-card[data-hero-stats-clone] {
+    display: grid !important;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    body:is(
+      .page-main,
+      .page-investment,
+      .page-credit,
+      .page-influence,
+      [data-page="fraud"],
+      [data-page="investment"],
+      [data-page="credit"],
+      [data-page="influence"]
+    ) > section.hero-investment:first-of-type .hero-stats-card:hover,
+    body:is(
+      .page-main,
+      .page-investment,
+      .page-credit,
+      .page-influence,
+      [data-page="fraud"],
+      [data-page="investment"],
+      [data-page="credit"],
+      [data-page="influence"]
+    ) > section.hero-investment:first-of-type .hero-stats-card.is-hovered {
+      position: relative !important;
+      z-index: 2 !important;
+      transform: scale(1.04) !important;
+      border-color: rgba(255, 154, 60, 0.45) !important;
+      box-shadow:
+        0 16px 34px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(255, 132, 36, 0.16) !important;
+    }
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-card__kpi {
+    max-width: 8.5ch !important;
+    font-size: clamp(1rem, 4.35vw, 1.18rem) !important;
+    line-height: 1.02 !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-card__text {
+    max-width: 17ch !important;
+    font-size: clamp(0.68rem, 2.9vw, 0.78rem) !important;
+    line-height: 1.24 !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-carousel__pagination {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 9px !important;
+    margin: 4px auto 0 !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-carousel__pagination[hidden] {
+    display: none !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-carousel__dot {
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.28) !important;
+    transition: width 0.22s ease, background 0.22s ease !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-carousel__dot.is-active {
+    width: 26px !important;
+    border-radius: 999px !important;
+    background: var(--cases-accent-2, #ff8a1f) !important;
+  }
+}
+
 .kf-flags .kf-flag-card,
 .kf-flags .kf-flag {
   overflow: hidden !important;
@@ -34133,8 +35244,173 @@ body.page-main .fraud-direction-card__content::after {
 }
 
 @media (max-width: 374px) {
-  body > section.hero-investment:first-of-type .hero-benefits-grid.hero-benefits-grid--intro {
-    grid-template-columns: 1fr !important;
+  body > section.hero-investment:first-of-type .hero-stats-carousel__track {
+    grid-template-columns: none !important;
+    grid-auto-columns: calc((100% - var(--hero-stats-side-reveal, 2px) - var(--hero-stats-gap, 12px)) / 2) !important;
+  }
+}
+
+/* 2026-06-19: restored visible hover motion for hero stats and mid-page premium cards. */
+@media (hover: hover) and (pointer: fine) {
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-card {
+    background:
+      radial-gradient(145% 150% at 10% 0%, rgba(255, 235, 214, 0.22), rgba(255, 166, 86, 0.07) 40%, transparent 70%),
+      radial-gradient(130% 120% at 100% 100%, rgba(255, 132, 36, 0.16), transparent 62%),
+      linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.04) 44%, rgba(18, 11, 7, 0.36) 100%),
+      rgba(13, 9, 6, 0.48) padding-box !important;
+    border-color: rgba(255, 204, 154, 0.24) !important;
+    box-shadow:
+      0 18px 38px rgba(0, 0, 0, 0.38),
+      inset 0 1px 0 rgba(255, 255, 255, 0.24),
+      inset 0 -1px 0 rgba(255, 132, 36, 0.12) !important;
+    backdrop-filter: blur(14px) saturate(1.14) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(1.14) !important;
+    transform: translate3d(0, 0, 0) scale(1) !important;
+    transform-origin: center center !important;
+    transition:
+      transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 240ms ease,
+      border-color 220ms ease,
+      box-shadow 220ms ease !important;
+    will-change: transform, filter, box-shadow;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-card:hover,
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-card.is-hovered {
+    z-index: 4 !important;
+    transform: translate3d(0, -5px, 0) scale(1.055) !important;
+    filter: brightness(1.08) saturate(1.08) !important;
+    border-color: rgba(255, 180, 96, 0.58) !important;
+    box-shadow:
+      0 24px 46px rgba(0, 0, 0, 0.48),
+      0 0 26px rgba(255, 132, 36, 0.20),
+      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      inset 0 -1px 0 rgba(255, 132, 36, 0.16) !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-card::after {
+    transition:
+      opacity 240ms ease,
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+  }
+
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-card:hover::after,
+  body:is(
+    .page-main,
+    .page-investment,
+    .page-credit,
+    .page-influence,
+    [data-page="fraud"],
+    [data-page="investment"],
+    [data-page="credit"],
+    [data-page="influence"]
+  ) > section.hero-investment:first-of-type .hero-stats-card.is-hovered::after {
+    opacity: 0.72 !important;
+    transform: translate3d(120%, 0, 0) rotate(18deg) !important;
+  }
+
+  body.page-main .fraud-directions-premium .fraud-direction-card,
+  body.page-investment .broker-premium-section .broker-premium-card,
+  body.page-credit .broker-premium-section .broker-premium-card,
+  body.page-credit .credit-premium-card,
+  body.page-influence .pressure-premium-section .pressure-premium-card {
+    position: relative !important;
+    overflow: hidden !important;
+    transform: translate3d(0, 0, 0) !important;
+    transition:
+      transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 240ms ease,
+      border-color 220ms ease,
+      box-shadow 220ms ease,
+      background-color 220ms ease !important;
+    will-change: transform, filter, box-shadow;
+  }
+
+  body.page-main .fraud-directions-premium .fraud-direction-card::after,
+  body.page-investment .broker-premium-section .broker-premium-card::after,
+  body.page-credit .broker-premium-section .broker-premium-card::after,
+  body.page-credit .credit-premium-card::after,
+  body.page-influence .pressure-premium-section .pressure-premium-card::after {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+    background:
+      radial-gradient(circle at 16% 14%, rgba(255, 216, 170, 0.20) 0%, rgba(236, 132, 58, 0.10) 28%, transparent 58%),
+      linear-gradient(118deg, rgba(255, 255, 255, 0.10), transparent 44%, rgba(255, 151, 60, 0.10)) !important;
+    transition:
+      opacity 240ms ease,
+      transform 300ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+  }
+
+  body.page-main .fraud-directions-premium .fraud-direction-card:hover,
+  body.page-investment .broker-premium-section .broker-premium-card:hover,
+  body.page-credit .broker-premium-section .broker-premium-card:hover,
+  body.page-credit .credit-premium-card:hover,
+  body.page-influence .pressure-premium-section .pressure-premium-card:hover {
+    transform: translate3d(0, -5px, 0) scale(1.012) !important;
+    filter: brightness(1.05) saturate(1.05) !important;
+    border-color: rgba(255, 196, 140, 0.30) !important;
+    box-shadow:
+      0 28px 52px rgba(0, 0, 0, 0.36),
+      0 0 24px rgba(255, 132, 36, 0.12),
+      inset 0 0 0 1px rgba(255, 205, 152, 0.10) !important;
+  }
+
+  body.page-main .fraud-directions-premium .fraud-direction-card:hover::after,
+  body.page-investment .broker-premium-section .broker-premium-card:hover::after,
+  body.page-credit .broker-premium-section .broker-premium-card:hover::after,
+  body.page-credit .credit-premium-card:hover::after,
+  body.page-influence .pressure-premium-section .pressure-premium-card:hover::after {
+    opacity: 1 !important;
+    transform: scale(1.02) !important;
   }
 }
 
