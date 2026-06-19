@@ -26,30 +26,24 @@
     'Роспотребнадзор'
   ];
 
-  const coverSet = (slug) => Array.from(
-    { length: 8 },
-    (_, index) => `/assets/news/covers/${slug}/${slug}-${String(index + 1).padStart(2, '0')}.webp`
-  );
+  const NEWS_COVER_COUNT = 4;
+  const coverPath = (category, index) => `/assets/news/covers/${category}-${String((index % NEWS_COVER_COUNT) + 1).padStart(2, '0')}.webp`;
 
-  const CATEGORY_COVERS = {
-    'Все новости': coverSet('laws'),
-    'Кредиты и банки': coverSet('banks'),
-    'Мошенничество': coverSet('fraud'),
-    'Защита прав потребителей': coverSet('consumer'),
-    'Суды': coverSet('courts'),
-    'Недвижимость': coverSet('real-estate'),
-    'Автомобили': coverSet('auto'),
-    'Медицина': coverSet('medical'),
-    'Законы': coverSet('laws'),
-    'ЦБ РФ': coverSet('cb-rf'),
-    'Прокуратура': coverSet('prosecutor'),
-    'ФАС': coverSet('fas'),
-    'Роспотребнадзор': coverSet('rospotreb')
+  const CATEGORY_IMAGES = {
+    'Все новости': coverPath('law', 0),
+    'Кредиты и банки': coverPath('credit', 0),
+    'Мошенничество': coverPath('fraud', 0),
+    'Защита прав потребителей': coverPath('consumer', 0),
+    'Суды': coverPath('court', 0),
+    'Недвижимость': coverPath('realestate', 0),
+    'Автомобили': coverPath('auto', 0),
+    'Медицина': coverPath('medical', 0),
+    'Законы': coverPath('law', 0),
+    'ЦБ РФ': coverPath('regulator', 0),
+    'Прокуратура': coverPath('prosecutor', 0),
+    'ФАС': coverPath('fas', 0),
+    'Роспотребнадзор': coverPath('rospotreb', 0)
   };
-
-  const CATEGORY_IMAGES = Object.fromEntries(
-    Object.entries(CATEGORY_COVERS).map(([category, covers]) => [category, covers[0]])
-  );
 
   const CATEGORY_COPY = {
     'Кредиты и банки': {
@@ -370,6 +364,30 @@
     return 'Законы';
   };
 
+  const resolveNewsCoverCategory = (item) => {
+    const category = item?.category || detectCategory(item);
+    const haystack = getHaystack(item);
+
+    if (category === 'ЦБ РФ' || haystack.includes('банк россии') || /(^|[^а-яё])цб([^а-яё]|$)/i.test(haystack)) return 'regulator';
+    if (category === 'Кредиты и банки') {
+      if (/(кредит|за[её]м|займ|ипотек|мфо|ставк|долг|просроч|задолжен)/i.test(haystack)) return 'credit';
+      return 'bank';
+    }
+    if (category === 'Мошенничество') return 'fraud';
+    if (category === 'Суды') return 'court';
+    if (category === 'Защита прав потребителей') return 'consumer';
+    if (category === 'Недвижимость') return 'realestate';
+    if (category === 'Автомобили') return 'auto';
+    if (category === 'Медицина') return 'medical';
+    if (category === 'Законы') return 'law';
+    if (category === 'Прокуратура') return 'prosecutor';
+    if (category === 'ФАС') return 'fas';
+    if (category === 'Роспотребнадзор') return 'rospotreb';
+    return 'law';
+  };
+
+  const getNewsCover = (item, index = 0) => coverPath(resolveNewsCoverCategory(item), index);
+
   const parseKeisNote = (item) => {
     const raw = normalizeMultiline(item?.keisNote || item?.keisNoteAuto);
     const lines = raw.split(/\n+/).map((line) => line.trim()).filter(Boolean);
@@ -407,11 +425,6 @@
       audience: clampText(note.audience || '', 120),
       title
     };
-  };
-
-  const buildImage = (_rawItem, category, index = 0) => {
-    const covers = CATEGORY_COVERS[category] || CATEGORY_COVERS['Все новости'];
-    return covers[index % covers.length];
   };
 
   const buildReadingTime = (item) => {
@@ -463,7 +476,7 @@
       dateTime,
       dateISO,
       url,
-      image: buildImage(item, category, coverIndex)
+      image: getNewsCover({ ...item, category }, coverIndex)
     };
     normalized.readingTime = buildReadingTime(normalized);
     return normalized;
@@ -513,11 +526,12 @@
       .slice(0, MAX_ITEMS);
     const coverCounters = Object.create(null);
     return items.map((item) => {
-      const coverIndex = coverCounters[item.category] || 0;
-      coverCounters[item.category] = coverIndex + 1;
+      const coverCategory = resolveNewsCoverCategory(item);
+      const coverIndex = coverCounters[coverCategory] || 0;
+      coverCounters[coverCategory] = coverIndex + 1;
       return {
         ...item,
-        image: buildImage(null, item.category, coverIndex)
+        image: getNewsCover(item, coverIndex)
       };
     });
   };
