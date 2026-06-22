@@ -977,6 +977,30 @@
 </div>
 <script defer="" src="../../script.js"></script>
 <!-- JivoChat Widget -->
-  <script src="https://code.jivo.ru/widget/CgMP7mbMCA" async></script>
+<script>
+  (function () {
+    var jivoSrc = "https://code.jivo.ru/widget/CgMP7mbMCA";
+    var isLoaded = false;
+
+    function loadJivo() {
+      if (isLoaded || document.querySelector('script[src="' + jivoSrc + '"]')) return;
+      isLoaded = true;
+
+      var script = document.createElement("script");
+      script.src = jivoSrc;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+
+    window.addEventListener("load", function () {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(loadJivo, { timeout: 3500 });
+        return;
+      }
+
+      window.setTimeout(loadJivo, 1200);
+    }, { once: true });
+  }());
+</script>
 </body>
 </html>

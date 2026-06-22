@@ -121,7 +121,18 @@
   <script src="./script.js" defer></script>
 
   <!-- JivoChat Widget -->
-  <script src="https://code.jivo.ru/widget/CgMP7mbMCA" async></script>
+  <script>
+(function () {
+  try {
+    var host = window.location && window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1' || host === '::1') return;
+    var script = document.createElement('script');
+    script.src = 'https://code.jivo.ru/widget/CgMP7mbMCA';
+    script.async = true;
+    document.body.appendChild(script);
+  } catch (e) {}
+})();
+</script>
 
     <footer class="site-footer" id="about">
   <div id="bottom-cta" aria-hidden="true"></div>

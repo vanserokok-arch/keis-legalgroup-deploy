@@ -30,7 +30,18 @@
 })();
 </script>
   <link rel="stylesheet" href="../../styles.css" />
-  <script src="https://mc.yandex.ru/metrika/tag.js" async></script>
+  <script>
+(function () {
+  try {
+    var host = window.location && window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1' || host === '::1') return;
+    var script = document.createElement('script');
+    script.src = 'https://mc.yandex.ru/metrika/tag.js';
+    script.async = true;
+    document.head.appendChild(script);
+  } catch (e) {}
+})();
+</script>
 </head>
 
 <body class="page-investment" id="top" data-page="investment">
@@ -185,48 +196,37 @@
         </aside>
 
         <!-- STATS CAROUSEL -->
-        <div class="hero-stats-carousel" data-hero-stats-carousel>
-          <div class="hero-stats-carousel__viewport">
-            <div class="hero-stats-carousel__track" data-hero-stats-track>
-              <article class="hero-stats-card">
-                <div class="hero-stats-card__kpi">30+ лет</div>
-                <div class="hero-stats-card__text">Практики у каждого нашего юриста</div>
+        <div class="hero-proof-carousel" data-hero-proof-carousel>
+          <div class="hero-proof-carousel__viewport">
+            <div class="hero-proof-carousel__track" data-hero-proof-track>
+              <article class="hero-proof-card">
+                <div class="hero-proof-card__kpi">30+ лет</div>
+                <div class="hero-proof-card__text">Практики у каждого нашего юриста</div>
               </article>
-              <article class="hero-stats-card">
-                <div class="hero-stats-card__kpi">Гарантии</div>
-                <div class="hero-stats-card__text">Оплата только за честный результат</div>
+              <article class="hero-proof-card">
+                <div class="hero-proof-card__kpi">Гарантии</div>
+                <div class="hero-proof-card__text">Оплата только за честный результат</div>
               </article>
-              <article class="hero-stats-card">
-                <div class="hero-stats-card__kpi">24/7</div>
-                <div class="hero-stats-card__text">Юрист на связи всегда — ответит в выходные дни и вечером</div>
+              <article class="hero-proof-card">
+                <div class="hero-proof-card__kpi">24/7</div>
+                <div class="hero-proof-card__text">Юрист на связи всегда — ответит в выходные дни и вечером</div>
               </article>
-              <article class="hero-stats-card">
-                <div class="hero-stats-card__kpi">400 млн+</div>
-                <div class="hero-stats-card__text">Вернули нашим клиентам в досудебном и судебном порядке</div>
+              <article class="hero-proof-card">
+                <div class="hero-proof-card__kpi">400 млн+</div>
+                <div class="hero-proof-card__text">Вернули нашим клиентам в досудебном и судебном порядке</div>
               </article>
             </div>
           </div>
-          <div class="hero-stats-carousel__pagination" data-hero-stats-pagination aria-hidden="true">
-            <span class="hero-stats-carousel__dot is-active" data-hero-stats-dot></span>
-            <span class="hero-stats-carousel__dot" data-hero-stats-dot></span>
-            <span class="hero-stats-carousel__dot" data-hero-stats-dot></span>
-            <span class="hero-stats-carousel__dot" data-hero-stats-dot></span>
+          <div class="hero-proof-carousel__pagination" data-hero-proof-pagination aria-hidden="true">
+            <span class="hero-proof-carousel__dot is-active" data-hero-proof-dot></span>
+            <span class="hero-proof-carousel__dot" data-hero-proof-dot></span>
+            <span class="hero-proof-carousel__dot" data-hero-proof-dot></span>
+            <span class="hero-proof-carousel__dot" data-hero-proof-dot></span>
           </div>
         </div>
         <!-- /STATS CAROUSEL -->
     </div>
   </section>
-
-  <div class="keis-divider keis-divider--shards keis-divider--kgx-stories-bottom" aria-hidden="true"></div>
-
-  <div class="keis-ticker">
-    <div class="keis-ticker__track" data-ticker-track>
-      <span>Узкопрофильные специалисты</span>
-      <span>Юрист на связи всегда</span>
-      <span>Более 30 лет опыта имеет каждый юрист компании</span>
-      <span>Работаем на результат, а не на процесс</span>
-    </div>
-  </div>
 
   <!-- KGX STORIES -->
   <section id="kgx-stories-carousel" class="kgx-stories">
@@ -486,14 +486,14 @@
               <ul class="broker-premium-card__list">
                 <li>получатель известен банку</li>
                 <li>перевод подтверждается документами</li>
-                <li>банковский след остаётся</li>
+                <li>банковские транзакции сохраняются</li>
               </ul>
             </article>
             <article class="broker-premium-card" role="listitem">
               <h3>Даже если карта уже заблокирована</h3>
               <ul class="broker-premium-card__list">
                 <li>остаётся история операций</li>
-                <li>остаются данные владельца счёта</li>
+                <li>сохранилась давность</li>
                 <li>можно установить получателя</li>
               </ul>
             </article>
@@ -525,8 +525,8 @@
         <div class="broker-premium-section__visual-space" aria-hidden="true"></div>
         <div class="broker-premium-section__content">
           <div class="broker-canon-head broker-canon-head--card">
-            <h2 id="crypto-tracing-title" class="broker-canon-head__title">Попросили купить криптовалюту, <span class="k-title__mark">а затем перевести?</span></h2>
-            <p class="broker-canon-head__lead">Мошенники часто объясняют это «пополнением счёта», «активацией кабинета» или «быстрым способом перевода». На деле деньги уходят на чужой кошелёк, а вывести их потом не дают.</p>
+            <h2 id="crypto-tracing-title" class="broker-canon-head__title">Купили криптовалюту, <span class="k-title__mark">а затем перевели?</span></h2>
+            <p class="broker-canon-head__lead">Под видом пополнения счёта или активации кабинета деньги переводят на чужой кошелёк, откуда их уже не вернуть.</p>
           </div>
           <div class="broker-crypto-path__steps broker-premium-grid" role="list">
             <article class="broker-premium-card broker-premium-card--timeline" role="listitem">
@@ -619,8 +619,8 @@
         <div class="broker-premium-section__visual-space" aria-hidden="true"></div>
         <div class="broker-premium-section__content">
           <div class="broker-canon-head broker-canon-head--card">
-            <h2 id="proof-evidence-title" class="broker-canon-head__title">Что может стать <span class="k-title__mark">доказательством</span></h2>
-            <p class="broker-canon-head__lead">Чем больше сохранилось переписки, переводов, скриншотов и других данных, тем проще восстановить события и подтвердить перевод денег.</p>
+            <h2 id="proof-evidence-title" class="broker-canon-head__title">Как можно <span class="k-title__mark">доказать обман?</span></h2>
+            <p class="broker-canon-head__lead">Переписки, чеки и скриншоты помогут восстановить обстоятельства обмана.</p>
           </div>
           <div class="broker-crypto-path__steps broker-premium-grid" role="list">
             <article class="broker-premium-card broker-premium-card--timeline" role="listitem">
@@ -837,9 +837,11 @@
   </section>
   <!-- CASES -->
   <section class="investment-cases case-showcase" id="cases">
-    <div class="case-showcase__head">
-      <h2>Наши <span>кейсы</span></h2>
-      <p>Отражаем состав доказательств, заявленные требования и итог рассмотрения.</p>
+    <div class="case-showcase__head k-header">
+      <div class="k-header__box">
+        <h2 class="k-title">Наши <span class="k-title__mark">кейсы</span></h2>
+        <p class="k-subtitle">Отражаем состав доказательств, заявленные требования и итог рассмотрения.</p>
+      </div>
     </div>
 
     <div class="case-showcase__layout">
@@ -1291,6 +1293,17 @@
   <script src="../../script.js" defer></script>
 
   <!-- JivoChat Widget -->
-  <script src="https://code.jivo.ru/widget/CgMP7mbMCA" async></script>
+  <script>
+(function () {
+  try {
+    var host = window.location && window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1' || host === '::1') return;
+    var script = document.createElement('script');
+    script.src = 'https://code.jivo.ru/widget/CgMP7mbMCA';
+    script.async = true;
+    document.body.appendChild(script);
+  } catch (e) {}
+})();
+</script>
 </body>
 </html>

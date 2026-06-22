@@ -25,6 +25,116 @@
   }
 })();
 
+(function preserveLocalReloadScroll() {
+  try {
+    const host = window.location && window.location.hostname;
+    const isLocal = host === 'localhost' || host === '127.0.0.1' || host === '::1';
+    if (!isLocal || !window.sessionStorage) return;
+
+    const key = `keis:local-reload-scroll:${window.location.pathname}${window.location.search}`;
+    const save = () => {
+      const y = Math.max(0, Math.round(window.scrollY || window.pageYOffset || 0));
+      sessionStorage.setItem(key, String(y));
+    };
+    const restore = () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('thanksReturn')) return;
+
+      const raw = sessionStorage.getItem(key);
+      sessionStorage.removeItem(key);
+      const y = Number.parseInt(raw || '', 10);
+      if (!Number.isFinite(y) || y <= 0) return;
+
+      const jump = () => window.scrollTo({ top: y, left: 0, behavior: 'auto' });
+      requestAnimationFrame(() => {
+        jump();
+        setTimeout(jump, 80);
+      });
+    };
+
+    window.addEventListener('beforeunload', save);
+    window.addEventListener('pagehide', save);
+    window.addEventListener('DOMContentLoaded', restore, { once: true });
+  } catch (e) {
+    // no-op
+  }
+})();
+
+(function initLocalDevAutoReload() {
+  try {
+    const host = window.location && window.location.hostname;
+    const isLocal = host === 'localhost' || host === '127.0.0.1' || host === '::1';
+    if (!isLocal || window.__KEIS_DISABLE_DEV_AUTO_RELOAD__) return;
+
+    const scripts = Array.from(document.scripts || []);
+    const hasNativeReload = scripts.some((script) => /live(?:reload|-server)|vscode/i.test(script.src || ''));
+    if (hasNativeReload) return;
+
+    const toUrl = (value) => {
+      try {
+        const url = new URL(value, window.location.href);
+        return url.origin === window.location.origin ? url.href : null;
+      } catch (e) {
+        return null;
+      }
+    };
+
+    const watchedUrls = Array.from(new Set([
+      toUrl(window.location.href.split('#')[0]),
+      ...Array.from(document.querySelectorAll('link[rel="stylesheet"][href]'), (node) => toUrl(node.href)),
+      ...scripts.map((script) => toUrl(script.src)).filter(Boolean),
+    ].filter(Boolean)));
+
+    if (!watchedUrls.length) return;
+
+    const signatures = new Map();
+    let ready = false;
+    let checking = false;
+
+    const signatureFor = async (url) => {
+      const response = await fetch(url, {
+        method: 'HEAD',
+        cache: 'no-store',
+        credentials: 'same-origin',
+      });
+      if (!response.ok) return null;
+      return [
+        response.headers.get('last-modified') || '',
+        response.headers.get('etag') || '',
+        response.headers.get('content-length') || '',
+      ].join('|');
+    };
+
+    const check = async () => {
+      if (checking) return;
+      checking = true;
+      try {
+        for (const url of watchedUrls) {
+          const signature = await signatureFor(url);
+          if (!signature) continue;
+
+          const previous = signatures.get(url);
+          signatures.set(url, signature);
+          if (ready && previous && previous !== signature) {
+            window.location.reload();
+            return;
+          }
+        }
+        ready = true;
+      } catch (e) {
+        // Keep local development resilient if one request is interrupted.
+      } finally {
+        checking = false;
+      }
+    };
+
+    check();
+    window.setInterval(check, 700);
+  } catch (e) {
+    // no-op
+  }
+})();
+
 (function initViewportVariable() {
   const rootEl = document.documentElement;
   if (!rootEl) return;
@@ -97,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSmartLazyMedia();
   initReviewsSection();
   initCaseShowcaseSections();
+  initHeroProofCarousel();
 
   if (isDev()) {
     console.log('[script.js] All initialization functions completed');
@@ -113,6 +224,576 @@ function isDev() {
 
 function isLocalPreview() {
   return isDev() || window.location.protocol === 'file:';
+}
+
+function initHeroProofCarousel() {
+  if (!guardInit('hero-proof-carousel')) return;
+
+  const roots = Array.from(
+    document.querySelectorAll('body > section.hero-investment:first-of-type [data-hero-proof-carousel]')
+  );
+  if (!roots.length) return;
+
+  const carouselMedia = window.matchMedia('(max-width: 980px)');
+  const reducedMotionMedia = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const prefersReducedMotion = () => reducedMotionMedia.matches;
+  const mod = (n, m) => ((n % m) + m) % m;
+
+  const addMqChangeListener = (mq, handler) => {
+    if (!mq || typeof handler !== 'function') return;
+    if (typeof mq.addEventListener === 'function') {
+      mq.addEventListener('change', handler);
+      return;
+    }
+    if (typeof mq.addListener === 'function') {
+      mq.addListener(handler);
+    }
+  };
+
+  const jivoQuietRoots = new Set();
+  const syncHeroProofJivoQuiet = () => {
+    document.documentElement.classList.toggle(
+      'hero-proof-jivo-quiet',
+      carouselMedia.matches && jivoQuietRoots.size > 0
+    );
+  };
+
+  roots.forEach((root) => {
+    const viewportEl = root.querySelector('.hero-proof-carousel__viewport');
+    const track = root.querySelector('[data-hero-proof-track]');
+    if (!track || track.dataset.heroProofReady === '1') return;
+
+    const originalNodes = Array.from(track.querySelectorAll('.hero-proof-card:not([data-hero-proof-clone])'));
+    const originalTemplates = originalNodes.map((node) => node.cloneNode(true));
+    const totalSlides = originalTemplates.length;
+    if (!viewportEl || totalSlides < 2) return;
+
+    track.dataset.heroProofReady = '1';
+
+    const pagination = root.querySelector('[data-hero-proof-pagination]');
+    const dots = Array.from(root.querySelectorAll('[data-hero-proof-dot]'));
+
+    const cloneCount = Math.min(3, totalSlides);
+    const autoplayDelayMs = 3000;
+
+    let index = cloneCount;
+    let slidesAll = [];
+    let isAnimating = false;
+    let isPaused = false;
+    let isSliderVisible = true;
+    let autoplayTimer = 0;
+    let resumeAutoplayTimer = 0;
+    let animationFallbackTimer = 0;
+    let edgePeekFrame = 0;
+    let edgePeekLoopActive = false;
+    let lastWheelSwipeAt = 0;
+
+    const readRealIndex = () => mod(index - cloneCount, totalSlides);
+
+    const updateNav = () => {
+      if (!dots.length) return;
+      const realIndex = readRealIndex();
+      dots.forEach((dot, index) => {
+        const isActive = index === realIndex;
+        dot.classList.toggle('is-active', isActive);
+        dot.setAttribute('aria-current', isActive ? 'true' : 'false');
+      });
+    };
+
+    const updateEdgePeek = () => {
+      const viewportRect = viewportEl.getBoundingClientRect();
+      const leftEdge = viewportRect.left + 1;
+      const rightEdge = viewportRect.right - 1;
+      let hasEdgePeeks = false;
+
+      slidesAll.forEach((slide) => {
+        const rect = slide.getBoundingClientRect();
+        const isVisible = rect.right > leftEdge && rect.left < rightEdge;
+        const isRightPeek = isVisible && rect.left < rightEdge && rect.right > rightEdge;
+        const isLeftCut = isVisible && rect.left < leftEdge;
+        slide.classList.toggle('is-edge-peek', isRightPeek);
+        slide.classList.toggle('is-before-edge-peek', !isRightPeek && !isLeftCut && isVisible);
+        hasEdgePeeks = hasEdgePeeks || isRightPeek;
+      });
+
+      track.classList.toggle('has-edge-peeks', hasEdgePeeks);
+    };
+
+    const requestEdgePeekUpdate = () => {
+      if (edgePeekFrame) return;
+      edgePeekFrame = window.requestAnimationFrame(() => {
+        edgePeekFrame = 0;
+        updateEdgePeek();
+        if (edgePeekLoopActive) {
+          edgePeekFrame = window.requestAnimationFrame(runEdgePeekLoop);
+        }
+      });
+    };
+
+    const runEdgePeekLoop = () => {
+      edgePeekFrame = 0;
+      updateEdgePeek();
+      if (edgePeekLoopActive) {
+        edgePeekFrame = window.requestAnimationFrame(runEdgePeekLoop);
+      }
+    };
+
+    const startEdgePeekLoop = () => {
+      edgePeekLoopActive = true;
+      if (!edgePeekFrame) {
+        edgePeekFrame = window.requestAnimationFrame(runEdgePeekLoop);
+      }
+    };
+
+    const stopEdgePeekLoop = (syncNow = true) => {
+      edgePeekLoopActive = false;
+      if (edgePeekFrame) {
+        window.cancelAnimationFrame(edgePeekFrame);
+        edgePeekFrame = 0;
+      }
+      if (syncNow) updateEdgePeek();
+    };
+
+    const readStep = () => {
+      const firstSlide = slidesAll[0];
+      const secondSlide = slidesAll[1];
+      if (firstSlide && secondSlide) {
+        return Math.max(1, secondSlide.offsetLeft - firstSlide.offsetLeft);
+      }
+      return Math.max(1, firstSlide?.getBoundingClientRect?.().width || viewportEl.clientWidth);
+    };
+
+    const clearAnimationFallback = () => {
+      if (!animationFallbackTimer) return;
+      clearTimeout(animationFallbackTimer);
+      animationFallbackTimer = 0;
+    };
+
+    const cancelActiveAnimation = () => {
+      if (!isAnimating) return;
+      clearAnimationFallback();
+      isAnimating = false;
+      track.classList.remove('is-animating');
+      track.style.willChange = 'auto';
+      track.style.setProperty('transition', 'none', 'important');
+      stopEdgePeekLoop();
+    };
+
+    const setTranslate = (animated = true) => {
+      if (!carouselMedia.matches) {
+        clearAnimationFallback();
+        track.classList.remove('is-animating');
+        track.style.willChange = 'auto';
+        track.style.setProperty('transition', 'none', 'important');
+        track.style.setProperty('transform', 'none', 'important');
+        isAnimating = false;
+        stopEdgePeekLoop();
+        return;
+      }
+
+      const x = -Math.round(readStep() * index);
+      if (animated && !prefersReducedMotion() && carouselMedia.matches) {
+        track.classList.add('is-animating');
+        track.style.willChange = 'transform';
+        track.style.setProperty('transition', 'transform 520ms cubic-bezier(0.18, 0.84, 0.22, 1)', 'important');
+        isAnimating = true;
+        clearAnimationFallback();
+        animationFallbackTimer = window.setTimeout(() => {
+          animationFallbackTimer = 0;
+          if (!isAnimating) return;
+          isAnimating = false;
+          track.classList.remove('is-animating');
+          track.style.willChange = 'auto';
+          stopEdgePeekLoop(false);
+          if (index >= cloneCount + totalSlides) {
+            jumpToRealIndex(0);
+          } else if (index < cloneCount) {
+            jumpToRealIndex(totalSlides - 1);
+          } else {
+            updateEdgePeek();
+            updateNav();
+          }
+          scheduleAutoplay();
+        }, 760);
+      } else {
+        clearAnimationFallback();
+        track.classList.remove('is-animating');
+        track.style.willChange = 'auto';
+        track.style.setProperty('transition', 'none', 'important');
+        isAnimating = false;
+        stopEdgePeekLoop(false);
+      }
+      track.style.setProperty('transform', `translate3d(${x}px, 0, 0)`, 'important');
+      if (isAnimating) {
+        startEdgePeekLoop();
+      } else {
+        requestEdgePeekUpdate();
+      }
+    };
+
+    const jumpToRealIndex = (targetIndex) => {
+      index = cloneCount + mod(targetIndex, totalSlides);
+      setTranslate(false);
+      updateNav();
+    };
+
+    const build = () => {
+      const currentRealIndex = readRealIndex();
+      track.innerHTML = '';
+      originalTemplates.slice(-cloneCount).forEach((node) => {
+        const clone = node.cloneNode(true);
+        clone.dataset.heroProofClone = 'true';
+        clone.setAttribute('aria-hidden', 'true');
+        track.appendChild(clone);
+      });
+      originalTemplates.forEach((node) => track.appendChild(node.cloneNode(true)));
+      originalTemplates.slice(0, cloneCount).forEach((node) => {
+        const clone = node.cloneNode(true);
+        clone.dataset.heroProofClone = 'true';
+        clone.setAttribute('aria-hidden', 'true');
+        track.appendChild(clone);
+      });
+      slidesAll = Array.from(track.children);
+      index = cloneCount + currentRealIndex;
+      setTranslate(false);
+      updateNav();
+      requestEdgePeekUpdate();
+    };
+
+    const stopAutoplay = () => {
+      if (!autoplayTimer) return;
+      clearTimeout(autoplayTimer);
+      autoplayTimer = 0;
+    };
+
+    const clearResumeAutoplay = () => {
+      if (!resumeAutoplayTimer) return;
+      clearTimeout(resumeAutoplayTimer);
+      resumeAutoplayTimer = 0;
+    };
+
+    const pauseAutoplay = () => {
+      isPaused = true;
+      stopAutoplay();
+      clearResumeAutoplay();
+    };
+
+    const resumeAutoplay = (delayMs = 900) => {
+      clearResumeAutoplay();
+      resumeAutoplayTimer = window.setTimeout(() => {
+        resumeAutoplayTimer = 0;
+        isPaused = false;
+        scheduleAutoplay();
+      }, delayMs);
+    };
+
+    const shouldAutoplay = () => (
+      carouselMedia.matches &&
+      !prefersReducedMotion() &&
+      !document.hidden &&
+      !isPaused &&
+      isSliderVisible
+    );
+
+    const scheduleAutoplay = () => {
+      stopAutoplay();
+      if (!shouldAutoplay()) return;
+      autoplayTimer = window.setTimeout(() => {
+        autoplayTimer = 0;
+        goToNext();
+      }, autoplayDelayMs);
+    };
+
+    const goToNext = () => {
+      if (!carouselMedia.matches || isAnimating) {
+        scheduleAutoplay();
+        return;
+      }
+      index += 1;
+      setTranslate(true);
+      updateNav();
+    };
+
+    const goToPrev = () => {
+      if (!carouselMedia.matches || isAnimating) {
+        scheduleAutoplay();
+        return;
+      }
+      index -= 1;
+      setTranslate(true);
+      updateNav();
+    };
+
+    const goToRealIndex = (targetIndex) => {
+      if (!Number.isFinite(targetIndex)) return;
+      stopAutoplay();
+      index = cloneCount + mod(targetIndex, totalSlides);
+      setTranslate(!prefersReducedMotion());
+      updateNav();
+      scheduleAutoplay();
+    };
+
+    track.addEventListener('transitionend', (event) => {
+      if (event.propertyName !== 'transform') return;
+      clearAnimationFallback();
+      isAnimating = false;
+      track.classList.remove('is-animating');
+      track.style.willChange = 'auto';
+      stopEdgePeekLoop(false);
+      if (index >= cloneCount + totalSlides) {
+        jumpToRealIndex(0);
+      } else if (index < cloneCount) {
+        jumpToRealIndex(totalSlides - 1);
+      } else {
+        updateEdgePeek();
+        updateNav();
+      }
+      scheduleAutoplay();
+    });
+
+    dots.forEach((dot, dotIndex) => {
+      dot.addEventListener('click', () => goToRealIndex(dotIndex));
+    });
+
+    const swipeState = {
+      active: false,
+      locked: false,
+      source: '',
+      pointerId: null,
+      startX: 0,
+      startY: 0,
+      deltaX: 0,
+    };
+
+    const resetSwipeState = () => {
+      swipeState.active = false;
+      swipeState.locked = false;
+      swipeState.source = '';
+      swipeState.pointerId = null;
+      swipeState.startX = 0;
+      swipeState.startY = 0;
+      swipeState.deltaX = 0;
+      viewportEl.classList.remove('is-swiping');
+    };
+
+    const releasePointer = () => {
+      if (swipeState.pointerId === null) return;
+      if (typeof viewportEl.releasePointerCapture !== 'function') return;
+      try {
+        viewportEl.releasePointerCapture(swipeState.pointerId);
+      } catch (_) {}
+    };
+
+    const startSwipe = (source, pointerId, clientX, clientY) => {
+      if (!carouselMedia.matches || swipeState.active) return false;
+      cancelActiveAnimation();
+      pauseAutoplay();
+      swipeState.active = true;
+      swipeState.locked = false;
+      swipeState.source = source;
+      swipeState.pointerId = pointerId;
+      swipeState.startX = clientX;
+      swipeState.startY = clientY;
+      swipeState.deltaX = 0;
+      viewportEl.classList.add('is-swiping');
+      return true;
+    };
+
+    const onSwipePointerDown = (event) => {
+      if (!event.isPrimary) return;
+      if (event.pointerType === 'mouse' && event.buttons !== 1) return;
+      if (!startSwipe('pointer', event.pointerId, event.clientX, event.clientY)) return;
+      if (typeof viewportEl.setPointerCapture === 'function') {
+        try {
+          viewportEl.setPointerCapture(event.pointerId);
+        } catch (_) {}
+      }
+    };
+
+    const moveSwipe = (clientX, clientY, event) => {
+      const dx = clientX - swipeState.startX;
+      const dy = clientY - swipeState.startY;
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
+
+      if (!swipeState.locked) {
+        if (absDy > 18 && absDy > absDx * 1.15) {
+          releasePointer();
+          resetSwipeState();
+          resumeAutoplay(900);
+          return;
+        }
+        if (absDx > 12 && absDx > absDy * 1.2) {
+          swipeState.locked = true;
+        }
+      }
+
+      if (!swipeState.locked) return;
+      if (event.cancelable) event.preventDefault();
+      swipeState.deltaX = dx;
+    };
+
+    const onSwipePointerMove = (event) => {
+      if (!swipeState.active || swipeState.source !== 'pointer' || event.pointerId !== swipeState.pointerId) return;
+      moveSwipe(event.clientX, event.clientY, event);
+    };
+
+    const finishSwipe = () => {
+      if (swipeState.locked && Math.abs(swipeState.deltaX) >= 42) {
+        if (swipeState.deltaX < 0) {
+          goToNext();
+        } else {
+          goToPrev();
+        }
+      }
+      releasePointer();
+      resetSwipeState();
+      resumeAutoplay(1300);
+    };
+
+    const onSwipePointerUp = (event) => {
+      if (!swipeState.active || swipeState.source !== 'pointer' || event.pointerId !== swipeState.pointerId) return;
+      finishSwipe();
+    };
+
+    const onSwipePointerCancel = (event) => {
+      if (!swipeState.active || swipeState.source !== 'pointer' || event.pointerId !== swipeState.pointerId) return;
+      releasePointer();
+      resetSwipeState();
+      resumeAutoplay(900);
+    };
+
+    const findSwipeTouch = (touches, identifier) => Array.from(touches).find((touch) => touch.identifier === identifier);
+
+    const onSwipeTouchStart = (event) => {
+      if (swipeState.active || event.touches.length !== 1) return;
+      const touch = event.touches[0];
+      startSwipe('touch', touch.identifier, touch.clientX, touch.clientY);
+    };
+
+    const onSwipeTouchMove = (event) => {
+      if (!swipeState.active || swipeState.source !== 'touch') return;
+      const touch = findSwipeTouch(event.touches, swipeState.pointerId);
+      if (!touch) return;
+      moveSwipe(touch.clientX, touch.clientY, event);
+    };
+
+    const onSwipeTouchEnd = (event) => {
+      if (!swipeState.active || swipeState.source !== 'touch') return;
+      if (!findSwipeTouch(event.changedTouches, swipeState.pointerId)) return;
+      finishSwipe();
+    };
+
+    const onSwipeTouchCancel = (event) => {
+      if (!swipeState.active || swipeState.source !== 'touch') return;
+      if (!findSwipeTouch(event.changedTouches, swipeState.pointerId)) return;
+      resetSwipeState();
+      resumeAutoplay(900);
+    };
+
+    const onSwipeMouseDown = (event) => {
+      if (event.button !== 0 || swipeState.active) return;
+      startSwipe('mouse', 'mouse', event.clientX, event.clientY);
+    };
+
+    const onSwipeMouseMove = (event) => {
+      if (!swipeState.active || swipeState.source !== 'mouse') return;
+      moveSwipe(event.clientX, event.clientY, event);
+    };
+
+    const onSwipeMouseUp = () => {
+      if (!swipeState.active || swipeState.source !== 'mouse') return;
+      finishSwipe();
+    };
+
+    const onSwipeWheel = (event) => {
+      if (!carouselMedia.matches || swipeState.active) return;
+      const absX = Math.abs(event.deltaX);
+      const absY = Math.abs(event.deltaY);
+      if (absX < 18 || absX < absY * 1.15) return;
+      if (event.cancelable) event.preventDefault();
+      const now = Date.now();
+      if (now - lastWheelSwipeAt < 680) return;
+      lastWheelSwipeAt = now;
+      cancelActiveAnimation();
+      pauseAutoplay();
+      if (event.deltaX > 0) {
+        goToNext();
+      } else {
+        goToPrev();
+      }
+      resumeAutoplay(1400);
+    };
+
+    viewportEl.addEventListener('pointerdown', onSwipePointerDown, { passive: true });
+    viewportEl.addEventListener('pointermove', onSwipePointerMove, { passive: false });
+    viewportEl.addEventListener('pointerup', onSwipePointerUp, { passive: true });
+    viewportEl.addEventListener('pointercancel', onSwipePointerCancel, { passive: true });
+    viewportEl.addEventListener('touchstart', onSwipeTouchStart, { passive: true });
+    viewportEl.addEventListener('touchmove', onSwipeTouchMove, { passive: false });
+    viewportEl.addEventListener('touchend', onSwipeTouchEnd, { passive: true });
+    viewportEl.addEventListener('touchcancel', onSwipeTouchCancel, { passive: true });
+    viewportEl.addEventListener('mousedown', onSwipeMouseDown, { passive: true });
+    viewportEl.addEventListener('wheel', onSwipeWheel, { passive: false });
+    window.addEventListener('mousemove', onSwipeMouseMove, { passive: false });
+    window.addEventListener('mouseup', onSwipeMouseUp, { passive: true });
+
+    const onResize = () => {
+      build();
+      if (carouselMedia.matches) {
+        root.classList.add('is-hero-proof-loop');
+        scheduleAutoplay();
+      } else {
+        root.classList.remove('is-hero-proof-loop');
+        stopAutoplay();
+      }
+      syncHeroProofJivoQuiet();
+    };
+    const onResizeDebounced = createRafThrottle(onResize);
+    window.addEventListener('resize', onResizeDebounced, { passive: true });
+    window.addEventListener('orientationchange', onResizeDebounced, { passive: true });
+    addMqChangeListener(carouselMedia, onResizeDebounced);
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopAutoplay();
+        return;
+      }
+      scheduleAutoplay();
+    });
+
+    if ('IntersectionObserver' in window) {
+      const autoplayObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.target !== root) return;
+          isSliderVisible = entry.isIntersecting && entry.intersectionRatio > 0.2;
+          if (entry.isIntersecting && entry.intersectionRatio > 0.05) {
+            jivoQuietRoots.add(root);
+          } else {
+            jivoQuietRoots.delete(root);
+          }
+          syncHeroProofJivoQuiet();
+          if (!isSliderVisible) {
+            stopAutoplay();
+            return;
+          }
+          scheduleAutoplay();
+        });
+      }, {
+        threshold: [0, 0.2, 0.35],
+        root: null,
+        rootMargin: '0px',
+      });
+      autoplayObserver.observe(root);
+    }
+
+    build();
+    if (carouselMedia.matches) {
+      root.classList.add('is-hero-proof-loop');
+      scheduleAutoplay();
+    }
+    syncHeroProofJivoQuiet();
+  });
 }
 
 function guardInit(key) {
@@ -1199,10 +1880,10 @@ function initCaseShowcaseSections() {
 
   const defaultDocs = ['Претензия', 'Исковое заявление', 'Решение суда', 'Исполнительный лист'];
   const docPools = {
-    pret: Array.from({ length: 8 }, (_, i) => `/assets/cases/pret/pret-${String(i + 1).padStart(2, '0')}.webp`),
-    isk: Array.from({ length: 8 }, (_, i) => `/assets/cases/isk/isk-${String(i + 1).padStart(2, '0')}.webp`),
-    resh: Array.from({ length: 8 }, (_, i) => `/assets/cases/resh/resh-${String(i + 1).padStart(2, '0')}.webp`),
-    ispol: Array.from({ length: 8 }, (_, i) => `/assets/cases/ispol/ispol-${i + 1}.webp`),
+    pret: Array.from({ length: 8 }, (_, i) => `assets/cases/pret/pret-${String(i + 1).padStart(2, '0')}.webp`),
+    isk: Array.from({ length: 8 }, (_, i) => `assets/cases/isk/isk-${String(i + 1).padStart(2, '0')}.webp`),
+    resh: Array.from({ length: 8 }, (_, i) => `assets/cases/resh/resh-${String(i + 1).padStart(2, '0')}.webp`),
+    ispol: Array.from({ length: 8 }, (_, i) => `assets/cases/ispol/ispol-${i + 1}.webp`),
   };
   const caseDurations = ['6 месяцев', '7 месяцев', '5 месяцев', '8 месяцев', '9 месяцев', '10 месяцев', '11 месяцев', '6 месяцев'];
   const caseResults = ['1 600 000 ₽', '1 120 000 ₽', '1 340 000 ₽', '1 080 000 ₽', '1 210 000 ₽', '1 470 000 ₽', '1 250 000 ₽', '1 030 000 ₽'];
@@ -1243,10 +1924,11 @@ function initCaseShowcaseSections() {
     if (name === 'Исполнительный лист') return 'ispol';
     return '';
   };
-  const pickDocImage = (poolKey, caseIndex, slotIndex) => {
+  const pickDocImage = (poolKey, caseIndex) => {
     const pool = docPools[poolKey];
     if (!pool || !pool.length) return '';
-    const imageIndex = ((caseIndex + 1) * 17 + (slotIndex + 1) * 11) % pool.length;
+    const safeIndex = Number.isFinite(caseIndex) ? caseIndex : 0;
+    const imageIndex = ((safeIndex % pool.length) + pool.length) % pool.length;
     return getAssetPath(pool[imageIndex]);
   };
   const getResultCaption = () => {
@@ -1306,7 +1988,7 @@ function initCaseShowcaseSections() {
       lead: String(item.dataset.lead || '').trim(),
       result: String(item.dataset.result || caseResults[index % caseResults.length]).trim(),
       tags: splitList(item.dataset.tags),
-      docs: defaultDocs,
+      docs: normalizeDocsList(splitList(item.dataset.docs)),
       duration: String(item.dataset.duration || caseDurations[index % caseDurations.length]).trim(),
     })) : staticCards.map((item) => ({ ...item, docs: normalizeDocsList(item.docs) }));
 
@@ -1355,6 +2037,7 @@ function initCaseShowcaseSections() {
 
     const createCard = (data, realIndex, cloneRole = 'real') => {
       const card = document.createElement('article');
+      const docs = normalizeDocsList(data.docs && data.docs.length ? data.docs : defaultDocs);
       card.className = `case-showcase__card${realIndex === 0 && cloneRole === 'real' ? ' is-active' : ''}`;
       card.dataset.caseIndex = String(realIndex);
       card.dataset.cloneRole = cloneRole;
@@ -1375,8 +2058,8 @@ function initCaseShowcaseSections() {
           </aside>
         </div>
         <div class="case-showcase__path" aria-label="Путь дела">
-          ${defaultDocs.map((doc, docIndex) => {
-            const image = pickDocImage(getDocPoolKey(doc), data.index, docIndex);
+          ${docs.map((doc) => {
+            const image = pickDocImage(getDocPoolKey(doc), realIndex);
             return `
               <div class="case-showcase__step">
                 <div class="case-doc case-doc--image" tabindex="0">
@@ -1408,6 +2091,11 @@ function initCaseShowcaseSections() {
       if (!slide) return;
       viewport.scrollTo({ left: getCenteredScrollLeft(slide), behavior });
     };
+    const setMovingState = (value) => {
+      root.classList.toggle('is-moving', value);
+      viewport.classList.toggle('is-moving', value);
+      track.classList.toggle('is-moving', value);
+    };
     const updateActiveState = (realIndex) => {
       activeIndex = ((realIndex % cases.length) + cases.length) % cases.length;
       slides.forEach((slide) => {
@@ -1428,6 +2116,7 @@ function initCaseShowcaseSections() {
     };
     const finishScroll = () => {
       isAnimating = false;
+      setMovingState(false);
       setViewportSnap('x mandatory');
       rebaseIfNeeded();
       updateActiveState(Number(slides[physicalIndex]?.dataset.caseIndex || 0));
@@ -1442,6 +2131,7 @@ function initCaseShowcaseSections() {
         return;
       }
       isAnimating = true;
+      setMovingState(true);
       setViewportSnap('none');
       scrollToPhysical(physicalIndex, 'smooth');
       window.setTimeout(finishScroll, TRANSITION_MS);
@@ -1490,6 +2180,7 @@ function initCaseShowcaseSections() {
 
     viewport.addEventListener('scroll', () => {
       if (isAnimating) return;
+      setMovingState(true);
       clearTimeout(scrollSettleTimer);
       scrollSettleTimer = window.setTimeout(() => {
         let nearestIndex = physicalIndex;
@@ -1506,6 +2197,7 @@ function initCaseShowcaseSections() {
         physicalIndex = nearestIndex;
         rebaseIfNeeded();
         updateActiveState(Number(slides[physicalIndex]?.dataset.caseIndex || 0));
+        setMovingState(false);
       }, 90);
     }, { passive: true });
 
@@ -3317,6 +4009,8 @@ function initHeader() {
     body.classList.contains('kg-mm-open') ? closeKgMm() : openKgMm();
   });
 
+  closeKgMm({ force: true });
+
   kgMm?.querySelectorAll('[data-kg-mm-close]').forEach((el) => {
     el.addEventListener('click', closeKgMm);
   });
@@ -3564,6 +4258,10 @@ function initKgxStoriesSlider() {
       return;
     }
 
+    const mp4Src = '/assets/block/video/just-bg.mp4?v=20260621just';
+    const webmSrc = '/assets/block/video/just-bg.webm?v=20260621just';
+    const posterSrc = '/assets/block/video/just-bg-poster.webp?v=20260621just';
+
     const video = document.createElement('video');
     video.className = 'kgx-stories__video-bg';
     video.autoplay = true;
@@ -3572,21 +4270,21 @@ function initKgxStoriesSlider() {
     video.loop = true;
     video.playsInline = true;
     video.preload = 'metadata';
-    video.poster = '/assets/block/video/just-bg-poster.webp?v=20260619just';
+    video.poster = posterSrc;
     video.setAttribute('aria-hidden', 'true');
     video.setAttribute('tabindex', '-1');
     video.setAttribute('playsinline', '');
     video.setAttribute('muted', '');
 
-    const webm = document.createElement('source');
-    webm.src = '/assets/block/video/just-bg.webm?v=20260619just';
-    webm.type = 'video/webm';
-    video.appendChild(webm);
-
     const mp4 = document.createElement('source');
-    mp4.src = '/assets/block/video/just-bg.mp4?v=20260619just';
+    mp4.src = mp4Src;
     mp4.type = 'video/mp4';
     video.appendChild(mp4);
+
+    const webm = document.createElement('source');
+    webm.src = webmSrc;
+    webm.type = 'video/webm';
+    video.appendChild(webm);
 
     video.addEventListener('loadeddata', () => root.classList.add('is-video-ready'), { once: true });
     video.addEventListener('error', () => root.classList.add('is-video-failed'), { once: true });
@@ -3714,6 +4412,10 @@ function updateStoriesNav() {
   let cloneCount = 3;
   let slidesAll = [];
   let pendingJumpDomIndex = null;
+  let edgePeekRafId = 0;
+  let edgePeekSlide = null;
+  let beforeEdgePeekSlide = null;
+  let edgePeekWidth = 0;
 
   const readVisibleFromLayout = () => {
     const width = window.innerWidth || document.documentElement.clientWidth || 0;
@@ -3741,27 +4443,172 @@ function updateStoriesNav() {
     }
   };
 
+  const setEdgePeekState = (peekSlide, peekWidth) => {
+    const beforeSlide = peekSlide ? slidesAll[slidesAll.indexOf(peekSlide) - 1] || null : null;
+
+    if (edgePeekSlide && edgePeekSlide !== peekSlide) {
+      edgePeekSlide.classList.remove('is-edge-peek');
+      edgePeekSlide.style.removeProperty('--kgx-edge-visible-w');
+    }
+    if (beforeEdgePeekSlide && beforeEdgePeekSlide !== beforeSlide) {
+      beforeEdgePeekSlide.classList.remove('is-before-edge-peek');
+    }
+
+    if (!peekSlide) {
+      edgePeekSlide = null;
+      beforeEdgePeekSlide = null;
+      edgePeekWidth = 0;
+      return;
+    }
+
+    const roundedWidth = Math.round(peekWidth);
+    if (edgePeekSlide !== peekSlide) {
+      peekSlide.classList.add('is-edge-peek');
+    }
+    if (roundedWidth !== edgePeekWidth || edgePeekSlide !== peekSlide) {
+      peekSlide.style.setProperty('--kgx-edge-visible-w', `${roundedWidth}px`);
+    }
+    if (beforeSlide && beforeEdgePeekSlide !== beforeSlide) {
+      beforeSlide.classList.add('is-before-edge-peek');
+    }
+
+    edgePeekSlide = peekSlide;
+    beforeEdgePeekSlide = beforeSlide;
+    edgePeekWidth = roundedWidth;
+  };
+
+  const measureEdgePeekSlide = () => {
+    if (visible < 1 || !slidesAll.length) {
+      setEdgePeekState(null, 0);
+      return;
+    }
+
+    const viewportRect = viewportEl.getBoundingClientRect();
+    const viewportRight = viewportRect.right;
+    let peekSlide = null;
+    let peekWidth = 0;
+    let peekLeft = -Infinity;
+
+    slidesAll.forEach((slide) => {
+      const rect = slide.getBoundingClientRect();
+      const visibleLeft = Math.max(rect.left, viewportRect.left);
+      const visibleRight = Math.min(rect.right, viewportRight);
+      const visibleWidth = Math.max(0, visibleRight - visibleLeft);
+      const slideWidth = Math.max(1, rect.width);
+      const isRightPeek =
+        rect.left >= viewportRect.left &&
+        rect.left < viewportRight &&
+        rect.right > viewportRight + 1 &&
+        visibleWidth > 0 &&
+        visibleWidth < slideWidth - 4;
+      if (!isRightPeek) return;
+      if (!peekSlide || rect.left > peekLeft) {
+        peekSlide = slide;
+        peekWidth = visibleWidth;
+        peekLeft = rect.left;
+      }
+    });
+
+    setEdgePeekState(peekSlide, peekWidth);
+  };
+
+  const scheduleEdgePeekMeasure = () => {
+    if (edgePeekRafId) return;
+    edgePeekRafId = requestAnimationFrame(() => {
+      edgePeekRafId = 0;
+      measureEdgePeekSlide();
+    });
+  };
+
+  const trackEdgePeekDuringAnimation = () => {
+    if (edgePeekRafId) {
+      cancelAnimationFrame(edgePeekRafId);
+      edgePeekRafId = 0;
+    }
+    const tick = () => {
+      measureEdgePeekSlide();
+      if (isAnimating) {
+        edgePeekRafId = requestAnimationFrame(tick);
+        return;
+      }
+      measureEdgePeekSlide();
+      edgePeekRafId = 0;
+    };
+    edgePeekRafId = requestAnimationFrame(tick);
+  };
+
+  const getCanonicalDomIndex = (targetRealIndex) => cloneCount + mod(targetRealIndex, totalSlides);
+
+  const getClosestDomIndexForReal = (targetRealIndex) => {
+    const canonical = getCanonicalDomIndex(targetRealIndex);
+    const candidates = [canonical, canonical - totalSlides, canonical + totalSlides]
+      .filter((index) => index >= 0 && index < slidesAll.length);
+    if (!candidates.length) return canonical;
+    return candidates.reduce((best, index) => (
+      Math.abs(index - domIndex) < Math.abs(best - domIndex) ? index : best
+    ), candidates[0]);
+  };
+
+  const snapToDomIndex = (index) => {
+    domIndex = index;
+    setEdgePeekState(null, 0);
+    track.style.transition = 'none';
+    track.style.willChange = 'transform';
+    applyTranslate(index, false);
+    requestAnimationFrame(() => {
+      track.style.willChange = 'auto';
+      scheduleEdgePeekMeasure();
+    });
+  };
+
+  const readRootCssLength = (name, fallback = 0) => {
+    const rawValue = getComputedStyle(root).getPropertyValue(name).trim();
+    const directValue = Number.parseFloat(rawValue);
+    if (Number.isFinite(directValue) && rawValue.endsWith('px')) return directValue;
+
+    const probe = document.createElement('span');
+    probe.style.position = 'absolute';
+    probe.style.width = `var(${name})`;
+    probe.style.height = '0';
+    probe.style.overflow = 'hidden';
+    probe.style.visibility = 'hidden';
+    probe.style.pointerEvents = 'none';
+    root.appendChild(probe);
+    const resolvedValue = Number.parseFloat(getComputedStyle(probe).width);
+    probe.remove();
+    return Number.isFinite(resolvedValue) ? resolvedValue : fallback;
+  };
+
   const applyTranslate = (index, animated = true) => {
     domIndex = index;
     const targetSlide = slidesAll[domIndex];
     const viewportWidth = viewportEl.getBoundingClientRect().width || 0;
     const visibleSlidesWidth = (step * visible) - gap;
     const sideSpace = Math.max(0, Math.round((viewportWidth - visibleSlidesWidth) / 2));
+    const safeInset = visible === 1
+      ? readRootCssLength('--kgx-card-safe-inset')
+      : 0;
+    const targetInset = visible === 1 ? safeInset : (visible >= 2 ? 0 : sideSpace);
     const x = targetSlide
-      ? -Math.round(targetSlide.offsetLeft - sideSpace)
-      : -Math.round((domIndex * step) - sideSpace);
-    const transitionValue = 'transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1)';
+      ? -Math.round(targetSlide.offsetLeft - targetInset)
+      : -Math.round((domIndex * step) - targetInset);
+    const transitionValue = visible >= 1
+      ? 'transform 300ms cubic-bezier(0.18, 0.84, 0.22, 1)'
+      : 'transform 280ms cubic-bezier(0.22, 0.61, 0.36, 1)';
     const useAnimation = animated && !prefersReducedMotion();
     if (useAnimation) {
+      measureEdgePeekSlide();
       track.style.willChange = 'transform';
       track.style.transition = transitionValue;
       track.style.transform = `translate3d(${x}px,0,0)`;
       isAnimating = true;
+      trackEdgePeekDuringAnimation();
     } else {
       track.style.willChange = 'auto';
       track.style.transition = 'none';
       track.style.transform = `translate3d(${x}px,0,0)`;
       isAnimating = false;
+      scheduleEdgePeekMeasure();
     }
   };
 
@@ -3771,6 +4618,7 @@ function updateStoriesNav() {
   const build = () => {
     visible = readVisibleFromLayout();
     cloneCount = visible;
+    setEdgePeekState(null, 0);
     track.innerHTML = '';
     const tail = originalTemplates.slice(-cloneCount).map((n) => n.cloneNode(true));
     const head = originalTemplates.slice(0, cloneCount).map((n) => n.cloneNode(true));
@@ -3854,12 +4702,15 @@ function updateStoriesNav() {
 
   track.addEventListener('transitionend', (e) => {
     if (e.propertyName !== 'transform') return;
-    isAnimating = false;
-    track.style.willChange = 'auto';
-    if (pendingJumpDomIndex === null) return;
-    domIndex = pendingJumpDomIndex;
+    const jumpDomIndex = pendingJumpDomIndex;
     pendingJumpDomIndex = null;
-    setTranslateNoAnim(domIndex);
+    isAnimating = false;
+    if (jumpDomIndex !== null) {
+      snapToDomIndex(jumpDomIndex);
+      return;
+    }
+    track.style.willChange = 'auto';
+    scheduleEdgePeekMeasure();
   });
 
   const goToPrev = () => {
@@ -3891,9 +4742,11 @@ function updateStoriesNav() {
     const nextIndex = mod(targetIndex, totalSlides);
     stopAutoplay();
     if (isAnimating || nextIndex === realIndex) return;
+    const targetDomIndex = getClosestDomIndexForReal(nextIndex);
+    const canonicalDomIndex = getCanonicalDomIndex(nextIndex);
     realIndex = nextIndex;
-    pendingJumpDomIndex = null;
-    domIndex = cloneCount + realIndex;
+    pendingJumpDomIndex = targetDomIndex === canonicalDomIndex ? null : canonicalDomIndex;
+    domIndex = targetDomIndex;
     setTranslate(domIndex);
     updateStoriesNav();
     startAutoplay();
@@ -5673,6 +6526,8 @@ function initLeftStickyAsk() {
     };
     const target = contentSections[8];
     if (!target) return;
+    const storiesSection = document.getElementById('kgx-stories-carousel');
+    let storiesBlockActive = false;
     let autoCloseObserver = null;
     let autoCloseFallbackActive = false;
 
@@ -5718,10 +6573,30 @@ function initLeftStickyAsk() {
     const show = () => {
       if (state.dismissed || state.hasShown || viewportBlock.matches) return;
       state.hasShown = true;
+      if (storiesBlockActive) {
+        wrap.classList.remove('is-visible', 'is-hiding');
+        wrap.classList.add('is-hidden');
+        setAriaVisible(false);
+        return;
+      }
       wrap.classList.remove('is-hidden', 'is-hiding');
       wrap.classList.add('is-visible');
       setAriaVisible(true);
       if (autoCloseFallbackActive) scheduleAutoCheck();
+    };
+
+    const hideForStories = () => {
+      if (!state.hasShown || state.dismissed) return;
+      wrap.classList.remove('is-visible', 'is-hiding');
+      wrap.classList.add('is-hidden');
+      setAriaVisible(false);
+    };
+
+    const restoreAfterStories = () => {
+      if (!state.hasShown || state.dismissed || state.autoHidden || viewportBlock.matches || storiesBlockActive) return;
+      wrap.classList.remove('is-hidden', 'is-hiding');
+      wrap.classList.add('is-visible');
+      setAriaVisible(true);
     };
 
     const checkAutoClose = () => {
@@ -5750,6 +6625,22 @@ function initLeftStickyAsk() {
       autoCloseObserver.observe(target);
     } else {
       autoCloseFallbackActive = true;
+    }
+
+    if (storiesSection && 'IntersectionObserver' in window) {
+      const storiesObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.target !== storiesSection) return;
+          storiesBlockActive = entry.isIntersecting;
+          if (storiesBlockActive) hideForStories();
+          else restoreAfterStories();
+        });
+      }, {
+        threshold: 0,
+        root: null,
+        rootMargin: '-12% 0px -12% 0px',
+      });
+      storiesObserver.observe(storiesSection);
     }
 
     const sentinel = document.createElement('div');

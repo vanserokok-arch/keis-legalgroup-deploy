@@ -527,14 +527,17 @@
       }
       body.page-influence #kgx-stories-carousel .kgx-stories__viewport{
         width: min(
-          calc((var(--kgx-card-w) * 2) + var(--kgx-gap)),
+          calc((var(--kgx-card-w) * 2) + var(--kgx-gap) + 28px),
           calc(100vw - clamp(64px, 6vw, 132px))
         ) !important;
         max-width: 100% !important;
         margin-left: auto !important;
         margin-right: auto !important;
-        padding: clamp(8px, 0.9vw, 14px) var(--kgx-viewport-pad-x) !important;
+        transform: translateX(-5%) !important;
+        padding: 14px !important;
         overflow: hidden !important;
+        -webkit-mask-image: none !important;
+        mask-image: none !important;
         box-sizing: border-box !important;
       }
       body.page-influence #kgx-stories-carousel .kgx-stories__track{
@@ -552,17 +555,34 @@
         max-width: var(--kgx-card-w) !important;
         min-height: unset !important;
         aspect-ratio: 16 / 10 !important;
+        box-sizing: border-box !important;
+        border: 3px solid rgba(255, 150, 48, 0.72) !important;
       }
       body.page-influence #kgx-stories-carousel .kgx-stories__controls{
         margin-top: clamp(18px, 1.6vw, 28px) !important;
       }
     }
+    @media (min-width: 981px) and (max-width: 1580px){
+      body.page-influence #kgx-stories-carousel .kgx-stories__viewport{
+        min-width: min(
+          calc((var(--kgx-card-w) * 2) + var(--kgx-gap) + 28px),
+          calc(100vw - clamp(64px, 6vw, 132px))
+        ) !important;
+        transform: translateX(-2%) !important;
+      }
+    }
     @media (min-width: 1581px){
       body.page-influence #kgx-stories-carousel .kgx-stories__viewport{
         width: min(
-          calc((var(--kgx-card-w) * 3) + (var(--kgx-gap) * 2)),
+          calc((var(--kgx-card-w) * 3) + (var(--kgx-gap) * 2) + 28px),
           calc(100vw - clamp(56px, 5.6vw, 118px))
         ) !important;
+        transform: translateX(-5%) !important;
+      }
+    }
+    @media (min-width: 1581px) and (max-width: 1680px){
+      body.page-influence #kgx-stories-carousel .kgx-stories__viewport{
+        transform: translateX(-3%) !important;
       }
     }
   </style>
@@ -721,48 +741,37 @@
         </aside>
 
         <!-- BENEFITS (4 cards) -->
-        <div class="hero-stats-carousel" data-hero-stats-carousel>
-          <div class="hero-stats-carousel__viewport">
-            <div class="hero-stats-carousel__track" data-hero-stats-track>
-              <article class="hero-stats-card">
-                <div class="hero-stats-card__kpi">30+ лет</div>
-                <div class="hero-stats-card__text">Практики у каждого нашего юриста</div>
+        <div class="hero-proof-carousel" data-hero-proof-carousel>
+          <div class="hero-proof-carousel__viewport">
+            <div class="hero-proof-carousel__track" data-hero-proof-track>
+              <article class="hero-proof-card">
+                <div class="hero-proof-card__kpi">30+ лет</div>
+                <div class="hero-proof-card__text">Практики у каждого нашего юриста</div>
               </article>
-              <article class="hero-stats-card">
-                <div class="hero-stats-card__kpi">Гарантии</div>
-                <div class="hero-stats-card__text">Оплата только за честный результат</div>
+              <article class="hero-proof-card">
+                <div class="hero-proof-card__kpi">Гарантии</div>
+                <div class="hero-proof-card__text">Оплата только за честный результат</div>
               </article>
-              <article class="hero-stats-card">
-                <div class="hero-stats-card__kpi">24/7</div>
-                <div class="hero-stats-card__text">Юрист на связи всегда — ответит в выходные дни и вечером</div>
+              <article class="hero-proof-card">
+                <div class="hero-proof-card__kpi">24/7</div>
+                <div class="hero-proof-card__text">Юрист на связи всегда — ответит в выходные дни и вечером</div>
               </article>
-              <article class="hero-stats-card">
-                <div class="hero-stats-card__kpi">400 млн+</div>
-                <div class="hero-stats-card__text">Вернули нашим клиентам в досудебном и судебном порядке</div>
+              <article class="hero-proof-card">
+                <div class="hero-proof-card__kpi">400 млн+</div>
+                <div class="hero-proof-card__text">Вернули нашим клиентам в досудебном и судебном порядке</div>
               </article>
             </div>
           </div>
-          <div class="hero-stats-carousel__pagination" data-hero-stats-pagination aria-hidden="true">
-            <span class="hero-stats-carousel__dot is-active" data-hero-stats-dot></span>
-            <span class="hero-stats-carousel__dot" data-hero-stats-dot></span>
-            <span class="hero-stats-carousel__dot" data-hero-stats-dot></span>
-            <span class="hero-stats-carousel__dot" data-hero-stats-dot></span>
+          <div class="hero-proof-carousel__pagination" data-hero-proof-pagination aria-hidden="true">
+            <span class="hero-proof-carousel__dot is-active" data-hero-proof-dot></span>
+            <span class="hero-proof-carousel__dot" data-hero-proof-dot></span>
+            <span class="hero-proof-carousel__dot" data-hero-proof-dot></span>
+            <span class="hero-proof-carousel__dot" data-hero-proof-dot></span>
           </div>
         </div>
         <!-- /BENEFITS -->
     </div>
   </section>
-
-  <div class="keis-divider keis-divider--shards keis-divider--kgx-stories-bottom" aria-hidden="true"></div>
-
-  <div class="keis-ticker">
-    <div class="keis-ticker__track" data-ticker-track>
-      <span>Узкопрофильные специалисты</span>
-      <span>Юрист на связи всегда</span>
-      <span>Более 30 лет опыта имеет каждый юрист компании</span>
-      <span>Работаем на результат, а не на процесс</span>
-    </div>
-  </div>
 
   <!-- KGX STORIES -->
   <section id="kgx-stories-carousel" class="kgx-stories">

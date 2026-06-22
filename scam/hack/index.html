@@ -127,7 +127,7 @@
 <span class="hero-investment__badge">Взлом и оформление кредита</span>
 <span class="hero-investment__badge hero-investment__badge--accent">Возврат средств</span>
 </div>
-<h1 class="hero-investment__title">Оформили кредит<br/>без вашего согласия?<br/><span class="hero-title--accent">Установим факт взлома и оспорим кредитные обязательства</span></h1>
+<h1 class="hero-investment__title">Оформили кредит без вашего согласия? <span class="hero-title--accent">Установим факт взлома и оспорим кредитные обязательства</span></h1>
 <ul class="hero-subpoints">
 <li>Разберём, как кредит появился на вашем имени: входы, коды, заявки и действия в личном кабинете</li>
 <li>Проверим, куда ушли деньги после выдачи кредита и кто их получил</li>
@@ -166,46 +166,37 @@
 </div>
 </aside>
 <!-- BENEFITS (4 cards) -->
-<div class="hero-stats-carousel" data-hero-stats-carousel="">
-<div class="hero-stats-carousel__viewport">
-<div class="hero-stats-carousel__track" data-hero-stats-track="">
-<article class="hero-stats-card">
-<div class="hero-stats-card__kpi">30+ лет</div>
-<div class="hero-stats-card__text">Практики у каждого нашего юриста</div>
+<div class="hero-proof-carousel" data-hero-proof-carousel="">
+<div class="hero-proof-carousel__viewport">
+<div class="hero-proof-carousel__track" data-hero-proof-track="">
+<article class="hero-proof-card">
+<div class="hero-proof-card__kpi">30+ лет</div>
+<div class="hero-proof-card__text">Практики у каждого нашего юриста</div>
 </article>
-<article class="hero-stats-card">
-<div class="hero-stats-card__kpi">Гарантии</div>
-<div class="hero-stats-card__text">Оплата только за честный результат</div>
+<article class="hero-proof-card">
+<div class="hero-proof-card__kpi">Гарантии</div>
+<div class="hero-proof-card__text">Оплата только за честный результат</div>
 </article>
-<article class="hero-stats-card">
-<div class="hero-stats-card__kpi">24/7</div>
-<div class="hero-stats-card__text">Юрист на связи всегда — ответит в выходные дни и вечером</div>
+<article class="hero-proof-card">
+<div class="hero-proof-card__kpi">24/7</div>
+<div class="hero-proof-card__text">Юрист на связи всегда — ответит в выходные дни и вечером</div>
 </article>
-<article class="hero-stats-card">
-<div class="hero-stats-card__kpi">400 млн+</div>
-<div class="hero-stats-card__text">Вернули нашим клиентам в досудебном и судебном порядке</div>
+<article class="hero-proof-card">
+<div class="hero-proof-card__kpi">400 млн+</div>
+<div class="hero-proof-card__text">Вернули нашим клиентам в досудебном и судебном порядке</div>
 </article>
 </div>
 </div>
-<div aria-hidden="true" class="hero-stats-carousel__pagination" data-hero-stats-pagination="">
-<span class="hero-stats-carousel__dot is-active" data-hero-stats-dot=""></span>
-<span class="hero-stats-carousel__dot" data-hero-stats-dot=""></span>
-<span class="hero-stats-carousel__dot" data-hero-stats-dot=""></span>
-<span class="hero-stats-carousel__dot" data-hero-stats-dot=""></span>
+<div aria-hidden="true" class="hero-proof-carousel__pagination" data-hero-proof-pagination="">
+<span class="hero-proof-carousel__dot is-active" data-hero-proof-dot=""></span>
+<span class="hero-proof-carousel__dot" data-hero-proof-dot=""></span>
+<span class="hero-proof-carousel__dot" data-hero-proof-dot=""></span>
+<span class="hero-proof-carousel__dot" data-hero-proof-dot=""></span>
 </div>
 </div>
 <!-- /BENEFITS -->
 </div>
 </div></section>
-<div aria-hidden="true" class="keis-divider keis-divider--shards keis-divider--kgx-stories-bottom"></div>
-<div class="keis-ticker">
-<div class="keis-ticker__track" data-ticker-track="">
-<span>Узкопрофильные специалисты</span>
-<span>Юрист на связи всегда</span>
-<span>Более 30 лет опыта имеет каждый юрист компании</span>
-<span>Работаем на результат, а не на процесс</span>
-</div>
-</div>
 <!-- KGX STORIES -->
 <section class="kgx-stories" id="kgx-stories-carousel">
 <div class="kgx-b4__container section-container">
@@ -981,6 +972,30 @@
 </div>
 <script defer="" src="../../script.js"></script>
 <!-- JivoChat Widget -->
-  <script src="https://code.jivo.ru/widget/CgMP7mbMCA" async></script>
+<script>
+  (function () {
+    var jivoSrc = "https://code.jivo.ru/widget/CgMP7mbMCA";
+    var isLoaded = false;
+
+    function loadJivo() {
+      if (isLoaded || document.querySelector('script[src="' + jivoSrc + '"]')) return;
+      isLoaded = true;
+
+      var script = document.createElement("script");
+      script.src = jivoSrc;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+
+    window.addEventListener("load", function () {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(loadJivo, { timeout: 3500 });
+        return;
+      }
+
+      window.setTimeout(loadJivo, 1200);
+    }, { once: true });
+  }());
+</script>
 </body>
 </html>
