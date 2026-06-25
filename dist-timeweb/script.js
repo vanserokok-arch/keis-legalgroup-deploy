@@ -64,7 +64,11 @@
   try {
     const host = window.location && window.location.hostname;
     const isLocal = host === 'localhost' || host === '127.0.0.1' || host === '::1';
-    if (!isLocal || window.__KEIS_DISABLE_DEV_AUTO_RELOAD__) return;
+    const searchParams = new URLSearchParams(window.location.search || '');
+    const isAutoReloadEnabled =
+      window.__KEIS_ENABLE_DEV_AUTO_RELOAD__ === true || searchParams.has('keisAutoReload');
+
+    if (!isLocal || window.__KEIS_DISABLE_DEV_AUTO_RELOAD__ || !isAutoReloadEnabled) return;
 
     const scripts = Array.from(document.scripts || []);
     const hasNativeReload = scripts.some((script) => /live(?:reload|-server)|vscode/i.test(script.src || ''));
@@ -2170,13 +2174,54 @@ function initCaseShowcaseSections() {
 
     const bindArrow = (button, delta) => {
       const trigger = () => {
-        goTo(activeIndex + delta);
+        if (isAnimating) return;
+        animateToPhysical(physicalIndex + delta);
         startAutoplay();
       };
       button.addEventListener('click', trigger);
     };
     bindArrow(prevBtn, -1);
     bindArrow(nextBtn, 1);
+
+    let swipeStartX = 0;
+    let swipeStartY = 0;
+    let swipeStartPhysical = 0;
+    let isSwipeTracking = false;
+
+    const onSwipe = (dx, dy) => {
+      if (isAnimating) return;
+      if (Math.abs(dx) < 28) return;
+      if (Math.abs(dx) < Math.abs(dy) * 1.25) return;
+      const step = dx < 0 ? 1 : -1;
+      const baseIndex = swipeStartPhysical;
+      if (slides[baseIndex]) {
+        scrollToPhysical(baseIndex, 'auto');
+      }
+      animateToPhysical(baseIndex + step);
+      startAutoplay();
+    };
+
+    viewport.addEventListener('pointerdown', (event) => {
+      if (isAnimating) return;
+      if (event.button !== undefined && event.button !== 0 && event.pointerType === 'mouse') return;
+      swipeStartX = event.clientX;
+      swipeStartY = event.clientY;
+      swipeStartPhysical = physicalIndex;
+      isSwipeTracking = true;
+      clearTimeout(scrollSettleTimer);
+    }, { passive: true });
+
+    const onPointerUp = (event) => {
+      if (!isSwipeTracking) return;
+      isSwipeTracking = false;
+      const dx = event.clientX - swipeStartX;
+      const dy = event.clientY - swipeStartY;
+      onSwipe(dx, dy);
+    };
+    viewport.addEventListener('pointerup', onPointerUp, { passive: true });
+    viewport.addEventListener('pointercancel', () => {
+      isSwipeTracking = false;
+    }, { passive: true });
 
     viewport.addEventListener('scroll', () => {
       if (isAnimating) return;

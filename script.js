@@ -62,9 +62,17 @@
 
 (function initLocalDevAutoReload() {
   try {
+    if (window.__KEIS_DISABLE_DEV_AUTO_RELOAD__ === true) {
+      return;
+    }
+
     const host = window.location && window.location.hostname;
     const isLocal = host === 'localhost' || host === '127.0.0.1' || host === '::1';
-    if (!isLocal || window.__KEIS_DISABLE_DEV_AUTO_RELOAD__) return;
+    const searchParams = new URLSearchParams(window.location.search || '');
+    const isAutoReloadEnabled =
+      window.__KEIS_ENABLE_DEV_AUTO_RELOAD__ === true || searchParams.has('keisAutoReload');
+
+    if (!isLocal || window.__KEIS_DISABLE_DEV_AUTO_RELOAD__ || !isAutoReloadEnabled) return;
 
     const scripts = Array.from(document.scripts || []);
     const hasNativeReload = scripts.some((script) => /live(?:reload|-server)|vscode/i.test(script.src || ''));
@@ -1172,7 +1180,8 @@ function createReviewAvatar(review, index) {
 }
 
 function getReviewsVisibleCount() {
-  if (window.matchMedia('(max-width: 768px)').matches) return 1;
+  if (window.matchMedia('(max-width: 600px)').matches) return 1;
+  if (window.matchMedia('(max-width: 768px)').matches) return 2;
   if (window.matchMedia('(max-width: 1100px)').matches) return 2;
   return 3;
 }
@@ -2114,16 +2123,39 @@ function initCaseShowcaseSections() {
         scrollToPhysical(physicalIndex, 'auto');
       }
     };
+    const getNearestSlideIndex = () => {
+      let nearestIndex = physicalIndex;
+      let nearestDistance = Infinity;
+      const viewportCenter = viewport.scrollLeft + viewport.clientWidth / 2;
+      slides.forEach((slide, index) => {
+        const slideCenter = slide.offsetLeft + slide.offsetWidth / 2;
+        const distance = Math.abs(slideCenter - viewportCenter);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestIndex = index;
+        }
+      });
+      return nearestIndex;
+    };
+    const setCenteredSlide = (index) => {
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle('is-centered', slideIndex === index);
+      });
+    };
     const finishScroll = () => {
       isAnimating = false;
       setMovingState(false);
       setViewportSnap('x mandatory');
       rebaseIfNeeded();
-      updateActiveState(Number(slides[physicalIndex]?.dataset.caseIndex || 0));
+      const nearestIndex = getNearestSlideIndex();
+      physicalIndex = nearestIndex;
+      setCenteredSlide(nearestIndex);
+      updateActiveState(Number(slides[nearestIndex]?.dataset.caseIndex || 0));
     };
     const animateToPhysical = (nextPhysicalIndex) => {
       if (isAnimating) return;
       physicalIndex = nextPhysicalIndex;
+      setCenteredSlide(physicalIndex);
       updateActiveState(Number(slides[physicalIndex]?.dataset.caseIndex || 0));
       if (reduceMotion) {
         scrollToPhysical(physicalIndex, 'auto');
@@ -2170,7 +2202,8 @@ function initCaseShowcaseSections() {
 
     const bindArrow = (button, delta) => {
       const trigger = () => {
-        goTo(activeIndex + delta);
+        if (isAnimating) return;
+        animateToPhysical(physicalIndex + delta);
         startAutoplay();
       };
       button.addEventListener('click', trigger);
@@ -2178,24 +2211,57 @@ function initCaseShowcaseSections() {
     bindArrow(prevBtn, -1);
     bindArrow(nextBtn, 1);
 
+    let swipeStartX = 0;
+    let swipeStartY = 0;
+    let swipeStartPhysical = 0;
+    let isSwipeTracking = false;
+
+    const onSwipe = (dx, dy) => {
+      if (isAnimating) return;
+      if (Math.abs(dx) < 28) return;
+      if (Math.abs(dx) < Math.abs(dy) * 1.25) return;
+      const step = dx < 0 ? 1 : -1;
+      const baseIndex = swipeStartPhysical;
+      if (slides[baseIndex]) {
+        scrollToPhysical(baseIndex, 'auto');
+      }
+      animateToPhysical(baseIndex + step);
+      startAutoplay();
+    };
+
+    viewport.addEventListener('pointerdown', (event) => {
+      if (isAnimating) return;
+      if (event.button !== undefined && event.button !== 0 && event.pointerType === 'mouse') return;
+      swipeStartX = event.clientX;
+      swipeStartY = event.clientY;
+      swipeStartPhysical = physicalIndex;
+      isSwipeTracking = true;
+      clearTimeout(scrollSettleTimer);
+    }, { passive: true });
+
+    const onPointerUp = (event) => {
+      if (!isSwipeTracking) return;
+      isSwipeTracking = false;
+      const dx = event.clientX - swipeStartX;
+      const dy = event.clientY - swipeStartY;
+      onSwipe(dx, dy);
+    };
+    viewport.addEventListener('pointerup', onPointerUp, { passive: true });
+    viewport.addEventListener('pointercancel', () => {
+      isSwipeTracking = false;
+    }, { passive: true });
+
     viewport.addEventListener('scroll', () => {
       if (isAnimating) return;
       setMovingState(true);
+      const nearestIndex = getNearestSlideIndex();
+      setCenteredSlide(nearestIndex);
       clearTimeout(scrollSettleTimer);
       scrollSettleTimer = window.setTimeout(() => {
-        let nearestIndex = physicalIndex;
-        let nearestDistance = Infinity;
-        const viewportCenter = viewport.scrollLeft + viewport.clientWidth / 2;
-        slides.forEach((slide, index) => {
-          const slideCenter = slide.offsetLeft + slide.offsetWidth / 2;
-          const distance = Math.abs(slideCenter - viewportCenter);
-          if (distance < nearestDistance) {
-            nearestDistance = distance;
-            nearestIndex = index;
-          }
-        });
         physicalIndex = nearestIndex;
         rebaseIfNeeded();
+        physicalIndex = getNearestSlideIndex();
+        setCenteredSlide(physicalIndex);
         updateActiveState(Number(slides[physicalIndex]?.dataset.caseIndex || 0));
         setMovingState(false);
       }, 90);
@@ -2228,6 +2294,7 @@ function initCaseShowcaseSections() {
     physicalIndex = cloneCount;
     scrollToPhysical(physicalIndex, 'auto');
     updateActiveState(0);
+    setCenteredSlide(physicalIndex);
     requestAnimationFrame(() => scrollToPhysical(physicalIndex, 'auto'));
     startAutoplay();
     root.dataset.caseShowcaseReady = 'true';
@@ -2277,7 +2344,15 @@ function initAnchorSmoothScroll() {
     if (!targetEl) return;
 
     event.preventDefault();
-    targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const headerOffset = Number.parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue('--keis-header-h')
+    ) || 76;
+    const targetTop = targetEl.getBoundingClientRect().top + window.scrollY - headerOffset - 4;
+    window.scrollTo({
+      top: targetTop < 0 ? 0 : targetTop,
+      behavior: 'smooth',
+    });
+
     if (window.history && typeof window.history.pushState === 'function') {
       window.history.pushState(null, '', targetUrl.hash);
     }

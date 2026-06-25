@@ -22551,6 +22551,18 @@ body.page-credit .case-showcase__head .k-header__box,
 body.page-influence .case-showcase__head .k-header__box {
   max-width: 100%;
   margin: 0;
+  padding: clamp(28px, 3vw, 42px);
+  border-radius: 28px;
+  background: linear-gradient(
+    135deg,
+    rgba(48, 48, 48, 0.58) 0%,
+    rgba(25, 28, 32, 0.52) 52%,
+    rgba(12, 16, 22, 0.58) 100%
+  );
+  border: 1px solid rgba(244, 153, 68, 0.42);
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 body.page-investment .case-showcase__head .k-title,
@@ -23593,16 +23605,23 @@ body.page-influence .case-showcase__dot.is-active {
 
 .investment-cases.case-showcase .case-showcase__head .k-header__box {
   width: 100%;
-  max-width: 1320px;
-  margin: 0;
-  padding: clamp(24px, 3vw, 38px);
-  border: 1px solid rgba(242, 138, 46, 0.26);
-  border-radius: 24px;
+  max-width: 640px;
+  margin: 0 auto clamp(36px, 4vw, 54px);
+  padding: clamp(28px, 3vw, 42px);
+  border-radius: 28px;
+  border: 1px solid rgba(244, 153, 68, 0.42);
   background:
-    linear-gradient(180deg, rgba(42, 29, 22, 0.72), rgba(18, 14, 12, 0.70));
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+    linear-gradient(
+      135deg,
+      rgba(48, 48, 48, 0.58) 0%,
+      rgba(25, 28, 32, 0.52) 52%,
+      rgba(12, 16, 22, 0.58) 100%
+    );
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .investment-cases.case-showcase .case-showcase__head .k-title {
@@ -25562,15 +25581,24 @@ body.page-investment .keis-bridge--cases {
 
 @media (min-width: 901px) {
   body.page-investment .investment-cases.case-showcase .case-showcase__head .k-header__box {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
-    width: fit-content;
-    max-width: min(100%, 720px);
-    justify-items: start;
-  }
-
-  body.page-investment .investment-cases.case-showcase .case-showcase__head .k-header__box::after {
-    display: none;
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto clamp(36px, 4vw, 54px) !important;
+    padding: clamp(28px, 3vw, 42px) !important;
+    border-radius: 28px;
+    border: 1px solid rgba(244, 153, 68, 0.42);
+    background:
+      linear-gradient(
+        135deg,
+        rgba(48, 48, 48, 0.58) 0%,
+        rgba(25, 28, 32, 0.52) 52%,
+        rgba(12, 16, 22, 0.58) 100%
+      );
+    box-shadow:
+      0 28px 80px rgba(0, 0, 0, 0.34),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 
   body.page-investment .investment-cases.case-showcase .case-showcase__head .k-subtitle {
@@ -35512,36 +35540,28 @@ body :is(
   }
 
   .investment-cases.case-showcase .case-showcase__head .k-header__box {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: clamp(24px, 4vw, 70px);
-    align-items: end;
-    max-width: 1440px;
-    padding: clamp(26px, 3vw, 42px) clamp(28px, 4vw, 56px);
-    border-radius: 8px;
-    border-color: var(--cases-polish-border);
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto clamp(36px, 4vw, 54px) !important;
+    padding: clamp(28px, 3vw, 42px);
+    border-radius: 28px;
+    border: 1px solid rgba(244, 153, 68, 0.42);
     background:
-      radial-gradient(360px 180px at 100% 0%, rgba(255, 138, 47, 0.15), transparent 70%),
-      linear-gradient(135deg, rgba(38, 28, 21, 0.84), rgba(12, 11, 10, 0.86));
+      linear-gradient(
+        135deg,
+        rgba(48, 48, 48, 0.58) 0%,
+        rgba(25, 28, 32, 0.52) 52%,
+        rgba(12, 16, 22, 0.58) 100%
+      );
     box-shadow:
-      0 30px 90px rgba(0, 0, 0, 0.34),
-      inset 0 1px 0 rgba(255, 255, 255, 0.10);
+      0 28px 80px rgba(0, 0, 0, 0.34),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 
   .investment-cases.case-showcase .case-showcase__head .k-header__box::after {
-    content: "претензия / иск / решение / лист";
-    align-self: end;
-    max-width: 250px;
-    padding: 12px 14px;
-    border: 1px solid rgba(255, 184, 112, 0.18);
-    border-radius: 8px;
-    color: rgba(255, 232, 207, 0.72);
-    font-family: var(--font-ui);
-    font-size: 12px;
-    font-weight: 750;
-    line-height: 1.35;
-    text-transform: uppercase;
-    background: rgba(0, 0, 0, 0.18);
+    content: none !important;
   }
 
   .investment-cases.case-showcase .case-showcase__head .k-title {
@@ -35558,9 +35578,18 @@ body :is(
     mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%);
   }
 
+  .investment-cases.case-showcase .case-showcase__layout {
+    width: min(100% - 42px, 1280px) !important;
+  }
+
   .investment-cases.case-showcase .case-showcase__track {
-    gap: clamp(18px, 1.8vw, 26px);
-    padding-bottom: 34px;
+    gap: clamp(14px, 1.6vw, 22px);
+    padding-inline: max(22px, calc((100% - min(74vw, 1020px)) / 2));
+    padding-bottom: 30px;
+  }
+
+  .investment-cases.case-showcase .case-showcase__viewport {
+    scroll-padding-inline: max(22px, calc((100% - min(74vw, 1020px)) / 2));
   }
 
   .investment-cases.case-showcase .case-showcase__card {
@@ -35578,6 +35607,8 @@ body :is(
       border-color 180ms ease,
       box-shadow 180ms ease,
       transform 180ms ease;
+    flex-basis: min(74vw, 1020px);
+    padding: clamp(22px, 2.6vw, 36px);
   }
 
   .investment-cases.case-showcase .case-showcase__card::before {
@@ -35617,8 +35648,8 @@ body :is(
   }
 
   .investment-cases.case-showcase .case-showcase__card-top {
-    grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
-    gap: clamp(28px, 3.4vw, 52px);
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+    gap: clamp(22px, 3vw, 40px);
     align-items: stretch;
   }
 
@@ -35661,6 +35692,7 @@ body :is(
 
   .investment-cases.case-showcase .case-showcase__fact {
     border-top-color: rgba(255, 255, 255, 0.12) !important;
+    padding-top: 9px !important;
   }
 
   .investment-cases.case-showcase .case-showcase__path {
@@ -35700,29 +35732,13 @@ body :is(
   }
 
   .investment-cases.case-showcase .case-showcase__step {
-    counter-increment: case-step;
     align-content: end;
-    padding-top: 18px;
+    padding-top: 0;
   }
 
   .investment-cases.case-showcase .case-showcase__step::before {
-    content: "0" counter(case-step);
-    position: absolute;
-    top: 0;
-    left: 50%;
-    min-width: 34px;
-    height: 24px;
-    display: grid;
-    place-items: center;
-    border: 1px solid rgba(255, 184, 112, 0.26);
-    border-radius: 999px;
-    color: rgba(255, 207, 164, 0.82);
-    font-family: var(--font-ui);
-    font-size: 10px;
-    font-weight: 850;
-    line-height: 1;
-    background: rgba(0, 0, 0, 0.26);
-    transform: translateX(-50%);
+    content: none;
+    display: none;
   }
 
   .investment-cases.case-showcase .case-showcase__step:not(:last-child)::after {
@@ -35732,13 +35748,13 @@ body :is(
   }
 
   .investment-cases.case-showcase .case-doc__stack {
-    width: 156px !important;
-    height: 208px !important;
+    width: 148px !important;
+    height: 196px !important;
   }
 
   .investment-cases.case-showcase .case-doc__image {
-    width: 156px !important;
-    height: 208px !important;
+    width: 148px !important;
+    height: 196px !important;
   }
 
   .investment-cases.case-showcase .case-doc__stack::before,
@@ -35808,16 +35824,16 @@ body :is(
 
 @media (min-width: 1200px) {
   .investment-cases.case-showcase .case-showcase__card {
-    flex-basis: min(74vw, 1180px) !important;
-    padding: clamp(30px, 3vw, 46px);
+    flex-basis: min(72vw, 1020px) !important;
+    padding: clamp(24px, 2.6vw, 40px);
   }
 
   .investment-cases.case-showcase .case-showcase__track {
-    padding-inline: max(28px, calc((100% - min(74vw, 1180px)) / 2));
+    padding-inline: max(24px, calc((100% - min(72vw, 1020px)) / 2));
   }
 
   .investment-cases.case-showcase .case-showcase__viewport {
-    scroll-padding-inline: max(28px, calc((100% - min(74vw, 1180px)) / 2));
+    scroll-padding-inline: max(24px, calc((100% - min(72vw, 1020px)) / 2));
   }
 }
 

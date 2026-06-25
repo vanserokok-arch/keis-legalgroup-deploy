@@ -32,5 +32,8 @@
     "postcss-safe-parser": "^7.0.1",
     "stylelint": "^17.0.0",
     "stylelint-config-standard": "^40.0.0"
+  },
+  "dependencies": {
+    "three": "^0.184.0"
   }
 }
