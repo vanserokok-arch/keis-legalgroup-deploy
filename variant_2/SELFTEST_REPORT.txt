@@ -1,0 +1,9 @@
+SELFTEST: OK
+
+variant_2_scam/index.html: 11 sections OK
+variant_2_scam/broker2/index.html: 11 sections OK
+variant_2_scam/pressure2/index.html: 11 sections OK
+variant_2_scam/hack2/index.html: 11 sections OK
+JS syntax: OK
+
+Errors:

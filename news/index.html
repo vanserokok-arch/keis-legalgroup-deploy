@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Новости | КЕЙС</title>
-  <meta name="description" content="Короткие новости и разборы изменений в понятной форме: что произошло, откуда информация и на что обратить внимание." />
+  <title>Юридический журнал KEIS | Новости и правовые разборы</title>
+  <meta name="description" content="Премиальный юридический журнал KEIS: новости, правовые риски, судебная практика и короткие разборы для клиентов." />
   <link rel="canonical" href="/news/">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -132,17 +132,32 @@
 
   <main class="kg-news" id="newsTop">
     <section class="kg-news__hero" aria-labelledby="newsTitle">
+      <div class="kg-news-bg" aria-hidden="true">
+        <video class="kg-news-bg__video" autoplay muted loop playsinline preload="metadata" poster="/assets/news/video/keis-chess-strategy-poster.webp">
+          <source src="/assets/news/video/keis-chess-strategy.mp4" type="video/mp4">
+        </video>
+        <div class="kg-news-bg__shade"></div>
+        <div class="kg-news-bg__intel">
+          <span class="kg-news-bg__doc kg-news-bg__doc--a"></span>
+          <span class="kg-news-bg__doc kg-news-bg__doc--b"></span>
+          <span class="kg-news-bg__doc kg-news-bg__doc--c"></span>
+          <span class="kg-news-bg__node kg-news-bg__node--a"></span>
+          <span class="kg-news-bg__node kg-news-bg__node--b"></span>
+          <span class="kg-news-bg__node kg-news-bg__node--c"></span>
+        </div>
+      </div>
+
       <div class="section-container kg-news__container">
         <div class="kg-news__hero-grid">
           <div class="kg-news__hero-copy">
             <p class="kg-news__kicker">Юридический журнал КЕЙС</p>
-            <h1 class="kg-news__title" id="newsTitle">Новости и разборы изменений</h1>
-            <p class="kg-news__subtitle">Коротко объясняем важные изменения: что произошло, кого касается и что делать.</p>
+            <h1 class="kg-news__title" id="newsTitle">Юридический журнал KEIS</h1>
+            <p class="kg-news__subtitle">Редакционная лента правовых рисков: регуляторы, суды, банки и потребительские споры — с выводом, что это меняет для клиента.</p>
           </div>
 
           <aside class="kg-news__brief" aria-label="Редакционный фокус">
             <span class="kg-news__brief-label">Фокус выпуска</span>
-            <p>Банки, суды, регуляторы и потребительские споры — только то, что может повлиять на деньги, документы и сроки.</p>
+            <p>Финансовые условия, судебная практика и новые обязанности — только сигналы, которые могут повлиять на деньги, документы и сроки.</p>
           </aside>
         </div>
 
@@ -160,20 +175,18 @@
           </label>
         </form>
 
-        <div class="kg-news-rubrics" role="tablist" aria-label="Рубрики новостей">
-          <button class="kg-news-rubric is-active" type="button" role="tab" aria-selected="true" data-news-category="Все новости">Все новости</button>
-          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Кредиты и банки">Кредиты и банки</button>
-          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Мошенничество">Мошенничество</button>
-          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Защита прав потребителей">Защита прав потребителей</button>
-          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Суды">Суды</button>
-          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Недвижимость">Недвижимость</button>
-          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Автомобили">Автомобили</button>
-          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Медицина">Медицина</button>
-          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Законы">Законы</button>
-          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="ЦБ РФ">ЦБ РФ</button>
-          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Прокуратура">Прокуратура</button>
-          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="ФАС">ФАС</button>
-          <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Роспотребнадзор">Роспотребнадзор</button>
+        <div class="kg-news-rubrics-wrap is-scroll-start" aria-label="Горизонтальная прокрутка рубрик">
+          <div class="kg-news-rubrics" role="tablist" aria-label="Рубрики новостей">
+            <button class="kg-news-rubric is-active" type="button" role="tab" aria-selected="true" data-news-category="Все новости">Все новости</button>
+            <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Кредиты и банки">Кредиты и банки</button>
+            <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Мошенничество">Мошенничество</button>
+            <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Защита прав потребителей">Защита прав потребителей</button>
+            <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Суды">Суды</button>
+            <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Недвижимость">Недвижимость</button>
+            <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Автомобили">Автомобили</button>
+            <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Медицина">Медицина</button>
+            <button class="kg-news-rubric" type="button" role="tab" aria-selected="false" data-news-category="Прокуратура">Прокуратура</button>
+          </div>
         </div>
 
         <div class="kg-news-feedback" id="newsStatus" role="status" aria-live="polite"></div>
@@ -211,6 +224,7 @@
             <div>
               <p class="kg-news-section-head__eyebrow">Лента</p>
               <h2>Все новости</h2>
+              <p>Собрали правовые сигналы, которые стоит проверить в договорах, переписке, платежах и претензиях.</p>
             </div>
             <span id="newsResultCount">Загрузка</span>
           </div>
@@ -328,7 +342,7 @@
   </div>
 
   <script src="../script.js" defer></script>
-  <script src="./news.js?v=20260618-premium" defer></script>
+  <script src="./news.js?v=20260627-hero-ui-polish" defer></script>
   <script src="https://code.jivo.ru/widget/CgMP7mbMCA" async></script>
 </body>
 </html>

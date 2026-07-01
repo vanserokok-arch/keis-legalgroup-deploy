@@ -2,7 +2,8 @@
   const pageRoot = document.body;
   if (!pageRoot || pageRoot.dataset.page !== 'news') return;
 
-  const BATCH_SIZE = 9;
+  const INITIAL_VISIBLE_COUNT = 11;
+  const LOAD_MORE_STEP = 9;
   const MAX_ITEMS = 40;
   const FETCH_TIMEOUT_MS = 12000;
   const SYNC_INTERVAL_MS = 600000;
@@ -19,30 +20,42 @@
     'Недвижимость',
     'Автомобили',
     'Медицина',
-    'Законы',
-    'ЦБ РФ',
-    'Прокуратура',
-    'ФАС',
-    'Роспотребнадзор'
+    'Прокуратура'
   ];
 
-  const NEWS_COVER_COUNT = 4;
-  const coverPath = (category, index) => `/assets/news/covers/${category}-${String((index % NEWS_COVER_COUNT) + 1).padStart(2, '0')}.webp`;
+  const NEWS_COVER_DIR = '/assets/news/editorial-covers';
+  const NEWS_HERO_COVER = `${NEWS_COVER_DIR}/hero-finance-dossier.webp`;
+  const COVER_FILES_BY_SLUG = {
+    law: 'legal-bulletin.webp',
+    bank: 'bank-risk.webp',
+    credit: 'credit-contract.webp',
+    fraud: 'fraud-payments.webp',
+    consumer: 'consumer-claim.webp',
+    court: 'court-casefile.webp',
+    realestate: 'realestate-cadastre.webp',
+    auto: 'auto-insurance.webp',
+    medical: 'medical-record.webp',
+    regulator: 'regulator-finance.webp',
+    prosecutor: 'prosecutor-review.webp',
+    fas: 'fas-trademark.webp',
+    rospotreb: 'rospotreb-check.webp'
+  };
+  const coverPath = (slug = 'law') => `${NEWS_COVER_DIR}/${COVER_FILES_BY_SLUG[slug] || COVER_FILES_BY_SLUG.law}`;
 
   const CATEGORY_IMAGES = {
-    'Все новости': coverPath('law', 0),
-    'Кредиты и банки': coverPath('credit', 0),
-    'Мошенничество': coverPath('fraud', 0),
-    'Защита прав потребителей': coverPath('consumer', 0),
-    'Суды': coverPath('court', 0),
-    'Недвижимость': coverPath('realestate', 0),
-    'Автомобили': coverPath('auto', 0),
-    'Медицина': coverPath('medical', 0),
-    'Законы': coverPath('law', 0),
-    'ЦБ РФ': coverPath('regulator', 0),
-    'Прокуратура': coverPath('prosecutor', 0),
-    'ФАС': coverPath('fas', 0),
-    'Роспотребнадзор': coverPath('rospotreb', 0)
+    'Все новости': coverPath('law'),
+    'Кредиты и банки': coverPath('credit'),
+    'Мошенничество': coverPath('fraud'),
+    'Защита прав потребителей': coverPath('consumer'),
+    'Суды': coverPath('court'),
+    'Недвижимость': coverPath('realestate'),
+    'Автомобили': coverPath('auto'),
+    'Медицина': coverPath('medical'),
+    'Законы': coverPath('law'),
+    'ЦБ РФ': coverPath('regulator'),
+    'Прокуратура': coverPath('prosecutor'),
+    'ФАС': coverPath('fas'),
+    'Роспотребнадзор': coverPath('rospotreb')
   };
 
   const CATEGORY_COPY = {
@@ -271,6 +284,8 @@
     popularSidebar: document.getElementById('newsPopularSidebar'),
     lawChanges: document.getElementById('newsLawChanges'),
     resultCount: document.getElementById('newsResultCount'),
+    rubricsWrap: document.querySelector('.kg-news-rubrics-wrap'),
+    rubricsTrack: document.querySelector('.kg-news-rubrics'),
     categoryButtons: Array.from(document.querySelectorAll('[data-news-category]'))
   };
 
@@ -281,7 +296,7 @@
   const state = {
     items: [],
     filtered: [],
-    visibleCount: BATCH_SIZE,
+    visibleCount: INITIAL_VISIBLE_COUNT,
     activeCategory: 'Все новости',
     isLoading: false,
     phpUnavailable: true,
@@ -354,8 +369,9 @@
     if (source.includes('цб') || has('банк россии', 'ключев', 'репо', 'депозит', 'валютный своп', 'финансового рынка')) return 'ЦБ РФ';
     if (has('мошен', 'фишинг', 'дроппер', 'обман', 'перевод под влиянием', 'украли деньги')) return 'Мошенничество';
     if (has('кредит', 'заем', 'займ', 'банк', 'вклад', 'ставк', 'мфо', 'страхов')) return 'Кредиты и банки';
-    if (has('потребител', 'товар', 'услуг', 'чек', 'претенз', 'возврат товара', 'исполнитель услуг')) return 'Защита прав потребителей';
+    if (/(товарн\w*\s+знак|pantone|роспатент|знак\w*\s+обслуживан)/i.test(haystack)) return 'ФАС';
     if (/(^|[^а-яё])(суд|вс рф|иск|апелляц|кассац)([^а-яё]|$)|судебн|верховн|неустойк|решени[ея]\s+(суда|судебн)/i.test(haystack)) return 'Суды';
+    if (has('потребител', 'товар', 'услуг', 'чек', 'претенз', 'возврат товара', 'исполнитель услуг')) return 'Защита прав потребителей';
     if (has('недвижим', 'квартир', 'дом', 'регистрац', 'ипотек', 'застройщик')) return 'Недвижимость';
     if (has('автомоб', 'дтп', 'автокредит', 'осаго', 'каско', 'дилер', 'навязанн')) return 'Автомобили';
     if (has('медицин', 'клиник', 'пациент', 'врач', 'медкарт', 'лечение')) return 'Медицина';
@@ -368,6 +384,8 @@
     const category = item?.category || detectCategory(item);
     const haystack = getHaystack(item);
 
+    if ((category === 'ЦБ РФ' || haystack.includes('банк россии') || /(^|[^а-яё])цб([^а-яё]|$)/i.test(haystack))
+      && /(кредит|за[её]м|займ|ипотек|мфо|ставк|долг|просроч|задолжен)/i.test(haystack)) return 'credit';
     if (category === 'ЦБ РФ' || haystack.includes('банк россии') || /(^|[^а-яё])цб([^а-яё]|$)/i.test(haystack)) return 'regulator';
     if (category === 'Кредиты и банки') {
       if (/(кредит|за[её]м|займ|ипотек|мфо|ставк|долг|просроч|задолжен)/i.test(haystack)) return 'credit';
@@ -386,7 +404,7 @@
     return 'law';
   };
 
-  const getNewsCover = (item, index = 0) => coverPath(resolveNewsCoverCategory(item), index);
+  const getNewsCover = (item) => coverPath(resolveNewsCoverCategory(item));
 
   const parseKeisNote = (item) => {
     const raw = normalizeMultiline(item?.keisNote || item?.keisNoteAuto);
@@ -524,16 +542,59 @@
         return bTime - aTime;
       })
       .slice(0, MAX_ITEMS);
-    const coverCounters = Object.create(null);
-    return items.map((item) => {
-      const coverCategory = resolveNewsCoverCategory(item);
-      const coverIndex = coverCounters[coverCategory] || 0;
-      coverCounters[coverCategory] = coverIndex + 1;
+    const decorated = items.map((item) => {
       return {
         ...item,
-        image: getNewsCover(item, coverIndex)
+        image: getNewsCover(item)
       };
     });
+    return balanceNewsOrder(decorated);
+  };
+
+  const balanceNewsOrder = (items) => {
+    const buckets = new Map();
+    items.forEach((item) => {
+      const bucket = buckets.get(item.category) || [];
+      bucket.push(item);
+      buckets.set(item.category, bucket);
+    });
+
+    const orderedCategories = [...buckets.keys()].sort((a, b) => {
+      const aTime = Date.parse(buckets.get(a)?.[0]?.dateISO || '') || 0;
+      const bTime = Date.parse(buckets.get(b)?.[0]?.dateISO || '') || 0;
+      return bTime - aTime;
+    });
+
+    const balanced = [];
+    while (balanced.length < items.length && orderedCategories.length > 0) {
+      for (let index = 0; index < orderedCategories.length; index += 1) {
+        const category = orderedCategories[index];
+        const bucket = buckets.get(category);
+        if (!bucket || bucket.length === 0) continue;
+
+        const last = balanced[balanced.length - 1];
+        const beforeLast = balanced[balanced.length - 2];
+        if (last?.category === category && beforeLast?.category === category) continue;
+
+        balanced.push(bucket.shift());
+      }
+
+      for (let index = orderedCategories.length - 1; index >= 0; index -= 1) {
+        const category = orderedCategories[index];
+        if (!buckets.get(category)?.length) orderedCategories.splice(index, 1);
+      }
+
+      if (orderedCategories.every((category) => {
+        const last = balanced[balanced.length - 1];
+        const beforeLast = balanced[balanced.length - 2];
+        return last?.category === category && beforeLast?.category === category;
+      })) {
+        const category = orderedCategories.find((name) => buckets.get(name)?.length);
+        if (category) balanced.push(buckets.get(category).shift());
+      }
+    }
+
+    return balanced.slice(0, MAX_ITEMS);
   };
 
   const fillSourceFilter = (preferredValue, proxySourceStatuses = null) => {
@@ -587,7 +648,7 @@
       return queryOk && sourceOk && categoryOk;
     });
 
-    if (state.visibleCount < BATCH_SIZE) state.visibleCount = BATCH_SIZE;
+    if (state.visibleCount < INITIAL_VISIBLE_COUNT) state.visibleCount = INITIAL_VISIBLE_COUNT;
     updateRubrics();
     renderAll();
   };
@@ -603,6 +664,8 @@
     ? `<time class="${className}" datetime="${escapeAttr(item.dateISO)}">${escapeHtml(item.dateHuman)}</time>`
     : `<span class="${className}">${escapeHtml(item.dateHuman)}</span>`;
 
+  const imageAlt = (item, prefix = 'Обложка материала') => `${prefix}: ${item.category}. ${item.title}`;
+
   const renderFeatured = () => {
     if (!refs.featured) return;
     const item = state.filtered[0] || state.items[0];
@@ -617,7 +680,7 @@
     refs.featured.removeAttribute('aria-busy');
     refs.featured.innerHTML = `
       <a class="kg-news-featured__link" ${linkAttrs(item)}>
-        <img class="kg-news-featured__image" src="${escapeAttr(item.image)}" alt="" loading="eager" decoding="async">
+        <img class="kg-news-featured__image" src="${escapeAttr(NEWS_HERO_COVER)}" alt="${escapeAttr(imageAlt(item, 'Главная обложка'))}" loading="eager" decoding="async" fetchpriority="high">
         <span class="kg-news-featured__shade" aria-hidden="true"></span>
         <span class="kg-news-featured__content">
           <span class="kg-news-featured__meta">
@@ -653,7 +716,7 @@
     refs.todayList.removeAttribute('aria-busy');
     refs.todayList.innerHTML = items.map((item) => `
       <a class="kg-news-today-item" ${linkAttrs(item)}>
-        <img src="${escapeAttr(item.image)}" alt="" loading="eager" decoding="async">
+        <img src="${escapeAttr(item.image)}" alt="${escapeAttr(imageAlt(item))}" loading="lazy" decoding="async">
         <span>
           <span class="kg-news-today-item__meta">
             <span>${escapeHtml(item.category)}</span>
@@ -674,7 +737,7 @@
         <a ${linkAttrs(item)}>
           <span class="kg-news-popular-item__num">${String(index + 1).padStart(2, '0')}</span>
           <span class="kg-news-popular-item__title">${escapeHtml(item.title)}</span>
-          <img src="${escapeAttr(item.image)}" alt="" loading="eager" decoding="async">
+          <img src="${escapeAttr(item.image)}" alt="${escapeAttr(`Обложка разбора: ${item.category}. ${item.title}`)}" loading="lazy" decoding="async">
         </a>
       </li>
     `).join('');
@@ -693,7 +756,7 @@
     `).join('');
   };
 
-  const cardToHtml = (item) => {
+  const cardToHtml = (item, index = 0) => {
     const dataAttrs = (item.url || item.id)
       ? ` data-news-id="${escapeAttr(item.id)}" data-news-url="${escapeAttr(item.url || '')}"`
       : '';
@@ -705,7 +768,7 @@
       <li class="kg-news-card"${dataAttrs}>
         <article class="kg-news-card__article">
           <a class="kg-news-card__media" ${linkAttrs(item)} aria-label="${escapeAttr(item.title)}">
-            <img src="${escapeAttr(item.image)}" alt="" loading="eager" decoding="async">
+            <img src="${escapeAttr(item.image)}" alt="${escapeAttr(imageAlt(item))}" loading="${index < 2 ? 'eager' : 'lazy'}" decoding="async"${index < 2 ? ' fetchpriority="high"' : ''}>
           </a>
           <div class="kg-news-card__body">
             <p class="kg-news-card__meta">
@@ -743,6 +806,20 @@
     </li>
   `;
 
+  const editorialFocusHtml = () => `
+    <li class="kg-news-focus-insert">
+      <div class="kg-news-focus-insert__copy">
+        <span>Редакционный фокус</span>
+        <h2>Что важно проверить на этой неделе</h2>
+      </div>
+      <ul>
+        <li>Сверить кредитные и банковские условия с новыми разъяснениями регуляторов.</li>
+        <li>Проверить сроки претензий, ответов и процессуальных действий по активным спорам.</li>
+        <li>Обновить договорные шаблоны, если менялись штрафы, комиссии или порядок уведомлений.</li>
+      </ul>
+    </li>
+  `;
+
   const renderList = () => {
     if (refs.resultCount) {
       const count = state.filtered.length;
@@ -760,8 +837,9 @@
     const visible = state.filtered.slice(0, Math.min(state.visibleCount, state.filtered.length));
     const html = [];
     visible.forEach((item, index) => {
-      html.push(cardToHtml(item));
-      if (index === 5 && state.filtered.length > 6) html.push(inlineCtaHtml());
+      html.push(cardToHtml(item, index));
+      if (index === 4 && state.filtered.length > 5) html.push(editorialFocusHtml());
+      if (index === 7 && state.filtered.length > 8) html.push(inlineCtaHtml());
     });
 
     refs.list.innerHTML = html.join('');
@@ -812,7 +890,7 @@
     fillSourceFilter(keepState ? previousState.source : 'all', state.lastProxySourceStatuses);
     refs.search.value = keepState ? previousState.query : '';
     state.activeCategory = keepState ? previousState.category : 'Все новости';
-    state.visibleCount = keepState ? Math.min(previousState.visibleCount, MAX_ITEMS) : BATCH_SIZE;
+    state.visibleCount = keepState ? Math.min(previousState.visibleCount, MAX_ITEMS) : INITIAL_VISIBLE_COUNT;
     applyFilters();
 
     if (keepState) {
@@ -886,6 +964,41 @@
     scheduleSync();
   };
 
+  const setupRubricsScroller = () => {
+    const track = refs.rubricsTrack;
+    const wrap = refs.rubricsWrap;
+    if (!track || !wrap) return;
+
+    let updateFrame = 0;
+    const updateState = () => {
+      updateFrame = 0;
+      const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+      const atStart = track.scrollLeft <= 2;
+      const atEnd = track.scrollLeft >= maxScroll - 2;
+      wrap.classList.toggle('is-scroll-start', atStart);
+      wrap.classList.toggle('is-scroll-end', atEnd || maxScroll <= 2);
+      wrap.classList.toggle('is-scrollable', maxScroll > 2);
+    };
+
+    const requestUpdate = () => {
+      if (updateFrame) return;
+      updateFrame = window.requestAnimationFrame(updateState);
+    };
+
+    track.addEventListener('wheel', (event) => {
+      const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+      if (!delta) return;
+      const maxScroll = track.scrollWidth - track.clientWidth;
+      if (maxScroll <= 2) return;
+      event.preventDefault();
+      track.scrollBy({ left: delta, behavior: 'smooth' });
+    }, { passive: false });
+
+    track.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate, { passive: true });
+    updateState();
+  };
+
   const runSilentSync = async () => {
     if (document.hidden || !isNewsVisible || state.isLoading) return;
     try {
@@ -917,25 +1030,25 @@
   };
 
   refs.search.addEventListener('input', () => {
-    state.visibleCount = BATCH_SIZE;
+    state.visibleCount = INITIAL_VISIBLE_COUNT;
     applyFilters();
   });
 
   refs.sourceFilter.addEventListener('change', () => {
-    state.visibleCount = BATCH_SIZE;
+    state.visibleCount = INITIAL_VISIBLE_COUNT;
     applyFilters();
   });
 
   refs.categoryButtons.forEach((button) => {
     button.addEventListener('click', () => {
       state.activeCategory = button.dataset.newsCategory || 'Все новости';
-      state.visibleCount = BATCH_SIZE;
+      state.visibleCount = INITIAL_VISIBLE_COUNT;
       applyFilters();
     });
   });
 
   refs.loadMoreBtn.addEventListener('click', () => {
-    state.visibleCount = Math.min(state.visibleCount + BATCH_SIZE, state.filtered.length, MAX_ITEMS);
+    state.visibleCount = Math.min(state.visibleCount + LOAD_MORE_STEP, state.filtered.length, MAX_ITEMS);
     renderList();
   });
 
@@ -948,6 +1061,10 @@
   });
 
   const setupJivoStartupGuard = () => {
+    if (['127.0.0.1', 'localhost'].includes(window.location.hostname)) {
+      document.documentElement.classList.add('footer-debug-jivo-off');
+    }
+
     const closeJivoPopup = () => {
       try {
         if (window.jivo_api && typeof window.jivo_api.close === 'function') {
@@ -1000,6 +1117,7 @@
   });
 
   setupJivoStartupGuard();
+  setupRubricsScroller();
   setStatus('Загружаем материалы...', 'is-info');
   loadInitial();
 })();

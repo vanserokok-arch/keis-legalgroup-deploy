@@ -1180,7 +1180,7 @@ function createReviewAvatar(review, index) {
 }
 
 function getReviewsVisibleCount() {
-  if (window.matchMedia('(max-width: 600px)').matches) return 1;
+  if (window.matchMedia('(max-width: 599.98px)').matches) return 1;
   if (window.matchMedia('(max-width: 768px)').matches) return 2;
   if (window.matchMedia('(max-width: 1100px)').matches) return 2;
   return 3;
@@ -1897,7 +1897,8 @@ function initCaseShowcaseSections() {
   const caseDurations = ['6 месяцев', '7 месяцев', '5 месяцев', '8 месяцев', '9 месяцев', '10 месяцев', '11 месяцев', '6 месяцев'];
   const caseResults = ['1 600 000 ₽', '1 120 000 ₽', '1 340 000 ₽', '1 080 000 ₽', '1 210 000 ₽', '1 470 000 ₽', '1 250 000 ₽', '1 030 000 ₽'];
   const AUTO_DELAY = 7000;
-  const TRANSITION_MS = 620;
+  const TRANSITION_MS = 180;
+  const MOTION_QUERY = '(min-width: 761px)';
 
   const escapeHtml = (value) => String(value || '')
     .replace(/&/g, '&amp;')
@@ -2005,6 +2006,9 @@ function initCaseShowcaseSections() {
     let physicalIndex = 0;
     let autoplayTimer = null;
     let scrollSettleTimer = null;
+    let transitionTimer = null;
+    let pendingPhysicalIndex = null;
+    let motionFrame = null;
     let isAnimating = false;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const cloneCount = cases.length;
@@ -2095,9 +2099,59 @@ function initCaseShowcaseSections() {
     const getCenteredScrollLeft = (slide) => (
       slide.offsetLeft - ((viewport.clientWidth - slide.offsetWidth) / 2)
     );
+    const getUsesMotionCarousel = () => window.matchMedia(MOTION_QUERY).matches;
+    const getCenteredTrackX = (slide) => -getCenteredScrollLeft(slide);
+    const easeMotion = (value) => 1 - Math.pow(1 - value, 2);
+    const cancelMotionFrame = () => {
+      if (!motionFrame) return;
+      cancelAnimationFrame(motionFrame);
+      motionFrame = null;
+    };
+    const setTrackX = (x) => {
+      track.style.transform = `translate3d(${x}px, 0, 0)`;
+    };
+    const setTrackTranslate = (nextPhysicalIndex, animate = false, onDone = null) => {
+      const slide = slides[nextPhysicalIndex];
+      if (!slide) return;
+      cancelMotionFrame();
+      track.style.transition = 'none';
+      const targetX = getCenteredTrackX(slide);
+      viewport.scrollTo({ left: 0, behavior: 'auto' });
+      if (!animate || reduceMotion) {
+        setTrackX(targetX);
+        if (typeof onDone === 'function') onDone();
+        return;
+      }
+      const startX = getRenderedTrackX();
+      const distance = targetX - startX;
+      if (Math.abs(distance) < 0.5) {
+        setTrackX(targetX);
+        if (typeof onDone === 'function') onDone();
+        return;
+      }
+      const startedAt = performance.now();
+      const tick = (now) => {
+        const progress = Math.min(1, (now - startedAt) / TRANSITION_MS);
+        const x = startX + distance * easeMotion(progress);
+        setTrackX(progress >= 1 ? targetX : x);
+        if (progress < 1) {
+          motionFrame = requestAnimationFrame(tick);
+          return;
+        }
+        motionFrame = null;
+        if (typeof onDone === 'function') onDone();
+      };
+      motionFrame = requestAnimationFrame(tick);
+    };
     const scrollToPhysical = (nextPhysicalIndex, behavior = 'smooth') => {
       const slide = slides[nextPhysicalIndex];
       if (!slide) return;
+      if (getUsesMotionCarousel()) {
+        setTrackTranslate(nextPhysicalIndex, behavior === 'smooth');
+        return;
+      }
+      track.style.transition = '';
+      track.style.transform = '';
       viewport.scrollTo({ left: getCenteredScrollLeft(slide), behavior });
     };
     const setMovingState = (value) => {
@@ -2105,10 +2159,36 @@ function initCaseShowcaseSections() {
       viewport.classList.toggle('is-moving', value);
       track.classList.toggle('is-moving', value);
     };
+    const getRenderedTrackX = () => {
+      if (!getUsesMotionCarousel()) return getCenteredTrackX(slides[physicalIndex]);
+      const transform = window.getComputedStyle(track).transform;
+      if (!transform || transform === 'none') return getCenteredTrackX(slides[physicalIndex]);
+      try {
+        return new DOMMatrixReadOnly(transform).m41;
+      } catch (_) {
+        return getCenteredTrackX(slides[physicalIndex]);
+      }
+    };
+    const interruptMotionForInput = () => {
+      if (!isAnimating || !getUsesMotionCarousel()) return false;
+      const renderedX = getRenderedTrackX();
+      cancelMotionFrame();
+      clearTimeout(transitionTimer);
+      transitionTimer = null;
+      physicalIndex = pendingPhysicalIndex ?? physicalIndex;
+      pendingPhysicalIndex = null;
+      isAnimating = false;
+      track.style.transition = 'none';
+      setTrackX(renderedX);
+      track.getBoundingClientRect();
+      setViewportSnap('none');
+      setMovingState(true);
+      return true;
+    };
     const updateActiveState = (realIndex) => {
       activeIndex = ((realIndex % cases.length) + cases.length) % cases.length;
-      slides.forEach((slide) => {
-        slide.classList.toggle('is-active', Number(slide.dataset.caseIndex) === activeIndex && slide.dataset.cloneRole === 'real');
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle('is-active', slideIndex === physicalIndex);
       });
       Array.from(dots.children).forEach((dot, index) => {
         dot.classList.toggle('is-active', index === activeIndex);
@@ -2117,13 +2197,13 @@ function initCaseShowcaseSections() {
     const rebaseIfNeeded = () => {
       if (physicalIndex < cloneCount) {
         physicalIndex += cloneCount;
-        scrollToPhysical(physicalIndex, 'auto');
       } else if (physicalIndex >= cloneCount + cases.length) {
         physicalIndex -= cloneCount;
-        scrollToPhysical(physicalIndex, 'auto');
       }
+      scrollToPhysical(physicalIndex, 'auto');
     };
     const getNearestSlideIndex = () => {
+      if (getUsesMotionCarousel()) return physicalIndex;
       let nearestIndex = physicalIndex;
       let nearestDistance = Infinity;
       const viewportCenter = viewport.scrollLeft + viewport.clientWidth / 2;
@@ -2143,6 +2223,13 @@ function initCaseShowcaseSections() {
       });
     };
     const finishScroll = () => {
+      clearTimeout(transitionTimer);
+      cancelMotionFrame();
+      transitionTimer = null;
+      if (pendingPhysicalIndex !== null) {
+        physicalIndex = pendingPhysicalIndex;
+        pendingPhysicalIndex = null;
+      }
       isAnimating = false;
       setMovingState(false);
       setViewportSnap('x mandatory');
@@ -2153,11 +2240,14 @@ function initCaseShowcaseSections() {
       updateActiveState(Number(slides[nearestIndex]?.dataset.caseIndex || 0));
     };
     const animateToPhysical = (nextPhysicalIndex) => {
-      if (isAnimating) return;
-      physicalIndex = nextPhysicalIndex;
-      setCenteredSlide(physicalIndex);
-      updateActiveState(Number(slides[physicalIndex]?.dataset.caseIndex || 0));
+      if (isAnimating) interruptMotionForInput();
+      const currentPhysicalIndex = physicalIndex;
+      pendingPhysicalIndex = nextPhysicalIndex;
+      setCenteredSlide(getUsesMotionCarousel() ? nextPhysicalIndex : currentPhysicalIndex);
+      updateActiveState(Number(slides[currentPhysicalIndex]?.dataset.caseIndex || 0));
       if (reduceMotion) {
+        physicalIndex = nextPhysicalIndex;
+        pendingPhysicalIndex = null;
         scrollToPhysical(physicalIndex, 'auto');
         finishScroll();
         return;
@@ -2165,16 +2255,22 @@ function initCaseShowcaseSections() {
       isAnimating = true;
       setMovingState(true);
       setViewportSnap('none');
-      scrollToPhysical(physicalIndex, 'smooth');
-      window.setTimeout(finishScroll, TRANSITION_MS);
+      clearTimeout(transitionTimer);
+      if (getUsesMotionCarousel()) {
+        setTrackTranslate(nextPhysicalIndex, true, finishScroll);
+      } else {
+        scrollToPhysical(nextPhysicalIndex, 'smooth');
+        transitionTimer = window.setTimeout(finishScroll, TRANSITION_MS + 24);
+      }
     };
     const goTo = (nextIndex) => {
       const normalized = ((nextIndex % cases.length) + cases.length) % cases.length;
-      const currentReal = Number(slides[physicalIndex]?.dataset.caseIndex || 0);
+      const basePhysicalIndex = pendingPhysicalIndex ?? physicalIndex;
+      const currentReal = Number(slides[basePhysicalIndex]?.dataset.caseIndex || 0);
       let delta = normalized - currentReal;
       if (delta > cases.length / 2) delta -= cases.length;
       if (delta < -cases.length / 2) delta += cases.length;
-      animateToPhysical(physicalIndex + delta);
+      animateToPhysical(basePhysicalIndex + delta);
     };
 
     const stopAutoplay = () => {
@@ -2202,8 +2298,8 @@ function initCaseShowcaseSections() {
 
     const bindArrow = (button, delta) => {
       const trigger = () => {
-        if (isAnimating) return;
-        animateToPhysical(physicalIndex + delta);
+        const basePhysicalIndex = pendingPhysicalIndex ?? physicalIndex;
+        animateToPhysical(basePhysicalIndex + delta);
         startAutoplay();
       };
       button.addEventListener('click', trigger);
@@ -2214,15 +2310,49 @@ function initCaseShowcaseSections() {
     let swipeStartX = 0;
     let swipeStartY = 0;
     let swipeStartPhysical = 0;
+    let swipeStartTrackX = 0;
+    let dragFrame = null;
+    let dragTrackX = 0;
+    let hasSwipeDragged = false;
     let isSwipeTracking = false;
+    let wheelLockedUntil = 0;
+    let wheelGestureTimer = null;
+    let wheelGestureDirection = 0;
+    const WHEEL_TRIGGER_DELTA = 28;
+    const WHEEL_GESTURE_QUIET_MS = 320;
+
+    const getSlideStepSize = (index, direction = 1) => {
+      const current = slides[index];
+      const next = slides[index + direction];
+      if (!current || !next) return current ? current.offsetWidth : viewport.clientWidth;
+      return Math.max(1, Math.abs(
+        (next.offsetLeft + next.offsetWidth / 2) - (current.offsetLeft + current.offsetWidth / 2)
+      ));
+    };
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+    const applyDragTrackX = (nextX) => {
+      dragTrackX = nextX;
+      if (dragFrame) return;
+      dragFrame = requestAnimationFrame(() => {
+        dragFrame = null;
+        setTrackX(dragTrackX);
+      });
+    };
+    const flushDragTrackX = () => {
+      if (dragFrame) {
+        cancelAnimationFrame(dragFrame);
+        dragFrame = null;
+      }
+      setTrackX(dragTrackX);
+    };
 
     const onSwipe = (dx, dy) => {
       if (isAnimating) return;
+      const baseIndex = swipeStartPhysical;
       if (Math.abs(dx) < 28) return;
       if (Math.abs(dx) < Math.abs(dy) * 1.25) return;
       const step = dx < 0 ? 1 : -1;
-      const baseIndex = swipeStartPhysical;
-      if (slides[baseIndex]) {
+      if (!getUsesMotionCarousel() && slides[baseIndex]) {
         scrollToPhysical(baseIndex, 'auto');
       }
       animateToPhysical(baseIndex + step);
@@ -2230,28 +2360,110 @@ function initCaseShowcaseSections() {
     };
 
     viewport.addEventListener('pointerdown', (event) => {
-      if (isAnimating) return;
+      if (isAnimating && !getUsesMotionCarousel()) return;
       if (event.button !== undefined && event.button !== 0 && event.pointerType === 'mouse') return;
+      interruptMotionForInput();
       swipeStartX = event.clientX;
       swipeStartY = event.clientY;
       swipeStartPhysical = physicalIndex;
+      swipeStartTrackX = getUsesMotionCarousel() ? getRenderedTrackX() : getCenteredTrackX(slides[physicalIndex]);
+      hasSwipeDragged = false;
       isSwipeTracking = true;
       clearTimeout(scrollSettleTimer);
+      stopAutoplay();
+      if (getUsesMotionCarousel() && viewport.setPointerCapture) {
+        try {
+          viewport.setPointerCapture(event.pointerId);
+        } catch (_) {}
+      }
     }, { passive: true });
+
+    viewport.addEventListener('pointermove', (event) => {
+      if (!isSwipeTracking || isAnimating || !getUsesMotionCarousel()) return;
+      const dx = event.clientX - swipeStartX;
+      const dy = event.clientY - swipeStartY;
+      if (Math.abs(dx) < 2 || Math.abs(dx) < Math.abs(dy) * 1.08) return;
+      event.preventDefault();
+      if (!hasSwipeDragged) {
+        setMovingState(true);
+        track.style.transition = 'none';
+      }
+      hasSwipeDragged = true;
+      setCenteredSlide(dx < 0 ? swipeStartPhysical + 1 : swipeStartPhysical - 1);
+      applyDragTrackX(swipeStartTrackX + dx * 0.92);
+    }, { passive: false });
 
     const onPointerUp = (event) => {
       if (!isSwipeTracking) return;
       isSwipeTracking = false;
+      if (hasSwipeDragged && getUsesMotionCarousel()) flushDragTrackX();
       const dx = event.clientX - swipeStartX;
       const dy = event.clientY - swipeStartY;
+      if (hasSwipeDragged && (Math.abs(dx) < 18 || Math.abs(dx) < Math.abs(dy) * 1.18)) {
+        animateToPhysical(swipeStartPhysical);
+        startAutoplay();
+        return;
+      }
+      if (!hasSwipeDragged && getUsesMotionCarousel()) {
+        startAutoplay();
+        return;
+      }
       onSwipe(dx, dy);
     };
     viewport.addEventListener('pointerup', onPointerUp, { passive: true });
     viewport.addEventListener('pointercancel', () => {
       isSwipeTracking = false;
+      if (hasSwipeDragged && getUsesMotionCarousel()) flushDragTrackX();
+      if (hasSwipeDragged && getUsesMotionCarousel()) {
+        animateToPhysical(swipeStartPhysical);
+      }
+      startAutoplay();
     }, { passive: true });
 
+    viewport.addEventListener('wheel', (event) => {
+      if (!getUsesMotionCarousel()) return;
+      const absDeltaX = Math.abs(event.deltaX);
+      if (absDeltaX < 2 || absDeltaX < Math.abs(event.deltaY) * 1.08) return;
+      event.preventDefault();
+      const now = Date.now();
+      const direction = event.deltaX >= 0 ? 1 : -1;
+      if (now < wheelLockedUntil) {
+        wheelLockedUntil = now + WHEEL_GESTURE_QUIET_MS;
+        clearTimeout(wheelGestureTimer);
+        wheelGestureTimer = window.setTimeout(() => {
+          wheelGestureDirection = 0;
+        }, WHEEL_GESTURE_QUIET_MS);
+        return;
+      }
+      if (absDeltaX < WHEEL_TRIGGER_DELTA) {
+        clearTimeout(wheelGestureTimer);
+        wheelGestureTimer = window.setTimeout(() => {
+          wheelGestureDirection = 0;
+        }, WHEEL_GESTURE_QUIET_MS);
+        return;
+      }
+      stopAutoplay();
+      if (wheelGestureDirection && wheelGestureDirection === direction) {
+        clearTimeout(wheelGestureTimer);
+        wheelLockedUntil = now + WHEEL_GESTURE_QUIET_MS;
+        wheelGestureTimer = window.setTimeout(() => {
+          wheelGestureDirection = 0;
+        }, WHEEL_GESTURE_QUIET_MS);
+        return;
+      }
+      wheelGestureDirection = direction;
+      const basePhysicalIndex = pendingPhysicalIndex ?? physicalIndex;
+      wheelLockedUntil = now + TRANSITION_MS + WHEEL_GESTURE_QUIET_MS;
+      animateToPhysical(basePhysicalIndex + direction);
+      startAutoplay();
+      clearTimeout(wheelGestureTimer);
+      wheelGestureTimer = window.setTimeout(() => {
+        wheelGestureDirection = 0;
+      }, TRANSITION_MS + WHEEL_GESTURE_QUIET_MS);
+    }, { passive: false });
+
     viewport.addEventListener('scroll', () => {
+      if (getUsesMotionCarousel()) return;
       if (isAnimating) return;
       setMovingState(true);
       const nearestIndex = getNearestSlideIndex();
@@ -2287,6 +2499,7 @@ function initCaseShowcaseSections() {
     window.addEventListener('pagehide', stopAutoplay, { once: true });
     onResizeRaf(() => {
       scrollToPhysical(physicalIndex, 'auto');
+      setCenteredSlide(physicalIndex);
       return 1;
     });
 
@@ -2295,7 +2508,16 @@ function initCaseShowcaseSections() {
     scrollToPhysical(physicalIndex, 'auto');
     updateActiveState(0);
     setCenteredSlide(physicalIndex);
-    requestAnimationFrame(() => scrollToPhysical(physicalIndex, 'auto'));
+    const syncInitialCenter = () => {
+      scrollToPhysical(physicalIndex, 'auto');
+      setCenteredSlide(physicalIndex);
+      updateActiveState(Number(slides[physicalIndex]?.dataset.caseIndex || 0));
+    };
+    requestAnimationFrame(() => {
+      syncInitialCenter();
+      requestAnimationFrame(syncInitialCenter);
+    });
+    window.addEventListener('load', syncInitialCenter, { once: true });
     startAutoplay();
     root.dataset.caseShowcaseReady = 'true';
   });
@@ -3879,6 +4101,17 @@ function initHeader() {
   if (!guardInit('header')) return;
   window.__headerInitialized = true;
 
+  try {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    if (sessionStorage.getItem('keisHeaderForceTop') === '1') {
+      sessionStorage.removeItem('keisHeaderForceTop');
+      window.scrollTo(0, 0);
+      requestAnimationFrame(() => window.scrollTo(0, 0));
+    }
+  } catch (_) {}
+
   // Measure header height and expose it via CSS var
   const header = document.querySelector('.keis-header');
   let headerMeasureRaf = null;
@@ -4001,6 +4234,17 @@ function initHeader() {
     setHeaderDirectionsScope(referrerScope || storedScope || 'consumer');
   };
   syncNewsHeaderDirections();
+
+  document.querySelectorAll('.keis-header-nav-dropdown a, .kg-mm__sublist a').forEach((link) => {
+    link.addEventListener('click', () => {
+      try {
+        const url = new URL(link.getAttribute('href') || '', window.location.href);
+        if (url.origin === window.location.origin && url.pathname !== window.location.pathname) {
+          sessionStorage.setItem('keisHeaderForceTop', '1');
+        }
+      } catch (_) {}
+    });
+  });
 
   /* ===== KG Mobile Menu (kg-mm) ===== */
   const burger = document.querySelector('.keis-header-burger, #burgerBtn');
